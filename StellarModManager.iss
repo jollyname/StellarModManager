@@ -33,13 +33,13 @@ ArchitecturesInstallIn64BitMode=x64compatible
 ;SetupArchitecture=x64
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
-LicenseFile=C:\Users\fafaf\source\repos\StellarModManager\App\License.txt
-InfoAfterFile=C:\Users\fafaf\source\repos\StellarModManager\App\PostInfo.txt
+LicenseFile=\App\License.txt
+InfoAfterFile=\App\PostInfo.txt
 ; Remove the following line to run in administrative install mode (install for all users).
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
 OutputBaseFilename=StellarModManager_1.0.0_Setup
-SetupIconFile=C:\Users\fafaf\source\repos\StellarModManager\App\icon.ico
+SetupIconFile=\App\icon.ico
 SolidCompression=yes
 WizardStyle=modern dynamic
 
@@ -50,8 +50,8 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-; Just use this one line to include everything in the App folder
-Source: "C:\Users\fafaf\source\repos\StellarModManager\App\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+; One line to include everything in the App folder
+Source: "\App\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
