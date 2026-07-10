@@ -1,0 +1,121 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:StellarModManager.ViewModels"
+             xmlns:loc="using:StellarModManager.Services"
+             x:Class="StellarModManager.Views.SetupPanelView"
+             x:DataType="vm:MainWindowViewModel">
+
+    <Border
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch">
+
+        <Border
+            Width="440"
+            Padding="40"
+            CornerRadius="24"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            BoxShadow="0 8 32 0 #55000000"
+            Background="{DynamicResource Theme.CardBackgroundBrush}">
+
+            <StackPanel Spacing="22">
+
+                <Border
+                    Width="64"
+                    Height="64"
+                    CornerRadius="32"
+                    HorizontalAlignment="Center">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                            <GradientStop Color="{DynamicResource Theme.AccentStart}" Offset="0"/>
+                            <GradientStop Color="{DynamicResource Theme.AccentEnd}" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <TextBlock
+                        Text="SM"
+                        FontSize="20"
+                        FontWeight="Bold"
+                        Foreground="White"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"/>
+                </Border>
+
+                <StackPanel Spacing="10">
+                    <TextBlock
+                        Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[WelcomeTitle]}"
+                        FontSize="24"
+                        FontWeight="Bold"
+                        TextAlignment="Center"
+                        TextWrapping="Wrap"
+                        Foreground="{DynamicResource Theme.TextPrimaryBrush}"/>
+
+                    <TextBlock
+                        Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[WelcomeDescription]}"
+                        FontSize="14"
+                        TextWrapping="Wrap"
+                        TextAlignment="Center"
+                        Foreground="{DynamicResource Theme.TextSecondaryBrush}"
+                        Margin="0,0,0,10"/>
+                </StackPanel>
+
+                <Button
+                    Classes="primary"
+                    Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ChooseGameFolder]}"
+                    Command="{Binding SelectGameFolderCommand}"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Center"/>
+
+                <Border
+                    IsVisible="{Binding MelonLoaderStatusText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                    Background="#12000000"
+                    CornerRadius="10"
+                    Padding="14,10">
+                    <StackPanel Spacing="4">
+                        <TextBlock
+                            Text="{Binding MelonLoaderStatusText}"
+                            FontSize="13"
+                            FontWeight="SemiBold"
+                            TextAlignment="Center"
+                            Foreground="{DynamicResource Theme.TextPrimaryBrush}"/>
+
+                        <TextBlock
+                            Text="{Binding GamePath}"
+                            FontSize="12"
+                            TextWrapping="Wrap"
+                            TextAlignment="Center"
+                            Foreground="{DynamicResource Theme.TextSecondaryBrush}"/>
+                    </StackPanel>
+                </Border>
+
+                <Button
+                    Classes="secondary"
+                    Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[InstallMelonLoaderAuto]}"
+                    IsVisible="{Binding !IsMelonLoaderValid}"
+                    IsEnabled="{Binding !IsInstallingMelonLoader}"
+                    Command="{Binding InstallMelonLoaderCommand}"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Center"/>
+
+                <TextBlock
+                    IsVisible="{Binding IsInstallingMelonLoader}"
+                    Text="{Binding InstallProgressText}"
+                    FontSize="12"
+                    TextAlignment="Center"
+                    TextWrapping="Wrap"
+                    Foreground="{DynamicResource Theme.TextSecondaryBrush}"/>
+
+                <Button
+                    Classes="primary"
+                    Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Continue]}"
+                    Command="{Binding CloseSetupCommand}"
+                    IsEnabled="{Binding IsMelonLoaderValid}"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Center"/>
+
+            </StackPanel>
+
+        </Border>
+
+    </Border>
+
+</UserControl>

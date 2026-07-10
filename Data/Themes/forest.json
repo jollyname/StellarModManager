@@ -1,0 +1,19 @@
+﻿{
+  "name": "Forest Moss",
+  "windowGradientStart": "#132018",
+  "windowGradientMid": "#2E4A34",
+  "windowGradientEnd": "#5C8A63",
+  "accentStart": "#2E4A34",
+  "accentEnd": "#5C8A63",
+  "accentHover": "#243A29",
+  "accentPressed": "#1C2D20",
+  "cardBackground": "#EEF3EA",
+  "modCardBackground": "#F4F8F1",
+  "modCardBorder": "#D7E4D1",
+  "textPrimary": "#1C2A1F",
+  "textSecondary": "#5C6B5E",
+  "textMuted": "#8B978C",
+  "danger": "#B23A2E",
+  "dangerHover": "#94301F",
+  "dangerPressed": "#762418"
+}

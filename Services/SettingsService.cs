@@ -7,24 +7,38 @@ namespace StellarModManager.Services;
 
 public class SettingsService
 {
-    private readonly string filePath = Path.Combine(AppContext.BaseDirectory, "Data", "settings.json");
+    private readonly string gameProfilePath = Path.Combine(AppContext.BaseDirectory, "Data", "settings.json");
+    private readonly string appSettingsPath = Path.Combine(AppContext.BaseDirectory, "Data", "appsettings.json");
 
     public void SaveGameProfile(GameProfile profile)
     {
-        Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
-
+        Directory.CreateDirectory(Path.GetDirectoryName(gameProfilePath)!);
         string json = JsonSerializer.Serialize(profile);
-
-        File.WriteAllText(filePath, json);
+        File.WriteAllText(gameProfilePath, json);
     }
 
     public GameProfile? LoadGameProfile()
     {
-        if (!File.Exists(filePath))
+        if (!File.Exists(gameProfilePath))
             return null;
 
-        string json = File.ReadAllText(filePath);
-
+        string json = File.ReadAllText(gameProfilePath);
         return JsonSerializer.Deserialize<GameProfile>(json);
+    }
+
+    public void SaveAppSettings(AppSettings settings)
+    {
+        Directory.CreateDirectory(Path.GetDirectoryName(appSettingsPath)!);
+        string json = JsonSerializer.Serialize(settings);
+        File.WriteAllText(appSettingsPath, json);
+    }
+
+    public AppSettings LoadAppSettings()
+    {
+        if (!File.Exists(appSettingsPath))
+            return new AppSettings();
+
+        string json = File.ReadAllText(appSettingsPath);
+        return JsonSerializer.Deserialize<AppSettings>(json) ?? new AppSettings();
     }
 }

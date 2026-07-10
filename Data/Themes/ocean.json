@@ -1,0 +1,19 @@
+﻿{
+  "name": "Ocean",
+  "windowGradientStart": "#0B2E3A",
+  "windowGradientMid": "#156C7A",
+  "windowGradientEnd": "#42B9C8",
+  "accentStart": "#156C7A",
+  "accentEnd": "#42B9C8",
+  "accentHover": "#105763",
+  "accentPressed": "#0B434D",
+  "cardBackground": "#E6F5F7",
+  "modCardBackground": "#EFFAFC",
+  "modCardBorder": "#C9E6EB",
+  "textPrimary": "#17303A",
+  "textSecondary": "#4D6870",
+  "textMuted": "#738A91",
+  "danger": "#C0392B",
+  "dangerHover": "#A5281A",
+  "dangerPressed": "#7F1D12"
+}

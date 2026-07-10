@@ -1,0 +1,157 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Primary gradient buttons -->
+    <Style Selector="Button.primary">
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="CornerRadius" Value="10"/>
+        <Setter Property="Padding" Value="0,12"/>
+        <Setter Property="Background">
+            <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                <GradientStop Color="{DynamicResource Theme.AccentStart}" Offset="0"/>
+                <GradientStop Color="{DynamicResource Theme.AccentEnd}" Offset="1"/>
+            </LinearGradientBrush>
+        </Setter>
+    </Style>
+
+    <Style Selector="Button.primary:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource Theme.AccentHoverBrush}"/>
+    </Style>
+
+    <Style Selector="Button.primary:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource Theme.AccentPressedBrush}"/>
+    </Style>
+
+    <Style Selector="Button.primary:disabled /template/ ContentPresenter">
+        <Setter Property="Background" Value="#D8D3DE"/>
+    </Style>
+    <Style Selector="Button.primary:disabled">
+        <Setter Property="Foreground" Value="{DynamicResource Theme.TextMutedBrush}"/>
+    </Style>
+
+    <!-- Small secondary button (used for per-item actions) -->
+    <Style Selector="Button.secondary">
+        <Setter Property="Background" Value="{DynamicResource Theme.AccentSolidBrush}"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="14,7"/>
+    </Style>
+    <Style Selector="Button.secondary:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource Theme.AccentHoverBrush}"/>
+    </Style>
+    <Style Selector="Button.secondary:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource Theme.AccentPressedBrush}"/>
+    </Style>
+
+    <Style Selector="TabControl">
+        <Setter Property="Padding" Value="0"/>
+    </Style>
+
+    <Style Selector="TabControl WrapPanel">
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
+
+    <Style Selector="TabItem">
+        <Setter Property="Foreground" Value="{DynamicResource Theme.TextMutedBrush}"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Padding" Value="4,10"/>
+        <Setter Property="Margin" Value="0,0,24,0"/>
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
+
+    <Style Selector="TabItem:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{DynamicResource Theme.AccentSolidBrush}"/>
+    </Style>
+
+    <Style Selector="TabItem:selected /template/ ContentPresenter">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{DynamicResource Theme.AccentSolidBrush}"/>
+    </Style>
+
+    <Style Selector="TabItem /template/ Border#PART_SelectedPipe">
+        <Setter Property="Background" Value="{DynamicResource Theme.AccentSolidBrush}"/>
+    </Style>
+
+    <!-- Mod card items -->
+    <Style Selector="Border.modCard">
+        <Setter Property="Background" Value="{DynamicResource Theme.ModCardBackgroundBrush}"/>
+        <Setter Property="CornerRadius" Value="12"/>
+        <Setter Property="Padding" Value="16"/>
+        <Setter Property="Margin" Value="0,0,0,10"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource Theme.ModCardBorderBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+    </Style>
+
+    <!-- Destructive action button -->
+    <Style Selector="Button.danger">
+        <Setter Property="Background" Value="{DynamicResource Theme.DangerBrush}"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="14,7"/>
+    </Style>
+    <Style Selector="Button.danger:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource Theme.DangerHoverBrush}"/>
+    </Style>
+    <Style Selector="Button.danger:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource Theme.DangerPressedBrush}"/>
+    </Style>
+
+    <!-- Mod progress bars -->
+    <Style Selector="ProgressBar.modProgress">
+        <Setter Property="Height" Value="6"/>
+        <Setter Property="CornerRadius" Value="3"/>
+        <Setter Property="Background" Value="{DynamicResource Theme.ModCardBorderBrush}"/>
+    </Style>
+    <Style Selector="ProgressBar.modProgress /template/ Border#PART_Indicator">
+        <Setter Property="Background" Value="{DynamicResource Theme.AccentEndBrush}"/>
+    </Style>
+
+    <!-- Settings button -->
+    <Style Selector="Button.iconButton">
+        <Setter Property="Width" Value="40"/>
+        <Setter Property="Height" Value="40"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="CornerRadius" Value="20"/>
+        <Setter Property="Background" Value="{DynamicResource Theme.AccentSolidBrush}"/>
+    </Style>
+    <Style Selector="Button.iconButton:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource Theme.AccentHoverBrush}"/>
+    </Style>
+
+    <!-- Settings panel checkboxes -->
+    <Style Selector="CheckBox.settingsCheck">
+        <Setter Property="Foreground" Value="{DynamicResource Theme.TextPrimaryBrush}"/>
+    </Style>
+    <Style Selector="CheckBox.settingsCheck:pointerover /template/ ContentPresenter">
+        <Setter Property="Foreground" Value="{DynamicResource Theme.TextPrimaryBrush}"/>
+    </Style>
+    <Style Selector="CheckBox.settingsCheck:pressed /template/ ContentPresenter">
+        <Setter Property="Foreground" Value="{DynamicResource Theme.TextPrimaryBrush}"/>
+    </Style>
+
+    <!-- Save changes button (animated appearance) -->
+    <Style Selector="Button.saveButton">
+        <Setter Property="Opacity" Value="0"/>
+        <Setter Property="RenderTransform" Value="scale(0.9)"/>
+        <Setter Property="IsHitTestVisible" Value="False"/>
+        <Setter Property="Transitions">
+            <Transitions>
+                <DoubleTransition Property="Opacity" Duration="0:0:0.18"/>
+                <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.18"/>
+            </Transitions>
+        </Setter>
+    </Style>
+    <Style Selector="Button.saveButton.shown">
+        <Setter Property="Opacity" Value="1"/>
+        <Setter Property="RenderTransform" Value="scale(1)"/>
+        <Setter Property="IsHitTestVisible" Value="True"/>
+    </Style>
+
+</Styles>

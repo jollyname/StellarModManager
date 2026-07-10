@@ -1,0 +1,86 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:StellarModManager.ViewModels"
+             xmlns:loc="using:StellarModManager.Services"
+             x:Class="StellarModManager.Views.InstalledModsView"
+             x:DataType="vm:MainWindowViewModel">
+
+    <Grid RowDefinitions="Auto,*" Margin="0,16,0,0">
+
+        <TextBlock
+            Grid.Row="0"
+            Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[InstalledModsDescription]}"
+            FontSize="13"
+            Foreground="{DynamicResource Theme.TextSecondaryBrush}"
+            Margin="0,0,0,14"/>
+
+        <ScrollViewer Grid.Row="1">
+            <ItemsControl ItemsSource="{Binding InstalledMods}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Classes="modCard">
+                            <StackPanel Spacing="10">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <StackPanel Grid.Column="0" Spacing="4">
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <TextBlock Text="{Binding Name}" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource Theme.TextPrimaryBrush}"/>
+                                            <TextBlock Text="{Binding Version}" FontSize="12" Foreground="{DynamicResource Theme.AccentEndBrush}" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                        <TextBlock
+                                            IsVisible="{Binding IsUpdateAvailable}"
+                                            Text="{Binding LatestVersion, StringFormat='Update available: {0}'}"
+                                            FontSize="12"
+                                            FontWeight="SemiBold"
+                                            Foreground="{DynamicResource Theme.DangerBrush}"/>
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Top">
+                                        <Button
+                                            Classes="secondary"
+                                            Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Update]}"
+                                            IsVisible="{Binding IsUpdateAvailable}"
+                                            IsEnabled="{Binding !IsUpdating}"
+                                            Command="{Binding $parent[UserControl].DataContext.UpdateModCommand}"
+                                            CommandParameter="{Binding}"/>
+
+                                        <Button
+                                            Classes="secondary"
+                                            Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[InstallToGame]}"
+                                            IsEnabled="{Binding !IsDeploying}"
+                                            Command="{Binding $parent[UserControl].DataContext.DeployModCommand}"
+                                            CommandParameter="{Binding}"/>
+
+                                        <Button
+                                            Classes="danger"
+                                            Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Remove]}"
+                                            IsEnabled="{Binding !IsRemoving}"
+                                            Command="{Binding $parent[UserControl].DataContext.RequestRemoveModCommand}"
+                                            CommandParameter="{Binding}"/>
+                                    </StackPanel>
+                                </Grid>
+
+                                <StackPanel IsVisible="{Binding IsDeploying}" Spacing="4">
+                                    <ProgressBar Classes="modProgress" Minimum="0" Maximum="100" Value="{Binding DeployProgress}"/>
+                                    <TextBlock Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[CopyingToGame]}" FontSize="11" Foreground="{DynamicResource Theme.TextSecondaryBrush}"/>
+                                </StackPanel>
+
+                                <StackPanel IsVisible="{Binding IsUpdating}" Spacing="4">
+                                    <ProgressBar Classes="modProgress" Minimum="0" Maximum="100" Value="{Binding UpdateProgress}"/>
+                                    <TextBlock Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Updating]}" FontSize="11" Foreground="{DynamicResource Theme.TextSecondaryBrush}"/>
+                                </StackPanel>
+
+                                <TextBlock
+                                    IsVisible="{Binding IsRemoving}"
+                                    Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Removing]}"
+                                    FontSize="11"
+                                    Foreground="{DynamicResource Theme.TextSecondaryBrush}"/>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+    </Grid>
+
+</UserControl>

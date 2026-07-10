@@ -11,5 +11,32 @@
   
     <Application.Styles>
         <FluentTheme />
+        <StyleInclude Source="avares://StellarModManager/Styles/AppStyles.axaml"/>
     </Application.Styles>
+
+    <Application.Resources>
+        <Color x:Key="Theme.WindowGradientStart">#24104F</Color>
+        <Color x:Key="Theme.WindowGradientMid">#5B2C83</Color>
+        <Color x:Key="Theme.WindowGradientEnd">#9B59B6</Color>
+
+        <Color x:Key="Theme.AccentStart">#5B2C83</Color>
+        <Color x:Key="Theme.AccentEnd">#9B59B6</Color>
+
+        <SolidColorBrush x:Key="Theme.AccentSolidBrush" Color="#5B2C83"/>
+        <SolidColorBrush x:Key="Theme.AccentEndBrush" Color="#9B59B6"/>
+        <SolidColorBrush x:Key="Theme.AccentHoverBrush" Color="#4A2369"/>
+        <SolidColorBrush x:Key="Theme.AccentPressedBrush" Color="#3A1B52"/>
+
+        <SolidColorBrush x:Key="Theme.CardBackgroundBrush" Color="#F7F5FA"/>
+        <SolidColorBrush x:Key="Theme.ModCardBackgroundBrush" Color="#FAF8FC"/>
+        <SolidColorBrush x:Key="Theme.ModCardBorderBrush" Color="#EAE3F0"/>
+
+        <SolidColorBrush x:Key="Theme.TextPrimaryBrush" Color="#2B1B3D"/>
+        <SolidColorBrush x:Key="Theme.TextSecondaryBrush" Color="#6B5C7A"/>
+        <SolidColorBrush x:Key="Theme.TextMutedBrush" Color="#8A7F91"/>
+
+        <SolidColorBrush x:Key="Theme.DangerBrush" Color="#C0392B"/>
+        <SolidColorBrush x:Key="Theme.DangerHoverBrush" Color="#A5281A"/>
+        <SolidColorBrush x:Key="Theme.DangerPressedBrush" Color="#7F1D12"/>
+    </Application.Resources>
 </Application>

@@ -1,0 +1,19 @@
+﻿{
+  "name": "Midnight Slate",
+  "windowGradientStart": "#12161C",
+  "windowGradientMid": "#2C3440",
+  "windowGradientEnd": "#5A6B7D",
+  "accentStart": "#2C3440",
+  "accentEnd": "#5A6B7D",
+  "accentHover": "#232A34",
+  "accentPressed": "#1B2028",
+  "cardBackground": "#D3D9E0",
+  "modCardBackground": "#DBE1E7",
+  "modCardBorder": "#B8C1CB",
+  "textPrimary": "#1A1F26",
+  "textSecondary": "#5C6672",
+  "textMuted": "#8B94A0",
+  "danger": "#C0392B",
+  "dangerHover": "#A5281A",
+  "dangerPressed": "#7F1D12"
+}

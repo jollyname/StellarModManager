@@ -1,0 +1,51 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:StellarModManager.ViewModels"
+             xmlns:loc="using:StellarModManager.Services"
+             x:Class="StellarModManager.Views.ConfirmRemoveModView"
+             x:DataType="vm:MainWindowViewModel">
+    <Border
+        Background="#66000000"
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch">
+        <Border
+            Width="380"
+            Padding="28"
+            CornerRadius="20"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            BoxShadow="0 8 32 0 #55000000"
+            Background="{DynamicResource Theme.CardBackgroundBrush}">
+            <StackPanel Spacing="18">
+                <TextBlock
+                    Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ConfirmRemoveTitle]}"
+                    FontSize="18"
+                    FontWeight="Bold"
+                    Foreground="{DynamicResource Theme.TextPrimaryBrush}"/>
+                <TextBlock
+                    Text="{Binding ConfirmRemoveMessage}"
+                    FontSize="13"
+                    TextWrapping="Wrap"
+                    Foreground="{DynamicResource Theme.TextSecondaryBrush}"/>
+                <Grid ColumnDefinitions="*,*" Margin="0,6,0,0">
+                    <Button
+                        Grid.Column="0"
+                        Classes="secondary"
+                        Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Cancel]}"
+                        Command="{Binding CancelRemoveCommand}"
+                        Margin="0,0,6,0"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Center"/>
+                    <Button
+                        Grid.Column="1"
+                        Classes="danger"
+                        Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ConfirmRemoveButton]}"
+                        Command="{Binding ConfirmRemoveCommand}"
+                        Margin="6,0,0,0"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Center"/>
+                </Grid>
+            </StackPanel>
+        </Border>
+    </Border>
+</UserControl>

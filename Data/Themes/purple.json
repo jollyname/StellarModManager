@@ -1,0 +1,19 @@
+{
+  "name": "Purple",
+  "windowGradientStart": "#24104F",
+  "windowGradientMid": "#5B2C83",
+  "windowGradientEnd": "#9B59B6",
+  "accentStart": "#5B2C83",
+  "accentEnd": "#9B59B6",
+  "accentHover": "#4A2369",
+  "accentPressed": "#3A1B52",
+  "cardBackground": "#EBE4F2",
+  "modCardBackground": "#F1ECF7",
+  "modCardBorder": "#D9CCE8",
+  "textPrimary": "#2B1B3D",
+  "textSecondary": "#6B5C7A",
+  "textMuted": "#8A7F91",
+  "danger": "#C0392B",
+  "dangerHover": "#A5281A",
+  "dangerPressed": "#7F1D12"
+}

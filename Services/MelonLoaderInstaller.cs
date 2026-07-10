@@ -26,25 +26,19 @@ public class MelonLoaderInstaller
 
         if (exePath == null)
         {
-            throw new InvalidOperationException(
-                "Could not find the game's executable in the selected folder.");
+            throw new InvalidOperationException("Could not find the game's executable in the selected folder.");
         }
 
         GameArchitecture architecture = DetectArchitecture(exePath);
 
         if (architecture == GameArchitecture.Unknown)
         {
-            throw new InvalidOperationException(
-                "Could not determine whether the game is 32-bit or 64-bit.");
+            throw new InvalidOperationException("Could not determine whether the game is 32-bit or 64-bit.");
         }
 
-        progress?.Report(
-            $"Detected {(architecture == GameArchitecture.X64 ? "64-bit" : "32-bit")} game. " +
-            "Fetching latest MelonLoader release...");
+        progress?.Report($"Detected {(architecture == GameArchitecture.X64 ? "64-bit" : "32-bit")} game. " + "Fetching latest MelonLoader release...");
 
-        string assetName = architecture == GameArchitecture.X64
-            ? "MelonLoader.x64.zip"
-            : "MelonLoader.x86.zip";
+        string assetName = architecture == GameArchitecture.X64 ? "MelonLoader.x64.zip" : "MelonLoader.x86.zip";
 
         string downloadUrl = await GetLatestReleaseAssetUrlAsync(assetName);
 

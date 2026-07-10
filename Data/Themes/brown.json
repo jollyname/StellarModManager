@@ -1,0 +1,19 @@
+{
+  "name": "Cozy Brown",
+  "windowGradientStart": "#2E1B12",
+  "windowGradientMid": "#5E3B24",
+  "windowGradientEnd": "#8C6640",
+  "accentStart": "#5E3B24",
+  "accentEnd": "#8C6640",
+  "accentHover": "#4A2E1C",
+  "accentPressed": "#3A2416",
+  "cardBackground": "#F0E6D8",
+  "modCardBackground": "#F5EDE1",
+  "modCardBorder": "#D9C7AE",
+  "textPrimary": "#3A2A1D",
+  "textSecondary": "#7A6552",
+  "textMuted": "#A0907E",
+  "danger": "#B23A2E",
+  "dangerHover": "#94301F",
+  "dangerPressed": "#762418"
+}

@@ -1,6 +1,8 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:StellarModManager.ViewModels"
+        xmlns:views="using:StellarModManager.Views"
+        xmlns:loc="using:StellarModManager.Services"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="600"
@@ -12,454 +14,96 @@
 
     <Window.Background>
         <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
-            <GradientStop Color="#24104F" Offset="0"/>
-            <GradientStop Color="#5B2C83" Offset="0.5"/>
-            <GradientStop Color="#9B59B6" Offset="1"/>
+            <GradientStop Color="{DynamicResource Theme.WindowGradientStart}" Offset="0"/>
+            <GradientStop Color="{DynamicResource Theme.WindowGradientMid}" Offset="0.5"/>
+            <GradientStop Color="{DynamicResource Theme.WindowGradientEnd}" Offset="1"/>
         </LinearGradientBrush>
     </Window.Background>
 
-    <Window.Styles>
-
-        <!-- Primary gradient buttons -->
-        <Style Selector="Button.primary">
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="CornerRadius" Value="10"/>
-            <Setter Property="Padding" Value="0,12"/>
-            <Setter Property="Background">
-                <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
-                    <GradientStop Color="#5B2C83" Offset="0"/>
-                    <GradientStop Color="#9B59B6" Offset="1"/>
-                </LinearGradientBrush>
-            </Setter>
-        </Style>
-
-        <Style Selector="Button.primary:pointerover /template/ ContentPresenter">
-            <Setter Property="Background">
-                <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
-                    <GradientStop Color="#4A2369" Offset="0"/>
-                    <GradientStop Color="#843F9E" Offset="1"/>
-                </LinearGradientBrush>
-            </Setter>
-        </Style>
-
-        <Style Selector="Button.primary:pressed /template/ ContentPresenter">
-            <Setter Property="Background">
-                <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
-                    <GradientStop Color="#3A1B52" Offset="0"/>
-                    <GradientStop Color="#6B2F80" Offset="1"/>
-                </LinearGradientBrush>
-            </Setter>
-        </Style>
-
-        <Style Selector="Button.primary:disabled /template/ ContentPresenter">
-            <Setter Property="Background" Value="#D8D3DE"/>
-        </Style>
-        <Style Selector="Button.primary:disabled">
-            <Setter Property="Foreground" Value="#8A7F91"/>
-        </Style>
-
-        <!-- Small secondary button (used for per-item actions) -->
-        <Style Selector="Button.secondary">
-            <Setter Property="Background" Value="#5B2C83"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="FontSize" Value="12"/>
-            <Setter Property="CornerRadius" Value="8"/>
-            <Setter Property="Padding" Value="14,7"/>
-        </Style>
-        <Style Selector="Button.secondary:pointerover /template/ ContentPresenter">
-            <Setter Property="Background" Value="#4A2369"/>
-        </Style>
-        <Style Selector="Button.secondary:pressed /template/ ContentPresenter">
-            <Setter Property="Background" Value="#3A1B52"/>
-        </Style>
-
-        <Style Selector="TabControl">
-            <Setter Property="Padding" Value="0"/>
-        </Style>
-
-        <Style Selector="TabControl WrapPanel">
-            <Setter Property="Background" Value="Transparent"/>
-        </Style>
-
-        <Style Selector="TabItem">
-            <Setter Property="Foreground" Value="#8A7F91"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="Padding" Value="4,10"/>
-            <Setter Property="Margin" Value="0,0,24,0"/>
-            <Setter Property="Background" Value="Transparent"/>
-        </Style>
-
-        <Style Selector="TabItem:pointerover /template/ ContentPresenter">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="#5B2C83"/>
-        </Style>
-
-        <Style Selector="TabItem:selected /template/ ContentPresenter">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="#5B2C83"/>
-        </Style>
-
-        <!-- Recolor the built-in selection pipe -->
-        <Style Selector="TabItem /template/ Border#PART_SelectedPipe">
-            <Setter Property="Background" Value="#5B2C83"/>
-        </Style>
-
-        <!-- Mod card items -->
-        <Style Selector="Border.modCard">
-            <Setter Property="Background" Value="#FAF8FC"/>
-            <Setter Property="CornerRadius" Value="12"/>
-            <Setter Property="Padding" Value="16"/>
-            <Setter Property="Margin" Value="0,0,0,10"/>
-            <Setter Property="BorderBrush" Value="#EAE3F0"/>
-            <Setter Property="BorderThickness" Value="1"/>
-        </Style>
-
-        <!-- Destructive action button -->
-        <Style Selector="Button.danger">
-            <Setter Property="Background" Value="#C0392B"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="FontSize" Value="12"/>
-            <Setter Property="CornerRadius" Value="8"/>
-            <Setter Property="Padding" Value="14,7"/>
-        </Style>
-        <Style Selector="Button.danger:pointerover /template/ ContentPresenter">
-            <Setter Property="Background" Value="#A5281A"/>
-        </Style>
-        <Style Selector="Button.danger:pressed /template/ ContentPresenter">
-            <Setter Property="Background" Value="#7F1D12"/>
-        </Style>
-
-        <!-- Mod progress bars -->
-        <Style Selector="ProgressBar.modProgress">
-            <Setter Property="Height" Value="6"/>
-            <Setter Property="CornerRadius" Value="3"/>
-            <Setter Property="Background" Value="#EAE3F0"/>
-        </Style>
-        <Style Selector="ProgressBar.modProgress /template/ Border#PART_Indicator">
-            <Setter Property="Background" Value="#9B59B6"/>
-        </Style>
-
-    </Window.Styles>
-
     <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-<Grid>
+    <Grid>
 
-    <!-- SETUP PANEL -->
-    <Border
-        IsVisible="{Binding SetupRequired}"
-        HorizontalAlignment="Stretch"
-        VerticalAlignment="Stretch">
+        <!-- SETUP PANEL -->
+        <views:SetupPanelView IsVisible="{Binding SetupRequired}"/>
 
-        <Border
-            Width="440"
-            Padding="40"
-            CornerRadius="24"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            BoxShadow="0 8 32 0 #66000000">
+        <!-- MAIN APP -->
+        <Grid
+            IsVisible="{Binding !SetupRequired}"
+            Margin="32"
+            RowDefinitions="Auto,*">
 
-            <Border.Background>
-                <SolidColorBrush Color="#F2FFFFFF"/>
-            </Border.Background>
+            <!-- Header -->
+            <Grid Grid.Row="0" Margin="0,0,0,20" ColumnDefinitions="*,Auto,Auto">
 
-        <StackPanel Spacing="22">
-
-            <Border
-                Width="64"
-                Height="64"
-                CornerRadius="32"
-                HorizontalAlignment="Center">
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
-                        <GradientStop Color="#5B2C83" Offset="0"/>
-                        <GradientStop Color="#9B59B6" Offset="1"/>
-                    </LinearGradientBrush>
-                </Border.Background>
-                <TextBlock
-                    Text="SM"
-                    FontSize="20"
-                    FontWeight="Bold"
-                    Foreground="White"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"/>
-            </Border>
-
-            <StackPanel Spacing="10">
-                <TextBlock
-                    Text="Welcome to StellarModManager"
-                    FontSize="24"
-                    FontWeight="Bold"
-                    TextAlignment="Center"
-                    TextWrapping="Wrap"
-                    Foreground="#2B1B3D"/>
-
-                <TextBlock
-                    Text="Select your Unity game folder to begin. You can let the manager install MelonLoader for you, or proceed if you have already installed it manually."
-                    FontSize="14"
-                    TextWrapping="Wrap"
-                    TextAlignment="Center"
-                    Foreground="#6B5C7A"
-                    Margin="0,0,0,10"/>
-            </StackPanel>
-
-            <Button
-                Classes="primary"
-                Content="Choose Game Folder"
-                Command="{Binding SelectGameFolderCommand}"
-                HorizontalAlignment="Stretch"
-                HorizontalContentAlignment="Center"/>
-
-            <Border
-                IsVisible="{Binding MelonLoaderStatusText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
-                Background="#12000000"
-                CornerRadius="10"
-                Padding="14,10">
-                <StackPanel Spacing="4">
-                    <TextBlock
-                        Text="{Binding MelonLoaderStatusText}"
-                        FontSize="13"
-                        FontWeight="SemiBold"
-                        TextAlignment="Center"
-                        Foreground="#2B1B3D"/>
-
-                    <TextBlock
-                        Text="{Binding GamePath}"
-                        FontSize="12"
-                        TextWrapping="Wrap"
-                        TextAlignment="Center"
-                        Foreground="#6B5C7A"/>
+                <StackPanel Grid.Column="0" Spacing="2">
+                    <TextBlock Text="StellarModManager" FontSize="26" FontWeight="Bold" Foreground="White"/>
+                    <TextBlock Text="{Binding GamePath}" FontSize="13" Foreground="#D9C8E8"/>
                 </StackPanel>
+
+                <Button
+                    Grid.Column="1"
+                    Classes="secondary"
+                    Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ChangeGameFolder]}"
+                    Command="{Binding SelectGameFolderCommand}"
+                    VerticalAlignment="Center"/>
+
+                <Button
+                    Grid.Column="2"
+                    Classes="iconButton"
+                    Margin="10,0,0,0"
+                    IsVisible="{Binding IsUpdateAvailable}"
+                    Command="{Binding OpenUpdatePanelCommand}"
+                    ToolTip.Tip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[UpdateAvailableTooltip]}"
+                    VerticalAlignment="Center">
+                    <Path Width="20" Height="20" Stretch="Uniform" Fill="#FFD166"
+                          Data="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M11,16.5H13V18.5H11V16.5M11,5.5H13V14.5H11V5.5Z"/>
+                </Button>
+
+                <Button
+                    Grid.Column="2"
+                    Classes="iconButton"
+                    Margin="10,0,0,0"
+                    Command="{Binding OpenSettingsCommand}"
+                    ToolTip.Tip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[SettingsTooltip]}"
+                    VerticalAlignment="Center">
+                    <Path
+                        Width="20" Height="20"
+                        Stretch="Uniform"
+                        Fill="White"
+                        Data="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.22,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.22,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.67 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z"/>
+                </Button>
+
+            </Grid>
+
+            <!-- Card containing tabs -->
+            <Border
+                Grid.Row="1"
+                CornerRadius="20"
+                Padding="28"
+                BoxShadow="0 8 32 0 #55000000"
+                Background="{DynamicResource Theme.CardBackgroundBrush}">
+
+                <TabControl>
+                    <TabItem Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[OnlineModsTab]}">
+                        <views:OnlineModsView/>
+                    </TabItem>
+
+                    <TabItem Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[InstalledModsTab]}">
+                        <views:InstalledModsView/>
+                    </TabItem>
+                </TabControl>
+
             </Border>
-
-            <Button
-                Classes="secondary"
-                Content="Install MelonLoader Automatically"
-                IsVisible="{Binding !IsMelonLoaderValid}"
-                IsEnabled="{Binding !IsInstallingMelonLoader}"
-                Command="{Binding InstallMelonLoaderCommand}"
-                HorizontalAlignment="Stretch"
-                HorizontalContentAlignment="Center"/>
-
-            <TextBlock
-                IsVisible="{Binding IsInstallingMelonLoader}"
-                Text="{Binding InstallProgressText}"
-                FontSize="12"
-                TextAlignment="Center"
-                TextWrapping="Wrap"
-                Foreground="#6B5C7A"/>
-
-            <Button
-                Classes="primary"
-                Content="Continue"
-                Command="{Binding CloseSetupCommand}"
-                IsEnabled="{Binding IsMelonLoaderValid}"
-                HorizontalAlignment="Stretch"
-                HorizontalContentAlignment="Center"/>
-
-        </StackPanel>
-
-        </Border>
-
-    </Border>
-
-    <!-- MAIN APP -->
-    <Grid
-        IsVisible="{Binding !SetupRequired}"
-        Margin="32"
-        RowDefinitions="Auto,*">
-
-        <!-- Header -->
-        <Grid Grid.Row="0" Margin="0,0,0,20" ColumnDefinitions="*,Auto">
-
-            <StackPanel Grid.Column="0" Spacing="2">
-                <TextBlock
-                    Text="StellarModManager"
-                    FontSize="26"
-                    FontWeight="Bold"
-                    Foreground="White"/>
-                <TextBlock
-                    Text="{Binding GamePath}"
-                    FontSize="13"
-                    Foreground="#D9C8E8"/>
-            </StackPanel>
-
-            <Button
-                Grid.Column="1"
-                Classes="secondary"
-                Content="Change Game Folder"
-                Command="{Binding SelectGameFolderCommand}"
-                VerticalAlignment="Center"/>
 
         </Grid>
 
-        <!-- Card containing tabs -->
-        <Border
-            Grid.Row="1"
-            CornerRadius="20"
-            Padding="28"
-            BoxShadow="0 8 32 0 #55000000">
-
-            <Border.Background>
-                <SolidColorBrush Color="#F7F5FA"/>
-            </Border.Background>
-
-            <TabControl>
-
-                <!-- ONLINE MODS TAB -->
-                <TabItem Header="Online Mods">
-                    <Grid RowDefinitions="Auto,*" Margin="0,16,0,0">
-
-                        <Grid Grid.Row="0" Margin="0,0,0,14" ColumnDefinitions="*,Auto">
-                            <TextBlock
-                                Grid.Column="0"
-                                Text="Browse and install mods from the online repository"
-                                FontSize="13"
-                                Foreground="#6B5C7A"
-                                VerticalAlignment="Center"/>
-
-                            <Button
-                                Grid.Column="1"
-                                Classes="secondary"
-                                Content="Refresh"
-                                Command="{Binding RefreshModsCommand}"/>
-                        </Grid>
-
-                        <ScrollViewer Grid.Row="1">
-                            <ItemsControl ItemsSource="{Binding OnlineMods}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Border Classes="modCard">
-                                            <StackPanel Spacing="10">
-                                                <Grid ColumnDefinitions="*,Auto">
-                                                    <StackPanel Grid.Column="0" Spacing="4">
-                                                        <StackPanel Orientation="Horizontal" Spacing="8">
-                                                            <TextBlock Text="{Binding Name}" FontSize="16" FontWeight="Bold" Foreground="#2B1B3D"/>
-                                                            <TextBlock Text="{Binding Version}" FontSize="12" Foreground="#9B59B6" FontWeight="SemiBold" VerticalAlignment="Center"/>
-                                                        </StackPanel>
-                                                        <TextBlock Text="{Binding Author}" FontSize="12" Foreground="#6B5C7A"/>
-                                                        <TextBlock Text="{Binding Description}" FontSize="13" TextWrapping="Wrap" Foreground="#4A3D57" Margin="0,4,0,0"/>
-                                                    </StackPanel>
-
-                                                    <Button
-                                                        Grid.Column="1"
-                                                        Classes="secondary"
-                                                        Content="Install"
-                                                        VerticalAlignment="Top"
-                                                        IsVisible="{Binding !IsInstalling}"
-                                                        Command="{Binding $parent[Window].DataContext.InstallModCommand}"
-                                                        CommandParameter="{Binding}"/>
-                                                </Grid>
-
-                                                <StackPanel IsVisible="{Binding IsInstalling}" Spacing="4">
-                                                    <ProgressBar Classes="modProgress" Minimum="0" Maximum="100" Value="{Binding DownloadProgress}"/>
-                                                    <TextBlock Text="Installing..." FontSize="11" Foreground="#6B5C7A"/>
-                                                </StackPanel>
-                                            </StackPanel>
-                                        </Border>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </ScrollViewer>
-
-                    </Grid>
-                </TabItem>
-
-                <!-- INSTALLED MODS TAB -->
-                <TabItem Header="Installed Mods">
-                    <Grid RowDefinitions="Auto,*" Margin="0,16,0,0">
-
-                        <TextBlock
-                            Grid.Row="0"
-                            Text="Mods currently in your library"
-                            FontSize="13"
-                            Foreground="#6B5C7A"
-                            Margin="0,0,0,14"/>
-
-                        <ScrollViewer Grid.Row="1">
-                            <ItemsControl ItemsSource="{Binding InstalledMods}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Border Classes="modCard">
-                                            <StackPanel Spacing="10">
-                                                <Grid ColumnDefinitions="*,Auto">
-                                                    <StackPanel Grid.Column="0" Spacing="4">
-                                                        <StackPanel Orientation="Horizontal" Spacing="8">
-                                                            <TextBlock Text="{Binding Name}" FontSize="16" FontWeight="Bold" Foreground="#2B1B3D"/>
-                                                            <TextBlock Text="{Binding Version}" FontSize="12" Foreground="#9B59B6" FontWeight="SemiBold" VerticalAlignment="Center"/>
-                                                        </StackPanel>
-                                                        <TextBlock
-                                                            IsVisible="{Binding IsUpdateAvailable}"
-                                                            Text="{Binding LatestVersion, StringFormat='Update available: {0}'}"
-                                                            FontSize="12"
-                                                            FontWeight="SemiBold"
-                                                            Foreground="#C0392B"/>
-                                                    </StackPanel>
-
-                                                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Top">
-                                                        <Button
-                                                            Classes="secondary"
-                                                            Content="Update"
-                                                            IsVisible="{Binding IsUpdateAvailable}"
-                                                            IsEnabled="{Binding !IsUpdating}"
-                                                            Command="{Binding $parent[Window].DataContext.UpdateModCommand}"
-                                                            CommandParameter="{Binding}"/>
-
-                                                        <Button
-                                                            Classes="secondary"
-                                                            Content="Install to Game"
-                                                            IsEnabled="{Binding !IsDeploying}"
-                                                            Command="{Binding $parent[Window].DataContext.DeployModCommand}"
-                                                            CommandParameter="{Binding}"/>
-
-                                                        <Button
-                                                            Classes="danger"
-                                                            Content="Remove"
-                                                            IsEnabled="{Binding !IsRemoving}"
-                                                            Command="{Binding $parent[Window].DataContext.RemoveModCommand}"
-                                                            CommandParameter="{Binding}"/>
-                                                    </StackPanel>
-                                                </Grid>
-
-                                                <StackPanel IsVisible="{Binding IsDeploying}" Spacing="4">
-                                                    <ProgressBar Classes="modProgress" Minimum="0" Maximum="100" Value="{Binding DeployProgress}"/>
-                                                    <TextBlock Text="Copying to game..." FontSize="11" Foreground="#6B5C7A"/>
-                                                </StackPanel>
-
-                                                <StackPanel IsVisible="{Binding IsUpdating}" Spacing="4">
-                                                    <ProgressBar Classes="modProgress" Minimum="0" Maximum="100" Value="{Binding UpdateProgress}"/>
-                                                    <TextBlock Text="Updating..." FontSize="11" Foreground="#6B5C7A"/>
-                                                </StackPanel>
-
-                                                <TextBlock
-                                                    IsVisible="{Binding IsRemoving}"
-                                                    Text="Removing..."
-                                                    FontSize="11"
-                                                    Foreground="#6B5C7A"/>
-                                            </StackPanel>
-                                        </Border>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </ScrollViewer>
-
-                    </Grid>
-                </TabItem>
-
-            </TabControl>
-
-        </Border>
+        <views:SettingsPanelView IsVisible="{Binding IsSettingsOpen}"/>
+        <views:ConfirmRemoveModView IsVisible="{Binding IsConfirmRemoveOpen}"/>
+        <views:UpdatePanelView IsVisible="{Binding IsUpdatePanelOpen}"/>
 
     </Grid>
-
-</Grid>
 
 </Window>

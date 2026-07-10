@@ -33,13 +33,13 @@ ArchitecturesInstallIn64BitMode=x64compatible
 ;SetupArchitecture=x64
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
-LicenseFile=\App\License.txt
-InfoAfterFile=\App\PostInfo.txt
+LicenseFile=App\License.txt
+InfoAfterFile=App\PostInfo.txt
 ; Remove the following line to run in administrative install mode (install for all users).
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
 OutputBaseFilename=StellarModManager_1.0.0_Setup
-SetupIconFile=\App\icon.ico
+SetupIconFile=App\icon.ico
 SolidCompression=yes
 WizardStyle=modern dynamic
 
@@ -51,7 +51,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 ; One line to include everything in the App folder
-Source: "\App\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "App\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
