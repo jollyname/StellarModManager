@@ -16,11 +16,12 @@ public class LocalizationService : INotifyPropertyChanged
     private Dictionary<string, string> fallbackTranslations = new();
     private Dictionary<string, string> languageDisplayNames = new();
 
-    public string CurrentLanguage { get; private set; } = "en";
+    private const string FallbackLanguage = "en";
+    public string CurrentLanguage { get; private set; } = FallbackLanguage;
 
     private LocalizationService()
     {
-        fallbackTranslations = LoadLanguage("en");
+        fallbackTranslations = LoadLanguage(FallbackLanguage);
         currentTranslations = fallbackTranslations;
     }
 
@@ -43,22 +44,29 @@ public class LocalizationService : INotifyPropertyChanged
         return string.Format(this[key], args);
     }
 
-    public void SetLanguage(string languageCode)
+    public bool TrySetLanguage(string desiredLanguage, out string usedLanguage)
     {
-        var language = LoadLanguage(languageCode);
+        var language = LoadLanguage(desiredLanguage);
+        bool languageExists = language.Count != 0;
 
-        if (language.Count == 0)
+        if (languageExists)
         {
-            CurrentLanguage = "en";
-            currentTranslations = fallbackTranslations;
+            CurrentLanguage = usedLanguage = desiredLanguage;
+            currentTranslations = language;
         }
         else
         {
-            CurrentLanguage = languageCode;
-            currentTranslations = language;
+            CurrentLanguage = usedLanguage = FallbackLanguage;
+            currentTranslations = fallbackTranslations;
         }
 
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(string.Empty));
+        return languageExists;
+    }
+
+    public void SetLanguage(string languageCode)
+    {
+        TrySetLanguage(languageCode, out _);
     }
 
     public IEnumerable<string> GetAvailableLanguages()
