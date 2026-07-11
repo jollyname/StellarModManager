@@ -2,6 +2,7 @@
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using StellarModManager.Models;
 using StellarModManager.Services;
 using System.Collections.ObjectModel;
 
