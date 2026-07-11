@@ -16,11 +16,12 @@ public class LocalizationService : INotifyPropertyChanged
     private Dictionary<string, string> fallbackTranslations = new();
     private Dictionary<string, string> languageDisplayNames = new();
 
-    public string CurrentLanguage { get; private set; } = "en";
+    private const string FallbackLanguage = "en";
+    public string CurrentLanguage { get; private set; } = FallbackLanguage;
 
     private LocalizationService()
     {
-        fallbackTranslations = LoadLanguage("en");
+        fallbackTranslations = LoadLanguage(FallbackLanguage);
         currentTranslations = fallbackTranslations;
     }
 
@@ -55,7 +56,7 @@ public class LocalizationService : INotifyPropertyChanged
         }
         else
         {
-            CurrentLanguage = usedLanguage = "en";
+            CurrentLanguage = usedLanguage = FallbackLanguage;
             currentTranslations = fallbackTranslations;
         }
 
