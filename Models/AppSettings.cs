@@ -1,4 +1,4 @@
-﻿namespace StellarModManager.Models;
+namespace StellarModManager.Models;
 
 public class AppSettings
 {

@@ -1,8 +1,8 @@
 # Stellar Mod Manager
 
-A mod manager for the game **Stellar Drive**.
+A mod manager for the game **StellarDrive**.
 
-Stellar Mod Manager makes it easier to install, update, and manage mods for Stellar Drive. It can automatically install MelonLoader if needed and provides a simple interface for managing your mods.
+Stellar Mod Manager makes it easier to install, update, and manage mods for StellarDrive. It can automatically install MelonLoader if needed and provides a simple interface for managing your mods.
 
 ## Features
 
@@ -10,13 +10,13 @@ Stellar Mod Manager makes it easier to install, update, and manage mods for Stel
 - Browse available mods
 - Install and manage installed mods
 - Simple setup process
-- Built for Stellar Drive
+- Built for StellarDrive
 
 ## Getting Started
 
 1. Download the latest release.
 2. Launch Stellar Mod Manager.
-3. Select your Stellar Drive installation folder when prompted.
+3. Select your StellarDrive installation folder when prompted.
 4. If MelonLoader is not installed, the manager can install it automatically.
 5. Use the Online and Installed tabs to manage your mods.
 

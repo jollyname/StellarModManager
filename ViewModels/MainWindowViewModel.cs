@@ -28,7 +28,12 @@ public partial class MainWindowViewModel : ViewModelBase
         autoCheckForAppUpdates = appSettings.AutoCheckForAppUpdates;
 
         themeService.ApplyTheme(themeService.LoadTheme(selectedTheme));
-        LocalizationService.Instance.SetLanguage(selectedLanguage);
+
+        if (!LocalizationService.Instance.TrySetLanguage(selectedLanguage, out string usedLanguage))
+        {
+            selectedLanguage = appSettings.Language = usedLanguage;
+            settingsService.SaveAppSettings(appSettings);
+        }
 
         updateCheckTimer = new DispatcherTimer { Interval = TimeSpan.FromMinutes(30) };
         updateCheckTimer.Tick += async (_, _) => await RefreshMods();

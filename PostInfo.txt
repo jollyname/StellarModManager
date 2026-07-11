@@ -1,6 +1,6 @@
 ========== STELLAR MOD MANAGER ==========
 
-Thank you for installing my mod manager for Stellar Drive! 
+Thank you for installing my mod manager for StellarDrive! 
 
 Getting Started:
 1. Launch the application.
