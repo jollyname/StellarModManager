@@ -3,7 +3,7 @@
 ; Non-commercial use only
 
 #define MyAppName "StellarModManager"
-#define MyAppVersion "1.0.0"
+#define MyAppVersion "1.1.0"
 #define MyAppPublisher "Jollyname"
 #define MyAppURL "https://github.com/jollyname/StellarModManager"
 #define MyAppExeName "StellarModManager.exe"
@@ -38,7 +38,7 @@ InfoAfterFile=App\PostInfo.txt
 ; Remove the following line to run in administrative install mode (install for all users).
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
-OutputBaseFilename=StellarModManager_1.0.0_Setup
+OutputBaseFilename=StellarModManager_1.1.0_Setup
 SetupIconFile=App\icon.ico
 SolidCompression=yes
 WizardStyle=modern dynamic

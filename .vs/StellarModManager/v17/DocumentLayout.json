@@ -29,7 +29,8 @@
               "ToolTip": "C:\\Users\\fafaf\\Documents\\StellarModManager\\Views\\MainWindow.axaml",
               "RelativeToolTip": "Views\\MainWindow.axaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-07-08T17:45:48.117Z"
+              "WhenOpened": "2026-07-08T17:45:48.117Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -39,7 +40,7 @@
               "RelativeDocumentMoniker": "ViewModels\\MainWindowViewModel.cs",
               "ToolTip": "C:\\Users\\fafaf\\Documents\\StellarModManager\\ViewModels\\MainWindowViewModel.cs",
               "RelativeToolTip": "ViewModels\\MainWindowViewModel.cs",
-              "ViewState": "AgIAABkAAAAAAAAAAAAiwDEAAAAkAAAAAAAAAA==",
+              "ViewState": "AgIAABsAAAAAAAAAAAASwDYAAAAkAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-07-08T19:05:10.919Z",
               "EditorCaption": ""

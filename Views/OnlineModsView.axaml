@@ -36,7 +36,7 @@
                                     <Button
                                         Grid.Column="1"
                                         Classes="secondary"
-                                        Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Install]}"
+                                        Content="{Binding InstallButtonText}"
                                         VerticalAlignment="Top"
                                         IsVisible="{Binding !IsInstalling}"
                                         Command="{Binding $parent[UserControl].DataContext.InstallModCommand}"

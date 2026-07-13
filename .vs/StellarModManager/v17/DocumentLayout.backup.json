@@ -3,16 +3,16 @@
   "WorkspaceRootPath": "C:\\Users\\fafaf\\Documents\\StellarModManager\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{9E2C9C05-1B03-4CC5-A626-6B1FB72A28D2}|StellarModManager.csproj|c:\\users\\fafaf\\documents\\stellarmodmanager\\stellarmodmanager.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{9E2C9C05-1B03-4CC5-A626-6B1FB72A28D2}|StellarModManager.csproj|solutionrelative:stellarmodmanager.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{9E2C9C05-1B03-4CC5-A626-6B1FB72A28D2}|StellarModManager.csproj|c:\\users\\fafaf\\documents\\stellarmodmanager\\viewmodels\\mainwindowviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{9E2C9C05-1B03-4CC5-A626-6B1FB72A28D2}|StellarModManager.csproj|solutionrelative:viewmodels\\mainwindowviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{9E2C9C05-1B03-4CC5-A626-6B1FB72A28D2}|StellarModManager.csproj|c:\\users\\fafaf\\documents\\stellarmodmanager\\views\\mainwindow.axaml||{6D5344A2-2FCD-49DE-A09D-6A14FD1B1224}",
       "RelativeMoniker": "D:0:0:{9E2C9C05-1B03-4CC5-A626-6B1FB72A28D2}|StellarModManager.csproj|solutionrelative:views\\mainwindow.axaml||{6D5344A2-2FCD-49DE-A09D-6A14FD1B1224}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9E2C9C05-1B03-4CC5-A626-6B1FB72A28D2}|StellarModManager.csproj|c:\\users\\fafaf\\documents\\stellarmodmanager\\views\\onlinemodsview.axaml||{6D5344A2-2FCD-49DE-A09D-6A14FD1B1224}",
+      "RelativeMoniker": "D:0:0:{9E2C9C05-1B03-4CC5-A626-6B1FB72A28D2}|StellarModManager.csproj|solutionrelative:views\\onlinemodsview.axaml||{6D5344A2-2FCD-49DE-A09D-6A14FD1B1224}"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,41 +22,41 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "StellarModManager.csproj",
-              "DocumentMoniker": "C:\\Users\\fafaf\\Documents\\StellarModManager\\StellarModManager.csproj",
-              "RelativeDocumentMoniker": "StellarModManager.csproj",
-              "ToolTip": "C:\\Users\\fafaf\\Documents\\StellarModManager\\StellarModManager.csproj",
-              "RelativeToolTip": "StellarModManager.csproj",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAADQAAAAKAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2026-07-10T18:47:49.129Z",
+              "DocumentIndex": 2,
+              "Title": "OnlineModsView.axaml",
+              "DocumentMoniker": "C:\\Users\\fafaf\\Documents\\StellarModManager\\Views\\OnlineModsView.axaml",
+              "RelativeDocumentMoniker": "Views\\OnlineModsView.axaml",
+              "ToolTip": "C:\\Users\\fafaf\\Documents\\StellarModManager\\Views\\OnlineModsView.axaml",
+              "RelativeToolTip": "Views\\OnlineModsView.axaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-07-13T20:35:58.55Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 1,
               "Title": "MainWindow.axaml",
               "DocumentMoniker": "C:\\Users\\fafaf\\Documents\\StellarModManager\\Views\\MainWindow.axaml",
               "RelativeDocumentMoniker": "Views\\MainWindow.axaml",
               "ToolTip": "C:\\Users\\fafaf\\Documents\\StellarModManager\\Views\\MainWindow.axaml",
               "RelativeToolTip": "Views\\MainWindow.axaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-07-08T17:45:48.117Z"
+              "WhenOpened": "2026-07-08T17:45:48.117Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "MainWindowViewModel.cs",
               "DocumentMoniker": "C:\\Users\\fafaf\\Documents\\StellarModManager\\ViewModels\\MainWindowViewModel.cs",
               "RelativeDocumentMoniker": "ViewModels\\MainWindowViewModel.cs",
               "ToolTip": "C:\\Users\\fafaf\\Documents\\StellarModManager\\ViewModels\\MainWindowViewModel.cs",
               "RelativeToolTip": "ViewModels\\MainWindowViewModel.cs",
-              "ViewState": "AgIAABkAAAAAAAAAAAAiwCoAAABGAAAAAAAAAA==",
+              "ViewState": "AgIAABsAAAAAAAAAAAAAADcAAAAiAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-07-08T19:05:10.919Z",
               "EditorCaption": ""

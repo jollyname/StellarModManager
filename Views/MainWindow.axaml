@@ -86,7 +86,7 @@
                 BoxShadow="0 8 32 0 #55000000"
                 Background="{DynamicResource Theme.CardBackgroundBrush}">
 
-                <TabControl>
+                <TabControl SelectedIndex="{Binding SelectedTabIndex}">
                     <TabItem Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[OnlineModsTab]}">
                         <views:OnlineModsView/>
                     </TabItem>

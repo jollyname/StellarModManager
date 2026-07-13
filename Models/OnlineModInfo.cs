@@ -1,10 +1,20 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using StellarModManager.Services;
+using System;
 using System.Text.Json.Serialization;
 
 namespace StellarModManager.Models;
 
 public partial class OnlineModInfo : ObservableObject
 {
+    public OnlineModInfo()
+    {
+        LocalizationService.Instance.LanguageChanged += (_, _) =>
+        {
+            OnPropertyChanged(nameof(InstallButtonText));
+        };
+    }
+
     [JsonPropertyName("id")]
     public string Id { get; set; } = "";
 
@@ -32,4 +42,16 @@ public partial class OnlineModInfo : ObservableObject
     [JsonIgnore]
     [ObservableProperty]
     private double downloadProgress;
+
+    [JsonIgnore]
+    [ObservableProperty]
+    private bool isInstalled;
+
+    [JsonIgnore]
+    public string InstallButtonText => IsInstalled ? LocalizationService.Instance["Reinstall"] : LocalizationService.Instance["Install"];
+
+    partial void OnIsInstalledChanged(bool value)
+    {
+        OnPropertyChanged(nameof(InstallButtonText));
+    }
 }

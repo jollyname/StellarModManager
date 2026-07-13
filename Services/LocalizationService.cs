@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Text.Json;
+using System.Threading.Channels;
 
 namespace StellarModManager.Services;
 
@@ -18,6 +19,8 @@ public class LocalizationService : INotifyPropertyChanged
 
     private const string FallbackLanguage = "en";
     public string CurrentLanguage { get; private set; } = FallbackLanguage;
+
+    public event EventHandler? LanguageChanged;
 
     private LocalizationService()
     {
@@ -46,6 +49,8 @@ public class LocalizationService : INotifyPropertyChanged
 
     public bool TrySetLanguage(string desiredLanguage, out string usedLanguage)
     {
+        var previousLanguage = CurrentLanguage;
+
         var language = LoadLanguage(desiredLanguage);
         bool languageExists = language.Count != 0;
 
@@ -60,7 +65,14 @@ public class LocalizationService : INotifyPropertyChanged
             currentTranslations = fallbackTranslations;
         }
 
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(string.Empty));
+        bool changed = previousLanguage != CurrentLanguage;
+
+        if (changed)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(string.Empty));
+            LanguageChanged?.Invoke(this, EventArgs.Empty);
+        }
+
         return languageExists;
     }
 

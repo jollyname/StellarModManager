@@ -4,6 +4,7 @@ using StellarModManager.Services;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace StellarModManager.ViewModels;
@@ -33,6 +34,8 @@ public partial class MainWindowViewModel
             string libraryPath = Path.Combine(AppContext.BaseDirectory, "Library", mod.Id);
             await installerService.InstallAsync(zipFile, libraryPath);
 
+            mod.IsInstalled = true;
+
             File.Delete(zipFile);
 
             MelonLoaderStatusText = $"{mod.Name} installed";
@@ -47,6 +50,7 @@ public partial class MainWindowViewModel
         }
 
         LoadInstalledMods();
+        _ = RefreshMods();
     }
 
     [RelayCommand]
@@ -56,11 +60,25 @@ public partial class MainWindowViewModel
             "https://raw.githubusercontent.com/jollyname/StellarModRepository/main/mods.json"
         );
 
-        OnlineMods.Clear();
-
         foreach (var mod in mods)
         {
-            OnlineMods.Add(mod);
+            mod.IsInstalled = Directory.Exists(Path.Combine(AppContext.BaseDirectory, "Library", mod.Id));
+
+            var existing = OnlineMods.FirstOrDefault(x => x.Id == mod.Id);
+
+            if (existing != null)
+            {
+                existing.Name = mod.Name;
+                existing.Author = mod.Author;
+                existing.Version = mod.Version;
+                existing.Description = mod.Description;
+                existing.DownloadUrl = mod.DownloadUrl;
+                existing.IsInstalled = mod.IsInstalled;
+            }
+            else
+            {
+                OnlineMods.Add(mod);
+            }
         }
 
         RefreshUpdateStatuses();

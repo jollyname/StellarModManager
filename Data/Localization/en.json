@@ -20,6 +20,7 @@
   "OnlineModsDescription": "Browse and install mods from the online repository",
   "Refresh": "Refresh",
   "Install": "Install",
+  "Reinstall": "Reinstall",
   "Installing": "Installing...",
   "InstalledModsDescription": "Mods currently in your library",
   "Update": "Update",
