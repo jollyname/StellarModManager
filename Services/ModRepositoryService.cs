@@ -19,7 +19,37 @@ public class ModRepositoryService
 
         RepositoryResponse? response = JsonSerializer.Deserialize<RepositoryResponse>(json);
 
-        return response?.Mods ?? new();
+        if (response == null)
+            return new();
+
+        List<OnlineModInfo> mods = new();
+
+        foreach (ModRegistryEntry entry in response.Mods)
+        {
+            try
+            {
+                string metadataUrl = $"https://raw.githubusercontent.com/{entry.Author}/{entry.Repo}/main/{entry.MetadataPath}/mod.json";
+
+                string modJson = await httpClient.GetStringAsync(metadataUrl);
+
+                OnlineModInfo? mod = JsonSerializer.Deserialize<OnlineModInfo>(modJson);
+
+                if (mod != null)
+                {
+                    mod.RepoName = entry.Repo;
+
+                    mod.DownloadUrl = $"https://github.com/{entry.Author}/{entry.Repo}/releases/download/v{mod.Version}/{entry.Repo}.zip";
+
+                    mods.Add(mod);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to load mod from {entry.Repo}: {ex.Message}");
+            }
+        }
+
+        return mods;
     }
 
     public async Task DownloadModAsync(string url, string destination, IProgress<double>? progress = null)
@@ -51,6 +81,6 @@ public class ModRepositoryService
     private class RepositoryResponse
     {
         [JsonPropertyName("mods")]
-        public List<OnlineModInfo> Mods { get; set; } = new();
+        public List<ModRegistryEntry> Mods { get; set; } = new();
     }
 }

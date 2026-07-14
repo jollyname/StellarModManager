@@ -9,6 +9,7 @@ namespace StellarModManager.Services;
 public class ModDeploymentService
 {
     private const string ManifestFileName = ".deployment.json";
+    private const string MetadataFileName = "mod.json";
 
     public void DeployMod(string installedModPath, string gamePath, IProgress<double>? progress = null)
     {
@@ -17,7 +18,9 @@ public class ModDeploymentService
 
         foreach (var file in allFiles)
         {
-            if (Path.GetFileName(file) != ManifestFileName)
+            string fileName = Path.GetFileName(file);
+
+            if (fileName != ManifestFileName && fileName != MetadataFileName)
             {
                 files.Add(file);
             }

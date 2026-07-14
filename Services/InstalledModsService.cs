@@ -17,7 +17,7 @@ public class InstalledModsService
         foreach (string modFolder in Directory.GetDirectories(libraryPath))
         {
             string folderName = Path.GetFileName(modFolder);
-            string jsonPath = Path.Combine(modFolder, $"{folderName}.json");
+            string jsonPath = Path.Combine(modFolder, "mod.json");
 
             if (!File.Exists(jsonPath))
                 continue;

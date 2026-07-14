@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using StellarModManager.Services;
-using System;
 using System.Text.Json.Serialization;
 
 namespace StellarModManager.Models;
@@ -17,23 +16,25 @@ public partial class OnlineModInfo : ObservableObject
 
     [JsonPropertyName("id")]
     public string Id { get; set; } = "";
-
+    
     [JsonPropertyName("name")]
     public string Name { get; set; } = "";
-
+    
     [JsonPropertyName("author")]
     public string Author { get; set; } = "";
-
+    
     [JsonPropertyName("version")]
     public string Version { get; set; } = "";
-
+    
     [JsonPropertyName("description")]
     public string Description { get; set; } = "";
-
+    
     [JsonPropertyName("downloadUrl")]
     public string DownloadUrl { get; set; } = "";
 
     // UI only
+
+    public string RepoName { get; set; } = "";
 
     [JsonIgnore]
     [ObservableProperty]
