@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace StellarModManager.Models;
 
-public partial class OnlineModInfo : ObservableObject
+public partial class OnlineModInfo : ModInfo
 {
     public OnlineModInfo()
     {
@@ -14,26 +14,12 @@ public partial class OnlineModInfo : ObservableObject
         };
     }
 
-    [JsonPropertyName("id")]
-    public string Id { get; set; } = "";
-    
-    [JsonPropertyName("name")]
-    public string Name { get; set; } = "";
-    
-    [JsonPropertyName("author")]
-    public string Author { get; set; } = "";
-    
-    [JsonPropertyName("version")]
-    public string Version { get; set; } = "";
-    
-    [JsonPropertyName("description")]
-    public string Description { get; set; } = "";
-    
+    //Base properties in ModInfo class
+
     [JsonPropertyName("downloadUrl")]
     public string DownloadUrl { get; set; } = "";
 
     // UI only
-
     public string RepoName { get; set; } = "";
 
     [JsonIgnore]

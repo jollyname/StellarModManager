@@ -3,25 +3,11 @@ using System.Text.Json.Serialization;
 
 namespace StellarModManager.Models;
 
-public partial class InstalledModInfo : ObservableObject
+public partial class InstalledModInfo : ModInfo
 {
-    [JsonPropertyName("id")]
-    public string Id { get; set; } = "";
-
-    [JsonPropertyName("name")]
-    public string Name { get; set; } = "";
-
-    [JsonPropertyName("author")]
-    public string Author { get; set; } = "";
-
-    [JsonPropertyName("version")]
-    public string Version { get; set; } = "";
-
-    [JsonPropertyName("description")]
-    public string Description { get; set; } = "";
+    //Base properties in ModInfo class
 
     // UI only
-
     [JsonIgnore]
     [ObservableProperty]
     private bool isDeploying;
