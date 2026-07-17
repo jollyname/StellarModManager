@@ -14,6 +14,19 @@ public class ModDeploymentService
     public void DeployMod(string installedModPath, string gamePath, IProgress<double>? progress = null)
     {
         var allFiles = Directory.GetFiles(installedModPath, "*", SearchOption.AllDirectories);
+
+        // If Manifest File found in installedModPath, then this mod was already deployed and previous files should be deleted first
+        // to avoid stray files from a previous mod version staying in the game directory, because they aren't saved into the next
+        // manifest file and therefore never removed (RemovedDeployedFiles only removes files saved in the mod's manifest file)
+        foreach(string path in allFiles)
+        {
+            if (path.EndsWith(ManifestFileName))
+            {
+                RemoveDeployedFiles(installedModPath, gamePath);
+                break; //There's ever only one manifest file to be found per mod directory
+            }
+        }
+
         var files = new List<string>();
 
         foreach (var file in allFiles)
