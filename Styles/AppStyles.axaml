@@ -87,6 +87,21 @@
         <Setter Property="BorderThickness" Value="1"/>
     </Style>
 
+    <!-- Expanded view -->
+    <Style Selector="Button.cardLink">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+    </Style>
+    <Style Selector="Button.cardLink:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
+    <Style Selector="Button.cardLink:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
+
     <!-- Destructive action button -->
     <Style Selector="Button.danger">
         <Setter Property="Background" Value="{DynamicResource Theme.DangerBrush}"/>

@@ -1,9 +1,9 @@
 <UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="using:StellarModManager.ViewModels"
-             xmlns:loc="using:StellarModManager.Services"
-             x:Class="StellarModManager.Views.OnlineModsView"
-             x:DataType="vm:MainWindowViewModel">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="using:StellarModManager.ViewModels"
+    xmlns:loc="using:StellarModManager.Services"
+    x:Class="StellarModManager.Views.OnlineModsView"
+    x:DataType="vm:MainWindowViewModel">
     <Grid RowDefinitions="Auto,*" Margin="0,16,0,0">
         <Grid Grid.Row="0" Margin="0,0,0,14" ColumnDefinitions="*,Auto">
             <TextBlock
@@ -11,12 +11,12 @@
                 Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[OnlineModsDescription]}"
                 FontSize="13"
                 Foreground="{DynamicResource Theme.TextSecondaryBrush}"
-                VerticalAlignment="Center"/>
+                VerticalAlignment="Center" />
             <Button
                 Grid.Column="1"
                 Classes="secondary"
                 Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Refresh]}"
-                Command="{Binding RefreshModsCommand}"/>
+                Command="{Binding RefreshModsCommand}" />
         </Grid>
         <ScrollViewer Grid.Row="1">
             <ItemsControl ItemsSource="{Binding OnlineMods}">
@@ -25,14 +25,42 @@
                         <Border Classes="modCard">
                             <StackPanel Spacing="10">
                                 <Grid ColumnDefinitions="*,Auto">
-                                    <StackPanel Grid.Column="0" Spacing="4">
-                                        <StackPanel Orientation="Horizontal" Spacing="8">
-                                            <TextBlock Text="{Binding Name}" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource Theme.TextPrimaryBrush}"/>
-                                            <TextBlock Text="{Binding Version}" FontSize="12" Foreground="{DynamicResource Theme.AccentEndBrush}" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                    <Button Grid.Column="0"
+                                        Classes="cardLink"
+                                        Command="{Binding $parent[UserControl].DataContext.OpenModDetailsCommand}"
+                                        CommandParameter="{Binding}">
+                                        <Grid ColumnDefinitions="Auto,*">
+                                        <Border Grid.Column="0"
+                                            Width="96" Height="96"
+                                            CornerRadius="6"
+                                            ClipToBounds="True"
+                                            Margin="0,0,12,0"
+                                            VerticalAlignment="Top"
+                                            IsVisible="{Binding ThumbnailImage, Converter={x:Static ObjectConverters.IsNotNull}}">
+                                            <Image Source="{Binding ThumbnailImage}"
+                                                Stretch="UniformToFill" />
+                                        </Border>
+
+                                        <StackPanel Grid.Column="1" Spacing="4">
+                                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                                <TextBlock Text="{Binding Name}" FontSize="16"
+                                                    FontWeight="Bold"
+                                                    Foreground="{DynamicResource Theme.TextPrimaryBrush}" />
+                                                <TextBlock Text="{Binding Version}" FontSize="12"
+                                                    Foreground="{DynamicResource Theme.AccentEndBrush}"
+                                                    FontWeight="SemiBold" VerticalAlignment="Center" />
+                                            </StackPanel>
+                                            <TextBlock Text="{Binding Author}" FontSize="13"
+                                                Foreground="{DynamicResource Theme.TextSecondaryBrush}" />
+                                            <TextBlock Text="{Binding Description}" FontSize="14"
+                                                TextWrapping="Wrap"
+                                                MaxLines="2"
+                                                TextTrimming="CharacterEllipsis"
+                                                Foreground="{DynamicResource Theme.TextPrimaryBrush}"
+                                                Margin="0,4,0,0" />
                                         </StackPanel>
-                                        <TextBlock Text="{Binding Author}" FontSize="12" Foreground="{DynamicResource Theme.TextSecondaryBrush}"/>
-                                        <TextBlock Text="{Binding Description}" FontSize="13" TextWrapping="Wrap" Foreground="{DynamicResource Theme.TextPrimaryBrush}" Margin="0,4,0,0"/>
-                                    </StackPanel>
+                                        </Grid>
+                                    </Button>
                                     <Button
                                         Grid.Column="1"
                                         Classes="secondary"
@@ -40,11 +68,15 @@
                                         VerticalAlignment="Top"
                                         IsVisible="{Binding !IsInstalling}"
                                         Command="{Binding $parent[UserControl].DataContext.InstallModCommand}"
-                                        CommandParameter="{Binding}"/>
+                                        CommandParameter="{Binding}" />
                                 </Grid>
                                 <StackPanel IsVisible="{Binding IsInstalling}" Spacing="4">
-                                    <ProgressBar Classes="modProgress" Minimum="0" Maximum="100" Value="{Binding DownloadProgress}"/>
-                                    <TextBlock Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Installing]}" FontSize="11" Foreground="{DynamicResource Theme.TextSecondaryBrush}"/>
+                                    <ProgressBar Classes="modProgress" Minimum="0" Maximum="100"
+                                        Value="{Binding DownloadProgress}" />
+                                    <TextBlock
+                                        Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Installing]}"
+                                        FontSize="11"
+                                        Foreground="{DynamicResource Theme.TextSecondaryBrush}" />
                                 </StackPanel>
                             </StackPanel>
                         </Border>
