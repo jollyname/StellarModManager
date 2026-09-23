@@ -74,12 +74,30 @@ public partial class MainWindowViewModel
                 existing.Description = mod.Description;
                 existing.DownloadUrl = mod.DownloadUrl;
                 existing.IsInstalled = mod.IsInstalled;
+                if (existing.ThumbnailUrl != mod.ThumbnailUrl)
+                {
+                    existing.ThumbnailUrl = mod.ThumbnailUrl;
+                    existing.ThumbnailImage = null;
+                    existing.GalleryImages.Clear();
+                    existing.GalleryLoaded = false;
+                }
+
+                if (!existing.ImageUrls.SequenceEqual(mod.ImageUrls))
+                {
+                    existing.ImageUrls = mod.ImageUrls;
+                    existing.GalleryImages.Clear();
+                    existing.GalleryLoaded = false;
+                }
             }
             else
             {
                 OnlineMods.Add(mod);
             }
         }
+
+        foreach (var mod in OnlineMods)
+            _ = repositoryService.LoadThumbnailAsync(mod);
+
 
         RefreshUpdateStatuses();
     }

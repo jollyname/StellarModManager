@@ -1,6 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using StellarModManager.Services;
 using System.Text.Json.Serialization;
+using System.Collections.Generic; // Lists
+using Avalonia.Media.Imaging;
+using System.Collections.ObjectModel; // image collection
 
 namespace StellarModManager.Models;
 
@@ -18,6 +21,22 @@ public partial class OnlineModInfo : ModInfo
 
     [JsonPropertyName("downloadUrl")]
     public string DownloadUrl { get; set; } = "";
+
+    [JsonIgnore] // lazy fix hehe
+    public string ThumbnailUrl { get; set; } = "";
+
+    [JsonIgnore]
+    [ObservableProperty]
+    private Bitmap? thumbnailImage;
+
+    [JsonIgnore]
+    public List<string> ImageUrls { get; set; } = new();
+
+    [JsonIgnore]
+    public ObservableCollection<Bitmap> GalleryImages { get; } = new(); 
+
+    [JsonIgnore]
+    public bool GalleryLoaded { get; set; }
 
     // UI only
     public string RepoName { get; set; } = "";

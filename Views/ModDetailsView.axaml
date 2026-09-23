@@ -1,0 +1,82 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="using:StellarModManager.ViewModels"
+    xmlns:loc="using:StellarModManager.Services"
+    xmlns:imaging="using:Avalonia.Media.Imaging"
+    x:Class="StellarModManager.Views.ModDetailsView"
+    x:DataType="vm:MainWindowViewModel">
+
+    <Border Background="#66000000">
+        <Border Margin="40" MaxWidth="1100" VerticalAlignment="Center" Padding="28"
+            CornerRadius="20"
+            BoxShadow="0 8 32 0 #55000000"
+            Background="{DynamicResource Theme.CardBackgroundBrush}">
+
+            <ScrollViewer x:Name="DetailsScroll" AllowAutoHide="False">
+                <StackPanel Spacing="16" Margin="0,0,20,0">
+
+                    <Grid ColumnDefinitions="*,Auto">
+                        <StackPanel Grid.Column="0" Spacing="4">
+                            <TextBlock Text="{Binding SelectedMod.Name}" FontSize="30"
+                                FontWeight="Bold"
+                                Foreground="{DynamicResource Theme.TextPrimaryBrush}" />
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <TextBlock Text="{Binding SelectedMod.Version}" FontSize="15"
+                                    FontWeight="SemiBold"
+                                    Foreground="{DynamicResource Theme.AccentEndBrush}" />
+                                <TextBlock Text="{Binding SelectedMod.Author}" FontSize="15"
+                                    Foreground="{DynamicResource Theme.TextSecondaryBrush}" />
+                            </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8"
+                            VerticalAlignment="Center">
+                            <Button Classes="secondary"
+                                Content="{Binding SelectedMod.InstallButtonText}"
+                                IsEnabled="{Binding !SelectedMod.IsInstalling}"
+                                Command="{Binding InstallModCommand}"
+                                CommandParameter="{Binding SelectedMod}" />
+                            <Button Classes="secondary"
+                                Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Close]}"
+                                Command="{Binding CloseModDetailsCommand}" />
+                        </StackPanel>
+                    </Grid>
+
+                    <Border Height="300"
+                        IsVisible="{Binding !!SelectedMod.GalleryImages.Count}"
+                        CornerRadius="12" ClipToBounds="True" Background="#22000000">
+                        <Image Source="{Binding #GalleryList.SelectedItem}" Stretch="Uniform" />
+                    </Border>
+
+                    <ListBox x:Name="GalleryList"
+                        AutoScrollToSelectedItem="False"
+                        IsVisible="{Binding !!SelectedMod.GalleryImages.Count}"
+                        ItemsSource="{Binding SelectedMod.GalleryImages}"
+                        SelectionMode="AlwaysSelected"
+                        Background="Transparent"
+                        ScrollViewer.HorizontalScrollBarVisibility="Auto">
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" Spacing="8" />
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate x:DataType="imaging:Bitmap">
+                                <Border Width="160" Height="90" CornerRadius="6" ClipToBounds="True">
+                                    <Image Source="{Binding}" Stretch="UniformToFill" />
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
+                    <TextBlock Text="{Binding SelectedMod.Description}" FontSize="15"
+                        TextWrapping="Wrap"
+                        Foreground="{DynamicResource Theme.TextPrimaryBrush}" />
+
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+    </Border>
+
+
+</UserControl>

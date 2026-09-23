@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System.Collections.Generic; // Lists
 using System.Text.Json.Serialization;
 
 namespace StellarModManager.Models
@@ -19,5 +20,11 @@ namespace StellarModManager.Models
 
         [JsonPropertyName("description")]
         public string Description { get; set; } = "";
+
+        [JsonPropertyName("thumbnail")]
+        public string Thumbnail { get; set; } = "";
+
+        [JsonPropertyName("images")]
+        public List<string> Images { get; set; } = new();
     }
 }

@@ -6,6 +6,8 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Avalonia.Media.Imaging;
+using System.Linq; // thumbnailss
 
 namespace StellarModManager.Services;
 
@@ -39,6 +41,17 @@ public class ModRepositoryService
                     mod.RepoName = entry.Repo;
 
                     mod.DownloadUrl = $"https://github.com/{entry.Author}/{entry.Repo}/releases/download/v{mod.Version}/{entry.Repo}.zip";
+
+                    // grab every image with thumbnail at the same time
+                    string baseUrl = $"https://raw.githubusercontent.com/{entry.Author}/{entry.Repo}/main/{entry.MetadataPath}/";
+                    string ToUrl(string path) => $"{baseUrl}{path}";
+
+                    if (!string.IsNullOrWhiteSpace(mod.Thumbnail))
+                    {
+                        mod.ThumbnailUrl = ToUrl(mod.Thumbnail);
+                    }
+
+                    mod.ImageUrls = mod.Images.Where(path => !string.IsNullOrWhiteSpace(path)).Select(ToUrl).ToList();
 
                     mods.Add(mod);
                 }
@@ -74,6 +87,51 @@ public class ModRepositoryService
             if (totalBytes.HasValue && totalBytes.Value > 0)
             {
                 progress?.Report((double)totalRead / totalBytes.Value * 100);
+            }
+        }
+    }
+
+    public async Task LoadThumbnailAsync(OnlineModInfo mod)
+    {
+        if (string.IsNullOrEmpty(mod.ThumbnailUrl) || mod.ThumbnailImage != null)
+            return;
+
+        try
+        {
+            byte[] bytes = await httpClient.GetByteArrayAsync(mod.ThumbnailUrl);
+            using var contentStream = new MemoryStream(bytes);
+            mod.ThumbnailImage = Bitmap.DecodeToWidth(contentStream, 192);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Thumbnail loading failed for {mod.Name}: {ex.Message}");
+        }
+    }
+
+    public async Task LoadGalleryAsync(OnlineModInfo mod)
+    {
+        var urls = new[] { mod.ThumbnailUrl }
+        .Concat(mod.ImageUrls)
+        .Where(url => !string.IsNullOrEmpty(url))
+        .Distinct()
+        .ToList();
+
+
+        if (mod.GalleryLoaded || urls.Count == 0)
+            return;
+        mod.GalleryLoaded = true;
+
+        foreach (string url in urls)
+        {
+            try
+            {
+                byte[] bytes = await httpClient.GetByteArrayAsync(url);
+                using var contentStream = new MemoryStream(bytes);
+                mod.GalleryImages.Add(Bitmap.DecodeToWidth(contentStream, 1280));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Gallery image failed for {mod.Name}: {ex.Message}");
             }
         }
     }
