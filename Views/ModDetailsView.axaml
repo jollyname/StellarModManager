@@ -3,6 +3,7 @@
     xmlns:vm="using:StellarModManager.ViewModels"
     xmlns:loc="using:StellarModManager.Services"
     xmlns:imaging="using:Avalonia.Media.Imaging"
+    xmlns:models="using:StellarModManager.Models"
     x:Class="StellarModManager.Views.ModDetailsView"
     x:DataType="vm:MainWindowViewModel">
 
@@ -72,6 +73,24 @@
                     <TextBlock Text="{Binding SelectedMod.Description}" FontSize="15"
                         TextWrapping="Wrap"
                         Foreground="{DynamicResource Theme.TextPrimaryBrush}" />
+
+                    <TextBlock Text="Changelog"
+                        FontSize="16" FontWeight="Bold"
+                        IsVisible="{Binding !!SelectedMod.Changelog.Count}"
+                        Foreground="{DynamicResource Theme.TextPrimaryBrush}" />
+
+                    <ItemsControl ItemsSource="{Binding SelectedMod.Changelog}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="models:ChangelogEntry">
+                                <StackPanel Spacing="4" Margin="0,0,0,12">
+                                    <TextBlock Text="{Binding Version, StringFormat='v{0}'}" FontWeight="SemiBold"
+                                        Foreground="{DynamicResource Theme.AccentEndBrush}" />
+                                    <TextBlock Text="{Binding Notes}" TextWrapping="Wrap"
+                                        Foreground="{DynamicResource Theme.TextPrimaryBrush}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
 
                 </StackPanel>
             </ScrollViewer>
