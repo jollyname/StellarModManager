@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -15,54 +16,95 @@ public class ModRepositoryService
 {
     private readonly HttpClient httpClient = new();
 
+    public ModRepositoryService()
+    {
+        httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("StellarModManager");
+    }
+
+    // request no cache (even tho im almost certain this doesnt work, we still try...)
+    private static string NoCache(string url) => $"{url}?t={DateTime.UtcNow.Ticks}";
+
     public async Task<List<OnlineModInfo>> GetModsAsync(string url)
     {
-        string json = await httpClient.GetStringAsync(url);
+        string json = await httpClient.GetStringAsync(NoCache(url));
 
         RepositoryResponse? response = JsonSerializer.Deserialize<RepositoryResponse>(json);
 
         if (response == null)
             return new();
 
-        List<OnlineModInfo> mods = new();
+        //load every mod at once, to speed up request
+        OnlineModInfo?[] mods = await Task.WhenAll(response.Mods.Select(LoadModAsync));
 
-        foreach (ModRegistryEntry entry in response.Mods)
+        return mods.OfType<OnlineModInfo>().ToList();
+    }
+
+    private async Task<OnlineModInfo?> LoadModAsync(ModRegistryEntry entry)
+    {
+        try
         {
-            try
+            string metadataUrl = $"https://raw.githubusercontent.com/{entry.Author}/{entry.Repo}/main/{entry.MetadataPath}/mod.json";
+
+            string modJson = await httpClient.GetStringAsync(NoCache(metadataUrl));
+
+            OnlineModInfo? mod = JsonSerializer.Deserialize<OnlineModInfo>(modJson);
+
+            if (mod == null)
+                return null;
+
+            mod.RepoOwner = entry.Author;
+            mod.RepoName = entry.Repo;
+
+            mod.DownloadUrl = $"https://github.com/{entry.Author}/{entry.Repo}/releases/download/v{mod.Version}/{entry.Repo}.zip";
+
+            // grab every image with thumbnail at the same time
+            string baseUrl = $"https://raw.githubusercontent.com/{entry.Author}/{entry.Repo}/main/{entry.MetadataPath}/";
+            string ToUrl(string path) => $"{baseUrl}{path}";
+
+            if (!string.IsNullOrWhiteSpace(mod.Thumbnail))
             {
-                string metadataUrl = $"https://raw.githubusercontent.com/{entry.Author}/{entry.Repo}/main/{entry.MetadataPath}/mod.json";
-
-                string modJson = await httpClient.GetStringAsync(metadataUrl);
-
-                OnlineModInfo? mod = JsonSerializer.Deserialize<OnlineModInfo>(modJson);
-
-                if (mod != null)
-                {
-                    mod.RepoName = entry.Repo;
-
-                    mod.DownloadUrl = $"https://github.com/{entry.Author}/{entry.Repo}/releases/download/v{mod.Version}/{entry.Repo}.zip";
-
-                    // grab every image with thumbnail at the same time
-                    string baseUrl = $"https://raw.githubusercontent.com/{entry.Author}/{entry.Repo}/main/{entry.MetadataPath}/";
-                    string ToUrl(string path) => $"{baseUrl}{path}";
-
-                    if (!string.IsNullOrWhiteSpace(mod.Thumbnail))
-                    {
-                        mod.ThumbnailUrl = ToUrl(mod.Thumbnail);
-                    }
-
-                    mod.ImageUrls = mod.Images.Where(path => !string.IsNullOrWhiteSpace(path)).Select(ToUrl).ToList();
-
-                    mods.Add(mod);
-                }
+                mod.ThumbnailUrl = ToUrl(mod.Thumbnail);
             }
-            catch (Exception ex)
+
+            mod.ImageUrls = mod.Images.Where(path => !string.IsNullOrWhiteSpace(path)).Select(ToUrl).ToList();
+
+            return mod;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to load mod from {entry.Repo}: {ex.Message}");
+            return null;
+        }
+    }
+
+    // reuse request instead of always starting a new one
+    public Task LoadChangelogAsync(OnlineModInfo mod)
+    {
+        if (mod.ChangelogTask == null)
+            mod.ChangelogTask = FetchChangelogAsync(mod);
+
+        return mod.ChangelogTask;
+    }
+
+    private async Task FetchChangelogAsync(OnlineModInfo mod)
+    {
+        try
+        {
+            var releases = await httpClient.GetFromJsonAsync<List<GitHubRelease>>(
+                $"https://api.github.com/repos/{mod.RepoOwner}/{mod.RepoName}/releases?per_page=30") ?? new();
+
+            foreach (var release in releases)
             {
-                Console.WriteLine($"Failed to load mod from {entry.Repo}: {ex.Message}");
+                if (Version.TryParse(release.tag_name.TrimStart('v'), out var version))
+                    mod.Changelog.Add(new ChangelogEntry(version, release.body ?? ""));
             }
         }
-
-        return mods;
+        catch (Exception ex)
+        {
+            // for retrying the changelog fetch later
+            mod.ChangelogTask = null;
+            Console.WriteLine($"Changelog failed for {mod.Name}: {ex.Message}");
+        }
     }
 
     public async Task DownloadModAsync(string url, string destination, IProgress<double>? progress = null)
@@ -98,7 +140,7 @@ public class ModRepositoryService
 
         try
         {
-            byte[] bytes = await httpClient.GetByteArrayAsync(mod.ThumbnailUrl);
+            byte[] bytes = await httpClient.GetByteArrayAsync(NoCache(mod.ThumbnailUrl));
             using var contentStream = new MemoryStream(bytes);
             mod.ThumbnailImage = Bitmap.DecodeToWidth(contentStream, 192);
         }
@@ -125,7 +167,7 @@ public class ModRepositoryService
         {
             try
             {
-                byte[] bytes = await httpClient.GetByteArrayAsync(url);
+                byte[] bytes = await httpClient.GetByteArrayAsync(NoCache(url));
                 using var contentStream = new MemoryStream(bytes);
                 mod.GalleryImages.Add(Bitmap.DecodeToWidth(contentStream, 1280));
             }

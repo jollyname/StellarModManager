@@ -106,6 +106,11 @@ public class ModDeploymentService
         }
     }
 
+    public bool IsDeployed(string installedModPath)
+    {
+        return File.Exists(Path.Combine(installedModPath, ManifestFileName));
+    }
+
     private static void WriteManifest(string installedModPath, List<string> relativePaths)
     {
         string manifestPath = Path.Combine(installedModPath, ManifestFileName);

@@ -18,6 +18,7 @@ public partial class MainWindowViewModel
         SelectedMod = mod;
         IsModDetailsOpen = true;
         _ = repositoryService.LoadGalleryAsync(mod);
+        _ = repositoryService.LoadChangelogAsync(mod);
     }
     
     [RelayCommand]

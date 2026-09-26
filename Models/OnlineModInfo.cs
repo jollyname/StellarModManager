@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using System.Collections.Generic; // Lists
 using Avalonia.Media.Imaging;
 using System.Collections.ObjectModel; // image collection
+using System.Threading.Tasks;
 
 namespace StellarModManager.Models;
 
@@ -40,6 +41,14 @@ public partial class OnlineModInfo : ModInfo
 
     // UI only
     public string RepoName { get; set; } = "";
+
+    public string RepoOwner { get; set; } = "";
+
+    [JsonIgnore]
+    public ObservableCollection<ChangelogEntry> Changelog { get; } = new();
+
+    [JsonIgnore]
+    public Task? ChangelogTask { get; set; }
 
     [JsonIgnore]
     [ObservableProperty]

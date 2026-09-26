@@ -35,4 +35,8 @@ public partial class InstalledModInfo : ModInfo
     [JsonIgnore]
     [ObservableProperty]
     private string? latestVersion;
+
+    [JsonIgnore]
+    [ObservableProperty]
+    private string? updateNotes;
 }

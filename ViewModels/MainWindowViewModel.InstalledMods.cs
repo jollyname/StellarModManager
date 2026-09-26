@@ -54,13 +54,41 @@ public partial class MainWindowViewModel
             {
                 installed.IsUpdateAvailable = true;
                 installed.LatestVersion = online.Version;
+                // load changelog
+                _ = LoadUpdateNotesAsync(installed, online, installedV);
             }
             else
             {
                 installed.IsUpdateAvailable = false;
                 installed.LatestVersion = null;
+                installed.UpdateNotes = null;
             }
         }
+    }
+
+    private async Task LoadUpdateNotesAsync(InstalledModInfo installed, OnlineModInfo online, Version installedV)
+    {
+        await repositoryService.LoadChangelogAsync(online);
+        // show all version logs not just previous
+        installed.UpdateNotes = string.Join("\n\n", online.Changelog
+            .Where(e => e.Version > installedV)
+            .Select(e => $"v{e.Version}\n{e.Notes}"));
+    }
+
+    // no longer wipes install, it deploys mods on update
+    private async Task<bool> InstallToLibraryAsync(string zipFile, string libraryPath)
+    {
+        bool wasDeployed = GamePath != "No game selected" && deploymentService.IsDeployed(libraryPath);
+
+        if (wasDeployed)
+            await Task.Run(() => deploymentService.RemoveDeployedFiles(libraryPath, GamePath));
+
+        await installerService.InstallAsync(zipFile, libraryPath);
+
+        if (wasDeployed)
+            await Task.Run(() => deploymentService.DeployMod(libraryPath, GamePath));
+
+        return wasDeployed;
     }
 
     [RelayCommand]
@@ -181,12 +209,6 @@ public partial class MainWindowViewModel
         {
             string libraryPath = Path.Combine(AppContext.BaseDirectory, "Library", mod.Id);
 
-            // Clean out whatever the old version placed in the game folder first since file layouts might change between mod versions.
-            if (GamePath != "No game selected")
-            {
-                await Task.Run(() => deploymentService.RemoveDeployedFiles(libraryPath, GamePath));
-            }
-
             string downloads = Path.Combine(AppContext.BaseDirectory, "Downloads");
             Directory.CreateDirectory(downloads);
 
@@ -194,11 +216,18 @@ public partial class MainWindowViewModel
             var progress = new Progress<double>(pct => mod.UpdateProgress = pct);
 
             await repositoryService.DownloadModAsync(onlineMatch.DownloadUrl, zipFile, progress);
-            await installerService.InstallAsync(zipFile, libraryPath);
+            bool redeployed = await InstallToLibraryAsync(zipFile, libraryPath);
 
             File.Delete(zipFile);
 
-            MelonLoaderStatusText = $"{mod.Name} updated to {onlineMatch.Version}. Install it to your game again to update the deployed copy.";
+            if (redeployed)
+            {
+                MelonLoaderStatusText = $"{mod.Name} updated to {onlineMatch.Version}";
+            }
+            else
+            {
+                MelonLoaderStatusText = $"{mod.Name} updated to {onlineMatch.Version}. Install it to your game to use it.";
+            }
         }
         catch (Exception ex)
         {

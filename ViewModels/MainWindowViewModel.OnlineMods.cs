@@ -2,6 +2,7 @@
 using StellarModManager.Models;
 using StellarModManager.Services;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -32,7 +33,7 @@ public partial class MainWindowViewModel
             await repositoryService.DownloadModAsync(mod.DownloadUrl, zipFile, progress);
 
             string libraryPath = Path.Combine(AppContext.BaseDirectory, "Library", mod.Id);
-            await installerService.InstallAsync(zipFile, libraryPath);
+            await InstallToLibraryAsync(zipFile, libraryPath);
 
             mod.IsInstalled = true;
 
@@ -49,16 +50,30 @@ public partial class MainWindowViewModel
             mod.IsInstalling = false;
         }
 
+        // refresh no longer needed
         LoadInstalledMods();
-        _ = RefreshMods();
     }
 
     [RelayCommand]
     private async Task RefreshMods()
     {
-        var mods = await repositoryService.GetModsAsync(
-            "https://raw.githubusercontent.com/jollyname/StellarModRepository/main/mods.json"
-        );
+        List<OnlineModInfo> mods;
+
+        try
+        {
+            mods = await repositoryService.GetModsAsync(
+                "https://raw.githubusercontent.com/jollyname/StellarModRepository/main/mods.json"
+            );
+        }
+        // catch failed refresh
+        catch (Exception ex)
+        {
+            MelonLoaderStatusText = $"Refresh failed: {ex.Message}";
+            return;
+        }
+        // remove old mods when finding mods
+        foreach (var gone in OnlineMods.Where(o => mods.All(m => m.Id != o.Id)).ToList())
+            OnlineMods.Remove(gone);
 
         foreach (var mod in mods)
         {
@@ -68,13 +83,19 @@ public partial class MainWindowViewModel
 
             if (existing != null)
             {
+                // version changes reset images and changelog
+                bool versionChanged = existing.Version != mod.Version;
+
                 existing.Name = mod.Name;
                 existing.Author = mod.Author;
                 existing.Version = mod.Version;
                 existing.Description = mod.Description;
                 existing.DownloadUrl = mod.DownloadUrl;
+                existing.RepoOwner = mod.RepoOwner;
+                existing.RepoName = mod.RepoName;
                 existing.IsInstalled = mod.IsInstalled;
-                if (existing.ThumbnailUrl != mod.ThumbnailUrl)
+
+                if (versionChanged || existing.ThumbnailUrl != mod.ThumbnailUrl)
                 {
                     existing.ThumbnailUrl = mod.ThumbnailUrl;
                     existing.ThumbnailImage = null;
@@ -82,11 +103,17 @@ public partial class MainWindowViewModel
                     existing.GalleryLoaded = false;
                 }
 
-                if (!existing.ImageUrls.SequenceEqual(mod.ImageUrls))
+                if (versionChanged || !existing.ImageUrls.SequenceEqual(mod.ImageUrls))
                 {
                     existing.ImageUrls = mod.ImageUrls;
                     existing.GalleryImages.Clear();
                     existing.GalleryLoaded = false;
+                }
+
+                if (versionChanged)
+                {
+                    existing.Changelog.Clear();
+                    existing.ChangelogTask = null;
                 }
             }
             else
