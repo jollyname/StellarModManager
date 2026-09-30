@@ -1,5 +1,6 @@
 # Stellar Mod Manager
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/VoxarX/StellarModManager/badge)](https://scorecard.dev/viewer/?uri=github.com/VoxarX/StellarModManager)
+
 A mod manager for the game **StellarDrive**.
 
 Stellar Mod Manager makes it easier to install, update, and manage mods for StellarDrive. It can automatically install MelonLoader if needed and provides a simple interface for managing your mods.
