@@ -1,0 +1,588 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:StellarModManager.ViewModels"
+             xmlns:models="using:StellarModManager.Models"
+             xmlns:loc="using:StellarModManager.Services"
+             x:Class="StellarModManager.Views.MainLibraryView"
+             x:DataType="vm:MainWindowViewModel">
+
+    <UserControl.Resources>
+
+        <!-- Installed mod: header / hero / description / action. Identical metrics to the browse card. -->
+        <DataTemplate x:Key="ModCardTemplate" x:DataType="models:InstalledModInfo">
+            <Grid Margin="12">
+
+                <Border Name="CardSurface"
+                        Classes="modCardFlat"
+                        Width="{Binding $parent[UserControl].DataContext.CardWidth}"
+                        Height="{Binding $parent[UserControl].DataContext.CardHeight}"
+                        Classes.selected="{Binding IsSelected}"
+                        Classes.inactive="{Binding !IsEnabled}">
+
+                    <Grid RowDefinitions="Auto,Auto,Auto,Auto">
+
+                    <Grid Grid.Row="0" Margin="12,12,12,10" ColumnDefinitions="Auto,*">
+                          <Border Grid.Column="0" Width="40" Height="40" CornerRadius="8"
+                                  Background="{Binding AvatarBackground}" ClipToBounds="True">
+                              <Image Source="{Binding IconImage}" Stretch="UniformToFill"
+                                   IsVisible="{Binding IconImage, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+                        </Border>
+
+
+                            <StackPanel Grid.Column="1" Margin="10,0,0,0" Spacing="2" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding Name}"
+                                           FontSize="15" FontWeight="SemiBold" Foreground="{DynamicResource Theme.TextPrimaryBrush}"
+                                           MaxLines="1" TextTrimming="CharacterEllipsis"/>
+                                <TextBlock Text="{Binding ByAuthorVersion}"
+                                           FontSize="12" Foreground="{DynamicResource Theme.TextSecondaryBrush}"
+                                           MaxLines="1" TextTrimming="CharacterEllipsis"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Flat panel, art fills the frame. UniformToFill keeps the aspect
+                             ratio and crops the overflow, so nothing stretches or letterboxes. -->
+                        <Border Grid.Row="1" Height="180" Background="{DynamicResource Theme.CardImageBrush}" ClipToBounds="True">
+                            <Grid>
+                                <Image Source="{Binding IconImage}" Stretch="UniformToFill"
+                                       IsVisible="{Binding IconImage, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+                                <Border Background="{DynamicResource Theme.CardImageOverlayBrush}"
+                                        IsVisible="{Binding IconImage, Converter={x:Static ObjectConverters.IsNull}}">
+                                    <TextBlock Text="{Binding Name}"
+                                               FontSize="20" FontWeight="SemiBold" Foreground="{DynamicResource Theme.TextPrimaryBrush}"
+                                               Opacity="0.55"
+                                               TextWrapping="Wrap" MaxLines="3" TextTrimming="CharacterEllipsis"
+                                               TextAlignment="Center" VerticalAlignment="Center"
+                                               HorizontalAlignment="Center" Margin="16"/>
+                                </Border>
+
+                                <Border Background="{DynamicResource Theme.InstalledBadgeBrush}" CornerRadius="9" Padding="9,3"
+                                        HorizontalAlignment="Right" VerticalAlignment="Top"
+                                        Margin="0,10,10,0"
+                                        IsVisible="{Binding IsUpdateAvailable}">
+                                    <TextBlock Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Update]}"
+                                               FontSize="10.5" FontWeight="SemiBold" Foreground="{DynamicResource Theme.TextOnAccentBrush}"/>
+                                </Border>
+                </Grid>
+            </Border>
+
+
+                        <TextBlock Grid.Row="2"
+                                   Text="{Binding CardDescription}"
+                                   FontSize="13" Foreground="{DynamicResource Theme.TextSecondaryBrush}"
+                                   TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis"
+                                   Height="36"
+                                   Margin="12,12,12,0"/>
+
+                        <Grid Grid.Row="3" Margin="12,12,12,12" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+
+                            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                <Border Classes="chip" Background="{Binding CategoryBackground}" Margin="0,0,6,0">
+                                    <TextBlock Text="{Binding CategoryName}" FontSize="10.5"
+                                               FontWeight="SemiBold" Foreground="{Binding ChipTextBrush}"/>
+                                </Border>
+                                <Border Classes="chip" Background="{DynamicResource Theme.ChipAccentBackgroundBrush}"
+                                        IsVisible="{Binding !IsEnabled}">
+                                    <TextBlock Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[NotInGame]}"
+                                               FontSize="10.5" FontWeight="SemiBold" Foreground="{DynamicResource Theme.ChipAccentTextBrush}"/>
+                                </Border>
+                            </StackPanel>
+
+                            <Button Grid.Column="1"
+                                    Classes="miniUpdate"
+                                    Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Update]}"
+                                    IsVisible="{Binding IsUpdateAvailable}"
+                                    IsEnabled="{Binding !IsUpdating}"
+                                    Command="{Binding $parent[UserControl].DataContext.UpdateModCommand}"
+                                    CommandParameter="{Binding}"
+                                    VerticalAlignment="Center"/>
+
+                            <ProgressBar Grid.Column="1"
+                                         Classes="modProgress"
+                                         IsIndeterminate="True"
+                                         IsVisible="{Binding IsUpdating}"
+                                         Width="70" VerticalAlignment="Center"/>
+
+                            <ToggleButton Grid.Column="2"
+                                          Classes="modToggle"
+                                          IsChecked="{Binding IsEnabled, Mode=OneWay}"
+                                          IsEnabled="{Binding !IsToggling}"
+                                          Command="{Binding $parent[UserControl].DataContext.ToggleModCommand}"
+                                          CommandParameter="{Binding}"
+                                          VerticalAlignment="Center"/>
+
+                </Grid>
+
+                    </Grid>
+
+            </Border>
+
+
+                <Grid.ContextMenu>
+                    <ContextMenu x:DataType="models:InstalledModInfo"
+                                 DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                        <MenuItem Tag="toggle"
+                                  Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[DisableMod]}"
+                                  IsVisible="{Binding IsEnabled}"
+                                  Click="OnCardMenuClick"/>
+                        <MenuItem Tag="toggle"
+                                  Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[EnableMod]}"
+                                  IsVisible="{Binding !IsEnabled}"
+                                  Click="OnCardMenuClick"/>
+                        <MenuItem Tag="update"
+                                  Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[CheckForUpdate]}"
+                                  IsVisible="{Binding IsUpdateAvailable}"
+                                  Click="OnCardMenuClick"/>
+                        <MenuItem Tag="folder"
+                                  Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[OpenFolder]}"
+                                  Click="OnCardMenuClick"/>
+                        <MenuItem Tag="remove"
+                                  Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Remove]}"
+                                  Click="OnCardMenuClick"/>
+                    </ContextMenu>
+                </Grid.ContextMenu>
+
+            </Grid>
+        </DataTemplate>
+
+        <!-- Repository mod: same card, install action in place of the toggle. -->
+        <DataTemplate x:Key="BrowseCardTemplate" x:DataType="models:OnlineModInfo">
+            <Border Classes="modCardFlat"
+                    Margin="12"
+                    Width="{Binding $parent[UserControl].DataContext.CardWidth}"
+                    Height="{Binding $parent[UserControl].DataContext.CardHeight}">
+
+                <Grid RowDefinitions="Auto,Auto,Auto,Auto">
+
+                    <Grid Grid.Row="0" Margin="12,12,12,10" ColumnDefinitions="Auto,*">
+                              <Border Grid.Column="0" Width="40" Height="40" CornerRadius="8"
+                                  Background="{Binding AvatarBackground}" ClipToBounds="True">
+                                  <Image Source="{Binding ThumbnailImage}" Stretch="UniformToFill"
+                                       IsVisible="{Binding ThumbnailImage, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+                            </Border>
+
+                        <StackPanel Grid.Column="1" Margin="10,0,0,0" Spacing="2" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding Name}"
+                                       FontSize="15" FontWeight="SemiBold" Foreground="{DynamicResource Theme.TextPrimaryBrush}"
+                                       MaxLines="1" TextTrimming="CharacterEllipsis"/>
+                            <TextBlock Text="{Binding ByAuthorVersion}"
+                                       FontSize="12" Foreground="{DynamicResource Theme.TextSecondaryBrush}"
+                                       MaxLines="1" TextTrimming="CharacterEllipsis"/>
+                        </StackPanel>
+                    </Grid>
+
+                      <Border Grid.Row="1" Height="180" Background="{DynamicResource Theme.CardImageBrush}" ClipToBounds="True">
+                          <Grid>
+                              <Image Source="{Binding ThumbnailImage}" Stretch="UniformToFill"
+                                   IsVisible="{Binding ThumbnailImage, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+                            <Border Background="{DynamicResource Theme.CardImageOverlayBrush}"
+                                    IsVisible="{Binding ThumbnailImage, Converter={x:Static ObjectConverters.IsNull}}">
+                                <TextBlock Text="{Binding Name}"
+                                           FontSize="20" FontWeight="SemiBold" Foreground="{DynamicResource Theme.TextPrimaryBrush}"
+                                           Opacity="0.55"
+                                           TextWrapping="Wrap" MaxLines="3" TextTrimming="CharacterEllipsis"
+                                           TextAlignment="Center" VerticalAlignment="Center"
+                                           HorizontalAlignment="Center" Margin="16"/>
+                            </Border>
+                </Grid>
+            </Border>
+
+
+                    <TextBlock Grid.Row="2"
+                               Text="{Binding CardDescription}"
+                               FontSize="13" Foreground="{DynamicResource Theme.TextSecondaryBrush}"
+                               TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis"
+                               Height="36"
+                               Margin="12,12,12,0"/>
+
+                    <Grid Grid.Row="3" Margin="12,12,12,12" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                            <Border Classes="chip" Background="{Binding CategoryBackground}" Margin="0,0,6,0">
+                                <TextBlock Text="{Binding CategoryName}" FontSize="10.5"
+                                           FontWeight="SemiBold" Foreground="{Binding ChipTextBrush}"/>
+                            </Border>
+                            <Border Classes="chip" Background="{DynamicResource Theme.ChipAccentBackgroundBrush}" IsVisible="{Binding IsInstalled}">
+                                <TextBlock Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[InstalledChip]}"
+                                           FontSize="10.5" FontWeight="SemiBold" Foreground="{DynamicResource Theme.ChipAccentTextBrush}"/>
+                            </Border>
+                        </StackPanel>
+
+                        <ProgressBar Grid.Column="1"
+                                     Classes="modProgress"
+                                     IsIndeterminate="True"
+                                     IsVisible="{Binding IsInstalling}"
+                                     Width="70" VerticalAlignment="Center"/>
+
+                        <Button Grid.Column="2"
+                                Classes="miniInstall"
+                                Content="{Binding InstallButtonText}"
+                                IsVisible="{Binding !IsInstalling}"
+                                Command="{Binding $parent[UserControl].DataContext.InstallModCommand}"
+                                CommandParameter="{Binding}"
+                                VerticalAlignment="Center"/>
+
+                    </Grid>
+
+                </Grid>
+            </Border>
+        </DataTemplate>
+
+    </UserControl.Resources>
+
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- TOP BAR -->
+        <Grid Grid.Row="0" Margin="20,12,20,0" ColumnDefinitions="*,Auto">
+
+            <Border Grid.Column="0"
+                    Height="32"
+                    CornerRadius="16"
+                    Background="{DynamicResource Theme.SurfaceBackgroundBrush}"
+                    BorderBrush="{DynamicResource Theme.BorderSubtleBrush}"
+                    BorderThickness="1"
+                    Padding="4"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center">
+                <StackPanel Orientation="Horizontal" Spacing="2">
+                    <Button Classes="segItem"
+                            Classes.active="{Binding !IsLibraryMode}"
+                            Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[BrowseMods]}"
+                            Command="{Binding ShowBrowseCommand}"/>
+                    <Button Classes="segItem"
+                            Classes.active="{Binding IsLibraryMode}"
+                            Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[InstalledModsTab]}"
+                            Command="{Binding ShowLibraryCommand}"/>
+                </StackPanel>
+            </Border>
+
+            <Grid Grid.Column="1" Width="90" Height="32" VerticalAlignment="Center">
+                <Button Classes="playButton"
+                        IsEnabled="{Binding !IsGameRunning}"
+                        Command="{Binding PlayCommand}"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Content="{Binding PlayButtonText}"/>
+                <ProgressBar Classes="playProgress"
+                             IsIndeterminate="True"
+                             IsVisible="{Binding IsLaunching}"
+                             Height="3"
+                             VerticalAlignment="Bottom"
+                             Margin="10,0,10,0"/>
+            </Grid>
+
+        </Grid>
+
+        <!-- BODY -->
+        <Grid Grid.Row="1" Margin="20,16,20,20">
+
+            <Grid Name="LibraryBody">
+
+                <ScrollViewer Name="GridScroll"
+                              IsVisible="{Binding IsLibraryMode}"
+                              VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled"
+                              VerticalContentAlignment="Top"
+                              HorizontalContentAlignment="Left">
+                    <Panel Name="GridRoot"
+                           Background="Transparent"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top">
+                        <WrapPanel Name="CardsPanel"
+                                   Orientation="Horizontal"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Top" />
+                    </Panel>
+                </ScrollViewer>
+
+                <StackPanel IsVisible="{Binding IsLibraryEmptyStateVisible}"
+                            Spacing="10"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                    <TextBlock Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[NothingInstalled]}"
+                               FontSize="15" FontWeight="SemiBold"
+                               Foreground="{DynamicResource Theme.TextPrimaryBrush}"
+                               HorizontalAlignment="Center" />
+                    <Button Classes="secondary"
+                            Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[BrowseMods]}"
+                            Command="{Binding ShowBrowseCommand}"
+                            Height="34" Padding="14,0"
+                            HorizontalAlignment="Center"
+                            HorizontalContentAlignment="Center" />
+                </StackPanel>
+
+                <ScrollViewer Name="BrowseScroll" IsVisible="{Binding !IsLibraryMode}"
+                              VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled"
+                              VerticalContentAlignment="Top"
+                              HorizontalContentAlignment="Left">
+                    <ItemsControl ItemsSource="{Binding OnlineMods}"
+                                  ItemTemplate="{StaticResource BrowseCardTemplate}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Name="BrowsePanel" Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+                </ScrollViewer>
+
+            </Grid>
+
+            <!-- DETAIL: full page -->
+            <Border Grid.Column="0" Grid.ColumnSpan="2"
+                    IsVisible="{Binding IsAnyDetailOpen}"
+                    Background="{DynamicResource Theme.DetailBackgroundBrush}"
+                    CornerRadius="12"
+                    BorderBrush="{DynamicResource Theme.BorderSubtleBrush}" BorderThickness="1">
+                <Grid>
+                <Grid RowDefinitions="Auto,Auto,Auto,*,Auto" Margin="28,24,28,24">
+
+                    <!-- back -->
+                    <Button Grid.Row="0" Classes="secondary"
+                            Command="{Binding CloseDetailCommand}"
+                            Height="34" Padding="12,0" Margin="0,0,0,22"
+                            HorizontalAlignment="Left">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Path Width="12" Height="12" Stroke="{DynamicResource Theme.TextPrimaryBrush}" StrokeThickness="1.6"
+                                  Data="M8,1 L2,6 L8,11"/>
+                            <TextBlock Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Back]}"
+                                       FontSize="12.5" FontWeight="SemiBold" Foreground="{DynamicResource Theme.TextPrimaryBrush}"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+
+                    <!-- MOD NAME -->
+                    <StackPanel Grid.Row="1" Spacing="6" Margin="0,0,0,20">
+                        <TextBlock Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ModName]}"
+                                   FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Theme.TextMutedBrush}"/>
+                        <TextBlock Text="{Binding DetailName}"
+                                   FontSize="22" FontWeight="SemiBold" Foreground="{DynamicResource Theme.TextPrimaryBrush}"
+                                   TextWrapping="Wrap"/>
+                    </StackPanel>
+
+                    <!-- IMAGES: horizontal strip, click to open large -->
+                    <StackPanel Grid.Row="2" Spacing="10" Margin="0,20,0,0"
+                                IsVisible="{Binding !IsDetailNoImages}">
+                        <TextBlock Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ImagesTab]}"
+                                   FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Theme.TextMutedBrush}"/>
+                        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+                            <ItemsControl ItemsSource="{Binding DetailGalleryImages}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Background="Transparent" BorderThickness="0" Padding="0"
+                                                Margin="0,0,12,0"
+                                                Command="{Binding $parent[UserControl].DataContext.OpenLightboxCommand}"
+                                                CommandParameter="{Binding}">
+                                            <Border Width="330" Height="200" CornerRadius="10" ClipToBounds="True"
+                                                    Background="{DynamicResource Theme.ImagePanelBrush}"
+                                                    BorderBrush="{DynamicResource Theme.BorderSubtleBrush}"
+                                                    BorderThickness="1">
+                                                <Image Source="{Binding}" Stretch="UniformToFill"/>
+                                            </Border>
+                                        </Button>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </StackPanel>
+
+                    <Border Grid.Row="2" Margin="0,20,0,0" CornerRadius="10" Padding="0,40"
+                            Background="{DynamicResource Theme.ImagePanelBrush}"
+                            BorderBrush="{DynamicResource Theme.BorderSubtleBrush}" BorderThickness="1"
+                            IsVisible="{Binding IsDetailNoImages}">
+                        <TextBlock Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[NoImages]}"
+                                   FontSize="12" Foreground="{DynamicResource Theme.TextMutedBrush}"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+
+                    <!-- TWO PANELS -->
+                    <ScrollViewer Grid.Row="3" Margin="0,18,0,0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <Grid ColumnDefinitions="*,440" ColumnSpacing="18">
+
+                            <!-- DETAILS -->
+                            <Border Grid.Column="1" CornerRadius="12" Padding="18"
+                                    Background="{DynamicResource Theme.SurfaceBackgroundBrush}"
+                                    BorderBrush="{DynamicResource Theme.BorderSubtleBrush}" BorderThickness="1"
+                                    VerticalAlignment="Top">
+                                <StackPanel Spacing="14">
+                                    <TextBlock Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[DetailsTab]}"
+                                               FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Theme.TextMutedBrush}"/>
+
+                                    <ItemsControl ItemsSource="{Binding DetailInfoRows}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate x:DataType="models:DetailInfoRow">
+                                                <Grid ColumnDefinitions="104,*" ColumnSpacing="14" Margin="0,0,0,12">
+                                                    <TextBlock Grid.Column="0" Text="{Binding Label}" FontSize="11.5"
+                                                               Foreground="{DynamicResource Theme.TextMutedBrush}" VerticalAlignment="Top"/>
+                                                    <TextBlock Grid.Column="1" Text="{Binding Value}" FontSize="12.5"
+                                                               Foreground="{DynamicResource Theme.TextPrimaryBrush}"
+                                                               TextWrapping="Wrap" VerticalAlignment="Top"/>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+
+                                    <TextBlock Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[NoDetails]}"
+                                               FontSize="12.5" Foreground="{DynamicResource Theme.TextMutedBrush}"
+                                               TextWrapping="Wrap"
+                                               IsVisible="{Binding IsDetailInfoEmpty}"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- VERSION TIMELINE -->
+                            <Border Grid.Column="0" CornerRadius="12" Padding="18"
+                                    Background="{DynamicResource Theme.SurfaceBackgroundBrush}"
+                                    BorderBrush="{DynamicResource Theme.BorderSubtleBrush}" BorderThickness="1"
+                                    VerticalAlignment="Top">
+                                <StackPanel Spacing="14">
+                                    <TextBlock Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[VersionsTab]}"
+                                               FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Theme.TextMutedBrush}"/>
+
+                                    <ItemsControl ItemsSource="{Binding DetailVersions}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate x:DataType="models:VersionTimelineEntry">
+                                                <Grid ColumnDefinitions="18,*" ColumnSpacing="12" Margin="0,0,0,18">
+                                                    <Grid Grid.Column="0">
+                                                        <Border Width="2" HorizontalAlignment="Center"
+                                                                VerticalAlignment="Stretch"
+                                                                Background="{DynamicResource Theme.BorderSubtleBrush}"
+                                                                IsVisible="{Binding !IsLast}"/>
+                                                        <Border Width="10" Height="10" CornerRadius="5" Margin="0,3,0,0"
+                                                                HorizontalAlignment="Center" VerticalAlignment="Top"
+                                                                Background="{DynamicResource Theme.AccentSolidBrush}"/>
+                                                    </Grid>
+                                                    <StackPanel Grid.Column="1" Spacing="3">
+                                                        <TextBlock Text="{Binding Version}" FontSize="12.5" FontWeight="SemiBold"
+                                                                   Foreground="{DynamicResource Theme.TextPrimaryBrush}"/>
+                                                        <TextBlock Text="{Binding Notes}" FontSize="11.5"
+                                                                   Foreground="{DynamicResource Theme.TextSecondaryBrush}"
+                                                                   TextWrapping="Wrap" LineHeight="17"/>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+
+                                    <TextBlock Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[NoVersions]}"
+                                               FontSize="12.5" Foreground="{DynamicResource Theme.TextMutedBrush}"
+                                               TextWrapping="Wrap"
+                                               IsVisible="{Binding IsDetailVersionsEmpty}"/>
+                                </StackPanel>
+                            </Border>
+
+                        </Grid>
+                    </ScrollViewer>
+                    <!-- ACTIONS -->
+                    <StackPanel Grid.Row="4" Spacing="8" Margin="0,20,0,0">
+
+                        <StackPanel Spacing="8" IsVisible="{Binding IsLibraryDetailOpen}">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Grid.Column="0"
+                                           Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ActiveInGame]}"
+                                           FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource Theme.TextPrimaryBrush}"
+                                           VerticalAlignment="Center"/>
+                                <ToggleButton Grid.Column="1" Classes="modToggle"
+                                              IsChecked="{Binding SelectedInstalledMod.IsEnabled, Mode=OneWay}"
+                                              IsEnabled="{Binding !SelectedInstalledMod.IsToggling}"
+                                              Command="{Binding ToggleModCommand}"
+                                              CommandParameter="{Binding SelectedInstalledMod}"/>
+                            </Grid>
+
+                            <Button Classes="secondary"
+                                    Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Update]}"
+                                    IsVisible="{Binding SelectedInstalledMod.IsUpdateAvailable}"
+                                    IsEnabled="{Binding !SelectedInstalledMod.IsUpdating}"
+                                    Command="{Binding UpdateModCommand}"
+                                    CommandParameter="{Binding SelectedInstalledMod}"
+                                    Height="36" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+
+                            <Button Classes="secondary"
+                                    Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[OpenSourceRepository]}"
+                                    IsVisible="{Binding SelectedModSourceUrl, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                                    Command="{Binding OpenSourceRepositoryCommand}"
+                                    Height="36" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+
+                            <Button Classes="danger"
+                                    Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Remove]}"
+                                    IsEnabled="{Binding !SelectedInstalledMod.IsRemoving}"
+                                    Command="{Binding RequestRemoveModCommand}"
+                                    CommandParameter="{Binding SelectedInstalledMod}"
+                                    Height="36" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+                        </StackPanel>
+
+                        <Button Classes="playButton"
+                                IsVisible="{Binding IsOnlineDetailOpen}"
+                                Content="{Binding SelectedOnlineMod.InstallButtonText}"
+                                IsEnabled="{Binding !SelectedOnlineMod.IsInstalling}"
+                                Command="{Binding InstallModCommand}"
+                                CommandParameter="{Binding SelectedOnlineMod}"
+                                Height="40" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">
+                            <ProgressBar Classes="playProgress"
+                                         IsIndeterminate="True"
+                                         IsVisible="{Binding SelectedOnlineMod.IsInstalling}"
+                                         Height="3"
+                                         VerticalAlignment="Bottom"
+                                         Margin="10,0,10,0"/>
+                        </Button>
+
+                    </StackPanel>
+
+                </Grid>
+
+                <!-- LIGHTBOX: sibling of the page grid inside the wrapper, never a second Border child -->
+                <Grid IsVisible="{Binding IsLightboxOpen}"
+                      Background="#F2000000"
+                      RowDefinitions="Auto,*,Auto">
+
+                    <Button Grid.Row="0" Command="{Binding CloseLightboxCommand}"
+                            HorizontalAlignment="Right" Margin="0,18,18,0"
+                            Width="36" Height="36" CornerRadius="18"
+                            Background="#33FFFFFF" BorderThickness="0">
+                        <Path Width="12" Height="12" Stroke="#FFFFFFFF" StrokeThickness="1.8"
+                              Data="M2,2 L10,10 M10,2 L2,10"/>
+                    </Button>
+
+                    <Panel Grid.Row="1">
+                        <Image Source="{Binding LightboxImage}"
+                               Stretch="Uniform"
+                               MaxWidth="1100" MaxHeight="680"
+                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+                        <Button Command="{Binding StepLightboxCommand}" CommandParameter="-1"
+                                IsVisible="{Binding HasMultipleLightboxImages}"
+                                HorizontalAlignment="Left" VerticalAlignment="Center" Margin="18,0,0,0"
+                                Width="44" Height="44" CornerRadius="22"
+                                Background="#33FFFFFF" BorderThickness="0">
+                            <Path Width="14" Height="14" Stroke="#FFFFFFFF" StrokeThickness="1.8"
+                                  Data="M10,1 L3,7 L10,13"/>
+                        </Button>
+
+                        <Button Command="{Binding StepLightboxCommand}" CommandParameter="1"
+                                IsVisible="{Binding HasMultipleLightboxImages}"
+                                HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,18,0"
+                                Width="44" Height="44" CornerRadius="22"
+                                Background="#33FFFFFF" BorderThickness="0">
+                            <Path Width="14" Height="14" Stroke="#FFFFFFFF" StrokeThickness="1.8"
+                                  Data="M4,1 L11,7 L4,13"/>
+                        </Button>
+                    </Panel>
+
+                    <TextBlock Grid.Row="2" Margin="0,0,0,20" HorizontalAlignment="Center"
+                               IsVisible="{Binding HasMultipleLightboxImages}"
+                               FontSize="12" Foreground="#B3FFFFFF"
+                               Text="{Binding LightboxCounter}"/>
+
+                </Grid>
+
+                </Grid>
+            </Border>
+
+        </Grid>
+
+    </Grid>
+
+</UserControl>

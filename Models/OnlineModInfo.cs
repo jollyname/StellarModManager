@@ -1,8 +1,10 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using StellarModManager.Services;
 using System;
 using System.Text.Json.Serialization;
 using System.Collections.Generic; // Lists
+using Avalonia.Media;
+using Avalonia.Media.Immutable;
 using Avalonia.Media.Imaging;
 using System.Collections.ObjectModel; // image collection
 using System.Threading.Tasks;
@@ -93,7 +95,55 @@ public partial class OnlineModInfo : ModInfo
     private bool isInstalled;
 
     [JsonIgnore]
+    [ObservableProperty]
+    private bool isSelected;
+
+    [JsonIgnore]
     public string InstallButtonText => IsInstalled ? LocalizationService.Instance["Reinstall"] : LocalizationService.Instance["Install"];
+
+    // Card presentation, shared with InstalledModInfo so both grids look the same.
+
+    [JsonIgnore]
+    public string Initial => ModPresentation.Initial(Name);
+
+    [JsonIgnore]
+    public IBrush AvatarBackground { get; private set; } = ModPresentation.AvatarBrush("");
+
+    [JsonIgnore]
+    public string CategoryName { get; private set; } = "Utility";
+
+    [JsonIgnore]
+    public IBrush CategoryBackground { get; private set; } = new ImmutableSolidColorBrush(Color.Parse("#ffa800"));
+
+    [JsonIgnore]
+    public IBrush ChipTextBrush => ModPresentation.ChipText;
+
+    [JsonIgnore]
+    public string ByAuthorVersion => LocalizationService.Instance.Format("ByAuthorVersion", Author, Version);
+
+    [JsonIgnore]
+    public string CardDescription
+    {
+        get
+        {
+            string description = Description?.Trim() ?? "";
+
+            return description.Length == 0
+                ? LocalizationService.Instance["NoDescription"]
+                : description;
+        }
+    }
+
+    public OnlineModInfo ResolvePresentation()
+    {
+        (string category, string color) = ModPresentation.Category(Name, Description);
+
+        CategoryName = category;
+        CategoryBackground = new ImmutableSolidColorBrush(Color.Parse(color));
+        AvatarBackground = ModPresentation.AvatarBrush(Name ?? Id);
+
+        return this;
+    }
 
     partial void OnIsInstalledChanged(bool value)
     {

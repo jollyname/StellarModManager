@@ -8,6 +8,6 @@ public class AppSettings
     public bool ConfirmBeforeRemove { get; set; } = true;
     public bool AutoCheckForModUpdates { get; set; } = true;
     public bool AutoCheckForAppUpdates { get; set; } = true;
-    public string Theme { get; set; } = "Purple";
+    public string Theme { get; set; } = "Dark";
     public int ModSort { get; set; }
 }

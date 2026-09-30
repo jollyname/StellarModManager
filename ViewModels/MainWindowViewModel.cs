@@ -17,6 +17,14 @@ public partial class MainWindowViewModel : ViewModelBase
 
     public MainWindowViewModel()
     {
+        InstalledMods.CollectionChanged += (_, _) =>
+        {
+            SyncLibrary();
+
+            OnPropertyChanged(nameof(IsLibraryEmpty));
+            OnPropertyChanged(nameof(IsLibraryEmptyStateVisible));
+        };
+
         LoadAvailableThemes();
         LoadAvailableLanguages();
 

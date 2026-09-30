@@ -18,6 +18,8 @@ public partial class MainWindowViewModel
 
     private InstalledModInfo? modPendingRemoval;
 
+    public bool IsLibraryEmpty => InstalledMods.Count == 0;
+
     [ObservableProperty]
     private bool isConfirmRemoveOpen;
 

@@ -5,105 +5,121 @@
         xmlns:loc="using:StellarModManager.Services"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="800"
+        mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="720"
         x:Class="StellarModManager.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Icon="/Assets/icon.ico"
+        Icon="/Assets/Logo.ico"
         Title="StellarModManager"
-        Width="900" Height="800">
-
-    <Window.Background>
-        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
-            <GradientStop Color="{DynamicResource Theme.WindowGradientStart}" Offset="0"/>
-            <GradientStop Color="{DynamicResource Theme.WindowGradientMid}" Offset="0.5"/>
-            <GradientStop Color="{DynamicResource Theme.WindowGradientEnd}" Offset="1"/>
-        </LinearGradientBrush>
-    </Window.Background>
+        Width="1000" Height="720"
+        MinWidth="460" MinHeight="480"
+        WindowDecorations="BorderOnly"
+        Background="{DynamicResource Theme.WindowBackgroundBrush}">
 
     <Design.DataContext>
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-    <Grid>
+    <Grid RowDefinitions="40,*" ColumnDefinitions="Auto,*">
 
-        <!-- SETUP PANEL -->
-        <views:SetupPanelView IsVisible="{Binding SetupRequired}"/>
+        <!-- ICON RAIL: full height, only on the library screen -->
+        <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="0"
+                Width="60"
+                IsVisible="{Binding !SetupRequired}"
+                Background="{DynamicResource Theme.TitleBarBackgroundBrush}">
 
-        <!-- MAIN APP -->
-        <Grid
-            IsVisible="{Binding !SetupRequired}"
-            Margin="32"
-            RowDefinitions="Auto,*">
+            <Grid RowDefinitions="Auto,*,Auto">
 
-            <!-- Header -->
-            <Grid Grid.Row="0" Margin="0,0,0,20" ColumnDefinitions="*,Auto,Auto">
+                <Border Grid.Row="0"
+                        Width="34" Height="34"
+                        Margin="0,52,0,0"
+                        HorizontalAlignment="Center" VerticalAlignment="Top">
+                    <!-- the mark is a flat light grey, so light mode needs the dark cut -->
+                    <Grid>
+                        <Image Source="/Assets/Logo.png" Stretch="Uniform"
+                               IsVisible="{DynamicResource Theme.IsDark}"/>
+                        <Image Source="/Assets/LogoDark.png" Stretch="Uniform"
+                               IsVisible="{DynamicResource Theme.IsLight}"/>
+                    </Grid>
+                </Border>
 
-                <StackPanel Grid.Column="0" Spacing="2">
-                    <TextBlock Text="StellarModManager" FontSize="26" FontWeight="Bold" Foreground="White"/>
-                    <TextBlock Text="{Binding GamePath}" FontSize="13" Foreground="#D9C8E8"/>
-                </StackPanel>
-
-                <Button
-                    Grid.Column="1"
-                    Classes="secondary"
-                    Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ChangeGameFolder]}"
-                    Command="{Binding SelectGameFolderCommand}"
-                    VerticalAlignment="Center"/>
-
-                <Button
-                    Grid.Column="2"
-                    Classes="iconButton"
-                    Margin="10,0,0,0"
-                    IsVisible="{Binding IsUpdateAvailable}"
-                    Command="{Binding OpenUpdatePanelCommand}"
-                    ToolTip.Tip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[UpdateAvailableTooltip]}"
-                    VerticalAlignment="Center">
-                    <Path Width="20" Height="20" Stretch="Uniform" Fill="#FFD166"
-                          Data="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M11,16.5H13V18.5H11V16.5M11,5.5H13V14.5H11V5.5Z"/>
-                </Button>
-
-                <Button
-                    Grid.Column="2"
-                    Classes="iconButton"
-                    Margin="10,0,0,0"
-                    Command="{Binding OpenSettingsCommand}"
-                    ToolTip.Tip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[SettingsTooltip]}"
-                    VerticalAlignment="Center">
-                    <Path
-                        Width="20" Height="20"
-                        Stretch="Uniform"
-                        Fill="White"
-                        Data="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.22,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.22,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.67 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z"/>
+                <Button Grid.Row="2"
+                        Classes="railButton"
+                        Margin="0,0,0,16"
+                        HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                        Command="{Binding OpenSettingsCommand}"
+                        ToolTip.Tip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[SettingsTooltip]}">
+                    <Path Width="20" Height="20"
+                          Stretch="Uniform"
+                          Fill="{DynamicResource Theme.IconGlyphBrush}"
+                          Data="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.22,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.22,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.67 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z"/>
                 </Button>
 
             </Grid>
+        </Border>
 
-            <!-- Card containing tabs -->
-            <Border
-                Grid.Row="1"
-                CornerRadius="20"
-                Padding="28"
-                BoxShadow="0 8 32 0 #55000000"
-                Background="{DynamicResource Theme.CardBackgroundBrush}">
+        <!-- CUSTOM TITLEBAR -->
+        <Grid Grid.Row="0" Grid.Column="1" Background="{DynamicResource Theme.TitleBarBackgroundBrush}">
 
-                <TabControl SelectedIndex="{Binding SelectedTabIndex}">
-                    <TabItem Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[OnlineModsTab]}">
-                        <views:OnlineModsView/>
-                    </TabItem>
+            <Border Name="TitleBarDrag"
+                    Background="Transparent"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"/>
 
-                    <TabItem Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[InstalledModsTab]}">
-                        <views:InstalledModsView/>
-                    </TabItem>
-                </TabControl>
+            <!-- app name; not hit-test visible so dragging still works underneath it -->
+            <TextBlock Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[AppName]}"
+                       FontSize="12.5" FontWeight="SemiBold" Foreground="{DynamicResource Theme.IconGlyphBrush}"
+                       Margin="0"
+                       VerticalAlignment="Center" HorizontalAlignment="Left"
+                       IsHitTestVisible="False"/>
 
-            </Border>
+            <StackPanel Grid.Column="0"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Stretch">
+
+                <Button Name="MinimizeButton" Classes="captionButton" Click="OnMinimizeClick">
+                    <Path Width="14" Height="14"
+                          Stroke="{DynamicResource Theme.IconGlyphBrush}" StrokeThickness="1.2"
+                          Data="M0.5,7 H13.5"/>
+                </Button>
+
+                <Button Name="MaximizeButton" Classes="captionButton" Click="OnMaximizeClick">
+                    <Panel>
+                        <Path Name="MaximizeGlyph" Width="14" Height="14"
+                              Stroke="{DynamicResource Theme.IconGlyphBrush}" StrokeThickness="1.2"
+                              Data="M0.5,0.5 H13.5 V13.5 H0.5 Z"/>
+                        <Path Name="RestoreGlyph" Width="14" Height="14"
+                              Stroke="{DynamicResource Theme.IconGlyphBrush}" StrokeThickness="1.2"
+                              IsVisible="False"
+                              Data="M0.5,2.5 H2.5 M2.5,0.5 H13.5 V11.5 H11.5 M11.5,13.5 H0.5 V2.5"/>
+                    </Panel>
+                </Button>
+
+                <Button Name="CloseButton" Classes="captionButton close" Click="OnCloseClick">
+                    <Path Width="14" Height="14"
+                          Stroke="{DynamicResource Theme.IconGlyphBrush}" StrokeThickness="1.2"
+                          Data="M0.5,0.5 L13.5,13.5 M13.5,0.5 L0.5,13.5"/>
+                </Button>
+
+            </StackPanel>
 
         </Grid>
-        
-        <views:ModDetailsView IsVisible="{Binding IsModDetailsOpen}"/>
-        <views:SettingsPanelView IsVisible="{Binding IsSettingsOpen}"/>
-        <views:ConfirmRemoveModView IsVisible="{Binding IsConfirmRemoveOpen}"/>
-        <views:UpdatePanelView IsVisible="{Binding IsUpdatePanelOpen}"/>
+
+        <!-- CONTENT -->
+        <Grid Grid.Row="1" Grid.Column="1">
+
+            <!-- SETUP PANEL -->
+            <views:SetupPanelView IsVisible="{Binding SetupRequired}"/>
+
+            <!-- MAIN APP -->
+            <views:MainLibraryView IsVisible="{Binding !SetupRequired}"/>
+
+            <views:ModDetailsView IsVisible="{Binding IsModDetailsOpen}"/>
+            <views:SettingsPanelView IsVisible="{Binding IsSettingsOpen}"/>
+            <views:ConfirmRemoveModView IsVisible="{Binding IsConfirmRemoveOpen}"/>
+            <views:UpdatePanelView IsVisible="{Binding IsUpdatePanelOpen}"/>
+
+        </Grid>
 
     </Grid>
 

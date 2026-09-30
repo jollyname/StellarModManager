@@ -1,18 +1,42 @@
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <!-- Primary gradient buttons -->
+    <!-- Custom titlebar window controls -->
+    <Style Selector="Button.captionButton">
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+          <Setter Property="Width" Value="50"/>
+          <Setter Property="Height" Value="40"/>
+
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="CornerRadius" Value="0"/>
+    </Style>
+
+    <Style Selector="Button.captionButton:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#1FFFFFFF"/>
+    </Style>
+
+    <Style Selector="Button.captionButton:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="#2EFFFFFF"/>
+    </Style>
+
+    <Style Selector="Button.captionButton.close:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#FFE5484D"/>
+    </Style>
+
+    <Style Selector="Button.captionButton.close:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="#FFC93A3F"/>
+    </Style>
+
+    <!-- Primary solid buttons -->
     <Style Selector="Button.primary">
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="Foreground" Value="White"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
-        <Setter Property="CornerRadius" Value="10"/>
+        <Setter Property="CornerRadius" Value="22"/>
         <Setter Property="Padding" Value="0,12"/>
-        <Setter Property="Background">
-            <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
-                <GradientStop Color="{DynamicResource Theme.AccentStart}" Offset="0"/>
-                <GradientStop Color="{DynamicResource Theme.AccentEnd}" Offset="1"/>
-            </LinearGradientBrush>
-        </Setter>
+        <Setter Property="Background" Value="{DynamicResource Theme.AccentSolidBrush}"/>
     </Style>
 
     <Style Selector="Button.primary:pointerover /template/ ContentPresenter">
@@ -24,7 +48,7 @@
     </Style>
 
     <Style Selector="Button.primary:disabled /template/ ContentPresenter">
-        <Setter Property="Background" Value="#D8D3DE"/>
+        <Setter Property="Background" Value="{DynamicResource Theme.ModCardBorderBrush}"/>
     </Style>
     <Style Selector="Button.primary:disabled">
         <Setter Property="Foreground" Value="{DynamicResource Theme.TextMutedBrush}"/>
@@ -32,6 +56,7 @@
 
     <!-- Small secondary button (used for per-item actions) -->
     <Style Selector="Button.secondary">
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="Background" Value="{DynamicResource Theme.AccentSolidBrush}"/>
         <Setter Property="Foreground" Value="White"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
@@ -44,33 +69,6 @@
     </Style>
     <Style Selector="Button.secondary:pressed /template/ ContentPresenter">
         <Setter Property="Background" Value="{DynamicResource Theme.AccentPressedBrush}"/>
-    </Style>
-
-    <Style Selector="ComboBox.secondary">
-        <Setter Property="Background" Value="{DynamicResource Theme.AccentSolidBrush}"/>
-        <Setter Property="Foreground" Value="White"/>
-        <Setter Property="FontWeight" Value="SemiBold"/>
-        <Setter Property="FontSize" Value="12"/>
-        <Setter Property="CornerRadius" Value="8"/>
-        <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="MinHeight" Value="0"/>
-        <Setter Property="Padding" Value="14,7,8,7"/>
-        <Setter Property="VerticalAlignment" Value="Center"/>
-    </Style>
-    <Style Selector="ComboBox.secondary /template/ PathIcon#DropDownGlyph">
-        <Setter Property="Foreground" Value="White"/>
-    </Style>
-    <Style Selector="ComboBox.secondary:pointerover /template/ Border#Background">
-        <Setter Property="Background" Value="{DynamicResource Theme.AccentHoverBrush}"/>
-    </Style>
-    <Style Selector="ComboBox.secondary:pressed /template/ Border#Background">
-        <Setter Property="Background" Value="{DynamicResource Theme.AccentPressedBrush}"/>
-    </Style>
-    <Style Selector="ComboBox.secondary:pointerover /template/ ContentPresenter#ContentPresenter">
-        <Setter Property="Foreground" Value="White"/>
-    </Style>
-    <Style Selector="ComboBox.secondary:pointerover /template/ PathIcon#DropDownGlyph">
-        <Setter Property="Foreground" Value="White"/>
     </Style>
 
     <Style Selector="TabControl">
@@ -140,6 +138,7 @@
 
     <!-- Destructive action button -->
     <Style Selector="Button.danger">
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="Background" Value="{DynamicResource Theme.DangerBrush}"/>
         <Setter Property="Foreground" Value="White"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
@@ -162,6 +161,273 @@
     </Style>
     <Style Selector="ProgressBar.modProgress /template/ Border#PART_Indicator">
         <Setter Property="Background" Value="{DynamicResource Theme.AccentEndBrush}"/>
+    </Style>
+
+    <!-- ================= LIBRARY ================= -->
+
+    <!-- Icon rail buttons -->
+    <Style Selector="Button.railButton">
+        <Setter Property="Width" Value="40"/>
+        <Setter Property="Height" Value="40"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="CornerRadius" Value="10"/>
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
+    <Style Selector="Button.railButton:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#1FFFFFFF"/>
+    </Style>
+
+    <!-- Play: the destination action, solid brand purple -->
+    <Style Selector="Button.playButton">
+        <Setter Property="Width" Value="90"/>
+        <Setter Property="Height" Value="32"/>
+        <Setter Property="CornerRadius" Value="16"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="{DynamicResource Theme.TextOnAccentBrush}"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Background" Value="{DynamicResource Theme.InstalledBadgeBrush}"/>
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="Background" Duration="0:0:0.15"/>
+            </Transitions>
+        </Setter>
+    </Style>
+    <Style Selector="Button.playButton:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource Theme.AccentBrightBrush}"/>
+    </Style>
+    <Style Selector="Button.playButton:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource Theme.AccentBrightPressedBrush}"/>
+    </Style>
+    <Style Selector="Button.playButton:disabled /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource Theme.AccentBrightDisabledBrush}"/>
+    </Style>
+    <Style Selector="Button.playButton:disabled">
+        <Setter Property="Foreground" Value="{DynamicResource Theme.IconGlyphBrush}"/>
+    </Style>
+
+    <Style Selector="ProgressBar.playProgress">
+        <Setter Property="Foreground" Value="#D9B3FF"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="CornerRadius" Value="2"/>
+    </Style>
+    <Style Selector="ProgressBar.playProgress /template/ Border#PART_Indicator">
+        <Setter Property="Background" Value="#D9B3FF"/>
+    </Style>
+    <Style Selector="ProgressBar.playProgress /template/ Border#PART_Track">
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
+
+    <!-- Search: inset, darker than the surface, no outline until focused -->
+    <Style Selector="TextBox.searchField">
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Foreground" Value="{DynamicResource Theme.TextPrimaryBrush}"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="CaretBrush" Value="{DynamicResource Theme.ChipAccentTextBrush}"/>
+    </Style>
+    <Style Selector="TextBox.searchField:pointerover /template/ Border#PART_BorderElement">
+        <Setter Property="BorderBrush" Value="Transparent"/>
+    </Style>
+    <Style Selector="TextBox.searchField:focused /template/ Border#PART_BorderElement">
+        <Setter Property="BorderBrush" Value="Transparent"/>
+    </Style>
+    <Style Selector="Border:pointerover">
+        <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+
+    <Style Selector="Button.searchClear">
+        <Setter Property="Width" Value="20"/>
+        <Setter Property="Height" Value="20"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="CornerRadius" Value="10"/>
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
+    <Style Selector="Button.searchClear:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#1FFFFFFF"/>
+    </Style>
+
+    <!-- Mod card -->
+    <Style Selector="Border.libraryCard">
+        <Setter Property="Background" Value="{DynamicResource Theme.SubtleFillBrush}"/>
+        <Setter Property="CornerRadius" Value="12"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Padding" Value="16"/>
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="BorderBrush" Duration="0:0:0.15"/>
+                <DoubleTransition Property="Opacity" Duration="0:0:0.15"/>
+            </Transitions>
+        </Setter>
+    </Style>
+    <Style Selector="Border.libraryCard:pointerover">
+        <Setter Property="BorderBrush" Value="#1FFFFFFF"/>
+        <Setter Property="RenderTransform" Value="translateY(-2px)"/>
+    </Style>
+    <Style Selector="Border.libraryCard.selected">
+        <Setter Property="BorderBrush" Value="{DynamicResource Theme.InstalledBadgeBrush}"/>
+        <Setter Property="BorderThickness" Value="2"/>
+        <Setter Property="Padding" Value="15"/>
+    </Style>
+    <Style Selector="Border.libraryCard.inactive">
+        <Setter Property="Opacity" Value="0.55"/>
+    </Style>
+
+    <Style Selector="Border.libraryCard:pointerover:selected">
+        <Setter Property="BorderBrush" Value="{DynamicResource Theme.InstalledBadgeBrush}"/>
+    </Style>
+
+    <!-- Flat store-style card: hairline edge, no drop shadow, rounded 10 -->
+    <Style Selector="Border.modCardFlat">
+        <Setter Property="Background" Value="{DynamicResource Theme.ModCardBackgroundBrush}"/>
+        <Setter Property="CornerRadius" Value="10"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource Theme.ModCardBorderBrush}"/>
+        <Setter Property="ClipToBounds" Value="True"/>
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                <BrushTransition Property="BorderBrush" Duration="0:0:0.15"/>
+                <DoubleTransition Property="Opacity" Duration="0:0:0.15"/>
+            </Transitions>
+        </Setter>
+    </Style>
+    <Style Selector="Border.modCardFlat:pointerover">
+        <Setter Property="Background" Value="{DynamicResource Theme.SubtleFillHoverBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource Theme.ModCardBorderBrush}"/>
+        <Setter Property="RenderTransform" Value="translateY(-2px)"/>
+    </Style>
+    <Style Selector="Border.modCardFlat.selected">
+        <Setter Property="BorderBrush" Value="{DynamicResource Theme.InstalledBadgeBrush}"/>
+        <Setter Property="BorderThickness" Value="2"/>
+    </Style>
+    <Style Selector="Border.modCardFlat.inactive">
+        <Setter Property="Opacity" Value="0.55"/>
+    </Style>
+
+    <Style Selector="Border.chip">
+        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="Padding" Value="6,2,6,3"/>
+    </Style>
+
+    <Style Selector="Button.miniUpdate">
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Background" Value="{DynamicResource Theme.ChipAccentBackgroundBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource Theme.ChipAccentTextBrush}"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="CornerRadius" Value="6"/>
+        <Setter Property="Padding" Value="10,4"/>
+        <Setter Property="Height" Value="24"/>
+    </Style>
+    <Style Selector="Button.miniUpdate:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource Theme.ChipAccentHoverBrush}"/>
+    </Style>
+
+    <Style Selector="Button.miniInstall">
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Background" Value="{DynamicResource Theme.InstalledBadgeBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource Theme.TextOnAccentBrush}"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="CornerRadius" Value="6"/>
+        <Setter Property="Padding" Value="14,5"/>
+        <Setter Property="Height" Value="26"/>
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="Background" Duration="0:0:0.15"/>
+            </Transitions>
+        </Setter>
+    </Style>
+    <Style Selector="Button.miniInstall:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource Theme.AccentBrightBrush}"/>
+    </Style>
+
+    <!-- Installed / Browse pill switcher -->
+    <Style Selector="Button.segItem">
+        <Setter Property="Height" Value="24"/>
+        <Setter Property="MinWidth" Value="92"/>
+        <Setter Property="CornerRadius" Value="12"/>
+        <Setter Property="Padding" Value="16,0"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="{DynamicResource Theme.IconGlyphBrush}"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="Background" Duration="0:0:0.15"/>
+            </Transitions>
+        </Setter>
+    </Style>
+    <Style Selector="Button.segItem:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#14FFFFFF"/>
+    </Style>
+    <Style Selector="Button.segItem.active">
+        <Setter Property="Background" Value="{DynamicResource Theme.SubtleFillBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource Theme.TextPrimaryBrush}"/>
+    </Style>
+    <Style Selector="Button.segItem.active:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource Theme.SubtleFillBrush}"/>
+    </Style>
+
+    <!-- Toggle: the single accent also means "on" -->
+    <Style Selector="ToggleButton.modToggle">
+        <Setter Property="Width" Value="34"/>
+        <Setter Property="Height" Value="20"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Name="Track" Width="34" Height="20" CornerRadius="10" Background="{DynamicResource Theme.ChipNeutralBrush}">
+                    <Border.Transitions>
+                        <Transitions>
+                            <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                        </Transitions>
+                    </Border.Transitions>
+                    <Border Name="Knob"
+                            Width="16" Height="16"
+                            CornerRadius="8"
+                            Background="{DynamicResource Theme.ToggleKnobBrush}"
+                            HorizontalAlignment="Left"
+                            Margin="2">
+                        <Border.Transitions>
+                            <Transitions>
+                                <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.15"/>
+                                <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                            </Transitions>
+                        </Border.Transitions>
+                    </Border>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+    <Style Selector="ToggleButton.modToggle:checked /template/ Border#Knob">
+        <Setter Property="RenderTransform" Value="translateX(14px)"/>
+        <Setter Property="Background" Value="{DynamicResource Theme.ToggleKnobBrush}"/>
+    </Style>
+    <Style Selector="ToggleButton.modToggle:checked /template/ Border#Track">
+        <Setter Property="Background" Value="{DynamicResource Theme.InstalledBadgeBrush}"/>
+    </Style>
+    <Style Selector="ToggleButton.modToggle:pointerover /template/ Border#Track">
+        <Setter Property="Background" Value="{DynamicResource Theme.ChipNeutralHoverBrush}"/>
+    </Style>
+    <Style Selector="ToggleButton.modToggle:pointerover:checked /template/ Border#Track">
+        <Setter Property="Background" Value="{DynamicResource Theme.AccentBrightBrush}"/>
+    </Style>
+    <Style Selector="ToggleButton.modToggle:disabled /template/ Border#Track">
+        <Setter Property="Background" Value="{DynamicResource Theme.DisabledFillBrush}"/>
+    </Style>
+    <Style Selector="ToggleButton.modToggle:disabled /template/ Border#Knob">
+        <Setter Property="Background" Value="{DynamicResource Theme.ToggleKnobDisabledBrush}"/>
+    </Style>
+    <Style Selector="ToggleButton.modToggle:focus-visible /template/ Border#Track">
+        <Setter Property="BorderBrush" Value="{DynamicResource Theme.InstalledBadgeBrush}"/>
+        <Setter Property="BorderThickness" Value="2"/>
     </Style>
 
     <!-- Settings button -->
@@ -203,6 +469,65 @@
         <Setter Property="Opacity" Value="1"/>
         <Setter Property="RenderTransform" Value="scale(1)"/>
         <Setter Property="IsHitTestVisible" Value="True"/>
+    </Style>
+
+    <!-- Accent pill combobox (sort / theme / language pickers) -->
+    <Style Selector="ComboBox.secondary">
+        <Setter Property="Background" Value="{DynamicResource Theme.AccentSolidBrush}"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="MinHeight" Value="0"/>
+        <Setter Property="Padding" Value="14,7,8,7"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+    <Style Selector="ComboBox.secondary /template/ PathIcon#DropDownGlyph">
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+    <Style Selector="ComboBox.secondary:pointerover /template/ Border#Background">
+        <Setter Property="Background" Value="{DynamicResource Theme.AccentHoverBrush}"/>
+    </Style>
+    <Style Selector="ComboBox.secondary:pressed /template/ Border#Background">
+        <Setter Property="Background" Value="{DynamicResource Theme.AccentPressedBrush}"/>
+    </Style>
+    <Style Selector="ComboBox.secondary:pointerover /template/ ContentPresenter#ContentPresenter">
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+    <Style Selector="Border.chip.chipAccent">
+        <Setter Property="Background" Value="{DynamicResource Theme.ChipAccentBackgroundBrush}"/>
+    </Style>
+            
+    <Style Selector="TextBlock.chipText">
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Foreground" Value="{DynamicResource Theme.ChipAccentTextBrush}"/>
+    </Style>
+    <Style Selector="TextBlock.chipText.onAccent">
+        <Setter Property="Foreground" Value="{DynamicResource Theme.TextOnAccentBrush}"/>
+    </Style>
+        
+    <!-- Slim scrollbars -->
+    <Style Selector="ScrollViewer">
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
+
+    <Style Selector="ScrollBar">
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
+
+    <Style Selector="ScrollBar:vertical">
+        <Setter Property="Width" Value="10"/>
+    </Style>
+
+    <Style Selector="ScrollBar:horizontal">
+        <Setter Property="Height" Value="10"/>
+    </Style>
+
+    <Style Selector="Expander">
+        <Setter Property="FontSize" Value="12"/>
     </Style>
 
 </Styles>

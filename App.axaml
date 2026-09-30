@@ -2,8 +2,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="StellarModManager.App"
              xmlns:local="using:StellarModManager"
-             RequestedThemeVariant="Default">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+             RequestedThemeVariant="Dark">
+             <!-- Theme tokens are swapped at runtime by ThemeService based on the selected Light/Dark theme. -->
 
     <Application.DataTemplates>
         <local:ViewLocator/>
@@ -15,28 +15,55 @@
     </Application.Styles>
 
     <Application.Resources>
-        <Color x:Key="Theme.WindowGradientStart">#24104F</Color>
-        <Color x:Key="Theme.WindowGradientMid">#5B2C83</Color>
-        <Color x:Key="Theme.WindowGradientEnd">#9B59B6</Color>
+        <Color x:Key="Theme.WindowGradientStart">#1A1A1A</Color>
+        <Color x:Key="Theme.WindowGradientMid">#1A1A1A</Color>
+        <Color x:Key="Theme.WindowGradientEnd">#1A1A1A</Color>
 
-        <Color x:Key="Theme.AccentStart">#5B2C83</Color>
+        <Color x:Key="Theme.AccentStart">#2E1559</Color>
         <Color x:Key="Theme.AccentEnd">#9B59B6</Color>
 
-        <SolidColorBrush x:Key="Theme.AccentSolidBrush" Color="#5B2C83"/>
+        <SolidColorBrush x:Key="Theme.AccentSolidBrush" Color="#2E1559"/>
         <SolidColorBrush x:Key="Theme.AccentEndBrush" Color="#9B59B6"/>
-        <SolidColorBrush x:Key="Theme.AccentHoverBrush" Color="#4A2369"/>
-        <SolidColorBrush x:Key="Theme.AccentPressedBrush" Color="#3A1B52"/>
+        <SolidColorBrush x:Key="Theme.AccentHoverBrush" Color="#3A1C72"/>
+        <SolidColorBrush x:Key="Theme.AccentPressedBrush" Color="#241046"/>
 
-        <SolidColorBrush x:Key="Theme.CardBackgroundBrush" Color="#F7F5FA"/>
-        <SolidColorBrush x:Key="Theme.ModCardBackgroundBrush" Color="#FAF8FC"/>
-        <SolidColorBrush x:Key="Theme.ModCardBorderBrush" Color="#EAE3F0"/>
+        <SolidColorBrush x:Key="Theme.CardBackgroundBrush" Color="#242527"/>
+        <SolidColorBrush x:Key="Theme.ModCardBackgroundBrush" Color="#1F2022"/>
+        <SolidColorBrush x:Key="Theme.ModCardBorderBrush" Color="#2E3033"/>
 
-        <SolidColorBrush x:Key="Theme.TextPrimaryBrush" Color="#2B1B3D"/>
-        <SolidColorBrush x:Key="Theme.TextSecondaryBrush" Color="#6B5C7A"/>
-        <SolidColorBrush x:Key="Theme.TextMutedBrush" Color="#8A7F91"/>
+        <SolidColorBrush x:Key="Theme.TextPrimaryBrush" Color="#E8E8EA"/>
+        <SolidColorBrush x:Key="Theme.TextSecondaryBrush" Color="#A8A8AE"/>
+        <SolidColorBrush x:Key="Theme.TextMutedBrush" Color="#7A7A80"/>
 
-        <SolidColorBrush x:Key="Theme.DangerBrush" Color="#C0392B"/>
-        <SolidColorBrush x:Key="Theme.DangerHoverBrush" Color="#A5281A"/>
-        <SolidColorBrush x:Key="Theme.DangerPressedBrush" Color="#7F1D12"/>
+        <SolidColorBrush x:Key="Theme.DangerBrush" Color="#E5484D"/>
+        <SolidColorBrush x:Key="Theme.DangerHoverBrush" Color="#C93A3F"/>
+        <SolidColorBrush x:Key="Theme.DangerPressedBrush" Color="#A82F34"/>
+    <SolidColorBrush x:Key="Theme.WindowBackgroundBrush" Color="#141518"/>
+    <SolidColorBrush x:Key="Theme.TitleBarBackgroundBrush" Color="#1A1B20"/>
+    <SolidColorBrush x:Key="Theme.SurfaceBackgroundBrush" Color="#1A1B1F"/>
+    <SolidColorBrush x:Key="Theme.DetailBackgroundBrush" Color="#0E0F12"/>
+    <SolidColorBrush x:Key="Theme.ImagePanelBrush" Color="#15161A"/>
+    <SolidColorBrush x:Key="Theme.CardImageBrush" Color="#151517"/>
+    <SolidColorBrush x:Key="Theme.CardImageOverlayBrush" Color="#1A1A1D"/>
+    <SolidColorBrush x:Key="Theme.SetupPanelBrush" Color="#1E1F24"/>
+    <SolidColorBrush x:Key="Theme.BorderSubtleBrush" Color="#2E3033"/>
+    <SolidColorBrush x:Key="Theme.ChipNeutralBrush" Color="#3A3C42"/>
+    <SolidColorBrush x:Key="Theme.ChipAccentBackgroundBrush" Color="#2E2A3C"/>
+    <SolidColorBrush x:Key="Theme.ChipAccentTextBrush" Color="#C79BFF"/>
+    <SolidColorBrush x:Key="Theme.InstalledBadgeBrush" Color="#7B2FBF"/>
+    <SolidColorBrush x:Key="Theme.IconGlyphBrush" Color="#8A8D94"/>
+    <SolidColorBrush x:Key="Theme.TextOnAccentBrush" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="Theme.AccentBrightBrush" Color="#8E42D2"/>
+    <SolidColorBrush x:Key="Theme.AccentBrightPressedBrush" Color="#6B27A8"/>
+    <SolidColorBrush x:Key="Theme.AccentBrightDisabledBrush" Color="#332B3D"/>
+    <SolidColorBrush x:Key="Theme.SubtleFillBrush" Color="#26272C"/>
+    <SolidColorBrush x:Key="Theme.SubtleFillHoverBrush" Color="#242427"/>
+    <SolidColorBrush x:Key="Theme.ChipAccentHoverBrush" Color="#4A3A5E"/>
+    <SolidColorBrush x:Key="Theme.ChipNeutralHoverBrush" Color="#4A4C53"/>
+    <SolidColorBrush x:Key="Theme.ToggleKnobBrush" Color="#C8CAD0"/>
+    <SolidColorBrush x:Key="Theme.ToggleKnobDisabledBrush" Color="#6E7076"/>
+    <SolidColorBrush x:Key="Theme.DisabledFillBrush" Color="#2A2C31"/>
+    <x:Boolean x:Key="Theme.IsLight">False</x:Boolean>
+    <x:Boolean x:Key="Theme.IsDark">True</x:Boolean>
     </Application.Resources>
 </Application>
