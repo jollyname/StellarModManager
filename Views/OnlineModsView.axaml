@@ -1,100 +1,94 @@
 <UserControl xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:vm="using:StellarModManager.ViewModels"
+    xmlns:models="using:StellarModManager.Models"
     xmlns:loc="using:StellarModManager.Services"
     x:Class="StellarModManager.Views.OnlineModsView"
     x:DataType="vm:MainWindowViewModel">
-    <Grid RowDefinitions="Auto,*" Margin="0,16,0,0">
-        <Grid Grid.Row="0" Margin="0,0,0,14" ColumnDefinitions="*,Auto,Auto">
-            <TextBlock
-                Grid.Column="0"
-                Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[OnlineModsDescription]}"
-                FontSize="13"
-                Foreground="{DynamicResource Theme.TextSecondaryBrush}"
-                VerticalAlignment="Center" />
-            <ComboBox
-                Grid.Column="1"
-                Classes="secondary"
-                Margin="0,0,8,0"
-                SelectedIndex="{Binding SortIndex}">
-                <ComboBoxItem Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[SortMostDownloaded]}" />
-                <ComboBoxItem Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[SortRecentlyUpdated]}" />
-                <ComboBoxItem Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[SortName]}" />
-            </ComboBox>
-            <Button
-                Grid.Column="2"
-                Classes="secondary"
-                Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Refresh]}"
-                Command="{Binding RefreshModsCommand}" />
-        </Grid>
-        <ScrollViewer Grid.Row="1">
-            <ItemsControl ItemsSource="{Binding OnlineMods}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Border Classes="modCard">
-                            <StackPanel Spacing="10">
-                                <Grid ColumnDefinitions="*,Auto">
-                                    <Button Grid.Column="0"
-                                        Classes="cardLink"
-                                        Command="{Binding $parent[UserControl].DataContext.OpenModDetailsCommand}"
-                                        CommandParameter="{Binding}">
-                                        <Grid ColumnDefinitions="Auto,*">
-                                        <Border Grid.Column="0"
-                                            Width="96" Height="96"
-                                            CornerRadius="6"
-                                            ClipToBounds="True"
-                                            Margin="0,0,12,0"
-                                            VerticalAlignment="Top"
-                                            IsVisible="{Binding ThumbnailImage, Converter={x:Static ObjectConverters.IsNotNull}}">
-                                            <Image Source="{Binding ThumbnailImage}"
-                                                Stretch="UniformToFill" />
-                                        </Border>
 
-                                        <StackPanel Grid.Column="1" Spacing="4">
-                                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                                <TextBlock Text="{Binding Name}" FontSize="16"
-                                                    FontWeight="Bold"
-                                                    Foreground="{DynamicResource Theme.TextPrimaryBrush}" />
-                                                <TextBlock Text="{Binding Version}" FontSize="12"
-                                                    Foreground="{DynamicResource Theme.AccentEndBrush}"
-                                                    FontWeight="SemiBold" VerticalAlignment="Center" />
-                                                <TextBlock Text="{Binding StatsText}" FontSize="12"
-                                                    Foreground="{DynamicResource Theme.TextSecondaryBrush}"
-                                                    VerticalAlignment="Center" />
-                                            </StackPanel>
-                                            <TextBlock Text="{Binding Author}" FontSize="13"
-                                                Foreground="{DynamicResource Theme.TextSecondaryBrush}" />
-                                            <TextBlock Text="{Binding Description}" FontSize="14"
-                                                TextWrapping="Wrap"
-                                                MaxLines="2"
-                                                TextTrimming="CharacterEllipsis"
-                                                Foreground="{DynamicResource Theme.TextPrimaryBrush}"
-                                                Margin="0,4,0,0" />
-                                        </StackPanel>
-                                        </Grid>
-                                    </Button>
-                                    <Button
-                                        Grid.Column="1"
-                                        Classes="secondary"
-                                        Content="{Binding InstallButtonText}"
-                                        VerticalAlignment="Top"
-                                        IsVisible="{Binding !IsInstalling}"
-                                        Command="{Binding $parent[UserControl].DataContext.InstallModCommand}"
-                                        CommandParameter="{Binding}" />
-                                </Grid>
-                                <StackPanel IsVisible="{Binding IsInstalling}" Spacing="4">
-                                    <ProgressBar Classes="modProgress" Minimum="0" Maximum="100"
-                                        Value="{Binding DownloadProgress}" />
-                                    <TextBlock
-                                        Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Installing]}"
-                                        FontSize="11"
-                                        Foreground="{DynamicResource Theme.TextSecondaryBrush}" />
-                                </StackPanel>
+    <Grid RowDefinitions="Auto,Auto,*">
+
+        <!-- Toolbar -->
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto,Auto" Margin="0,0,0,12">
+            <TextBox Grid.Column="0" MaxWidth="320" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
+                     Text="{Binding SearchText}"
+                     PlaceholderText="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[SearchPlaceholder]}">
+                <TextBox.InnerRightContent>
+                    <PathIcon Data="{StaticResource Icon.Search}" Width="14" Height="14" Margin="0,0,10,0"
+                              Foreground="{DynamicResource Theme.TextSecondaryBrush}"/>
+                </TextBox.InnerRightContent>
+            </TextBox>
+
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" Margin="16,0,8,0">
+                <TextBlock Classes="columnHeader" Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[SortLabel]}"/>
+                <ComboBox MinWidth="190" SelectedIndex="{Binding SortIndex}">
+                    <ComboBoxItem Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[SortMostDownloaded]}"/>
+                    <ComboBoxItem Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[SortRecentlyUpdated]}"/>
+                    <ComboBoxItem Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[SortName]}"/>
+                </ComboBox>
+            </StackPanel>
+
+            <Button Grid.Column="2" Classes="ghost" Command="{Binding RefreshModsCommand}">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <PathIcon Data="{StaticResource Icon.Refresh}" Width="14" Height="14"/>
+                    <TextBlock Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Refresh]}"/>
+                </StackPanel>
+            </Button>
+        </Grid>
+
+        <!-- Column headers -->
+        <Grid Grid.Row="1" ColumnDefinitions="60,*,70,80,110,120" Height="32" Margin="12,0">
+            <TextBlock Grid.Column="1" Classes="columnHeader" Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ColumnName]}"/>
+            <TextBlock Grid.Column="2" Classes="columnHeader" Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ColumnVersion]}"/>
+            <TextBlock Grid.Column="3" Classes="columnHeader" Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ColumnDownloads]}"/>
+            <TextBlock Grid.Column="4" Classes="columnHeader" Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ColumnUpdated]}"/>
+            <TextBlock Grid.Column="5" Classes="columnHeader" Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ColumnState]}"/>
+        </Grid>
+        <Rectangle Grid.Row="1" Classes="separator" VerticalAlignment="Bottom"/>
+
+        <TextBlock Grid.Row="2" Classes="secondary" FontSize="14" Margin="12,16"
+                   IsVisible="{Binding !VisibleOnlineMods.Count}"
+                   Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[NoModsFound]}"/>
+
+        <ListBox Grid.Row="2" Classes="table" Margin="0,4,0,0"
+                 ItemsSource="{Binding VisibleOnlineMods}"
+                 SelectedItem="{Binding BrowseSelection}">
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="models:OnlineModInfo">
+                    <Grid>
+                        <Border Classes="pill"/>
+                        <Grid ColumnDefinitions="60,*,70,80,110,120" Margin="12,0">
+                            <Border Classes="thumbnail" Width="48" Height="48" HorizontalAlignment="Left">
+                                <Image Source="{Binding ThumbnailImage}" Stretch="UniformToFill"/>
+                            </Border>
+
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2" Margin="0,0,12,0">
+                                <TextBlock Text="{Binding Name}" FontSize="14" TextTrimming="CharacterEllipsis"
+                                           Foreground="{DynamicResource Theme.TextPrimaryBrush}"/>
+                                <TextBlock Classes="secondary" Text="{Binding Author}" TextTrimming="CharacterEllipsis"/>
                             </StackPanel>
-                        </Border>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </ScrollViewer>
+
+                            <TextBlock Grid.Column="2" Classes="cell" Text="{Binding Version}"/>
+                            <TextBlock Grid.Column="3" Classes="cell" Text="{Binding Downloads, StringFormat={}{0:N0}}"/>
+                            <TextBlock Grid.Column="4" Classes="cell" Text="{Binding UpdatedText}"/>
+
+                            <Panel Grid.Column="5" VerticalAlignment="Center">
+                                <TextBlock Classes="cell success" IsVisible="{Binding ShowInstalledState}"
+                                           Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[StateInstalled]}"/>
+                                <StackPanel Orientation="Horizontal" Spacing="4" IsVisible="{Binding ShowUpdateState}">
+                                    <TextBlock Classes="cell accent" Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[StateUpdate]}"/>
+                                    <TextBlock Classes="cell accent" Text="{Binding Version}"/>
+                                </StackPanel>
+                                <TextBlock Classes="cell" Text="—" IsVisible="{Binding ShowNoState}"/>
+                                <StackPanel Spacing="6" IsVisible="{Binding IsInstalling}" Margin="0,0,16,0">
+                                    <TextBlock Classes="cell" Text="{Binding DownloadProgress, StringFormat={}{0:0} %}"/>
+                                    <ProgressBar Classes="modProgress" Minimum="0" Maximum="100" Value="{Binding DownloadProgress}"/>
+                                </StackPanel>
+                            </Panel>
+                        </Grid>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </Grid>
 </UserControl>

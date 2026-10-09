@@ -13,6 +13,7 @@ namespace StellarModManager.ViewModels;
 public partial class MainWindowViewModel
 {
     public ObservableCollection<InstalledModInfo> InstalledMods { get; } = new();
+    public ObservableCollection<InstalledModInfo> AvailableModUpdates { get; } = new();
     private readonly InstalledModsService installedModsService = new();
     private readonly ModDeploymentService deploymentService = new();
 
@@ -27,6 +28,7 @@ public partial class MainWindowViewModel
     private void LoadInstalledMods()
     {
         string libraryPath = Path.Combine(AppContext.BaseDirectory, "Library");
+        string? libraryId = LibrarySelection?.Id;
 
         InstalledMods.Clear();
 
@@ -34,15 +36,25 @@ public partial class MainWindowViewModel
 
         foreach (var mod in mods)
         {
+            mod.IsDeployed = deploymentService.IsDeployed(Path.Combine(libraryPath, mod.Id));
             InstalledMods.Add(mod);
         }
 
+        LibrarySelection = InstalledMods.FirstOrDefault(m => m.Id == libraryId);
         RefreshUpdateStatuses();
     }
 
     // Check for both id and version.
     private void RefreshUpdateStatuses()
     {
+        string? updatesId = UpdatesSelection?.Id;
+
+        foreach (var online in OnlineMods)
+        {
+            online.IsInstalled = InstalledMods.Any(m => m.Id == online.Id);
+            online.HasUpdate = false;
+        }
+
         foreach (var installed in InstalledMods)
         {
             var online = OnlineMods.FirstOrDefault(m => m.Id == installed.Id);
@@ -55,6 +67,7 @@ public partial class MainWindowViewModel
             {
                 installed.IsUpdateAvailable = true;
                 installed.LatestVersion = online.Version;
+                online.HasUpdate = true;
                 // load changelog
                 _ = LoadUpdateNotesAsync(installed, online, installedV);
             }
@@ -65,6 +78,15 @@ public partial class MainWindowViewModel
                 installed.UpdateNotes = null;
             }
         }
+
+        AvailableModUpdates.Clear();
+
+        foreach (var installed in InstalledMods.Where(m => m.IsUpdateAvailable))
+            AvailableModUpdates.Add(installed);
+
+        // Rebuilding the lists drops their selections; restore them by id
+        UpdatesSelection = AvailableModUpdates.FirstOrDefault(m => m.Id == updatesId);
+        ShowDetails();
     }
 
     private async Task LoadUpdateNotesAsync(InstalledModInfo installed, OnlineModInfo online, Version installedV)
@@ -97,7 +119,7 @@ public partial class MainWindowViewModel
     {
         if (GamePath == "No game selected")
         {
-            MelonLoaderStatusText = "Select a game first";
+            ReportError("StatusSelectGameFirst");
             return;
         }
 
@@ -110,12 +132,13 @@ public partial class MainWindowViewModel
             var progress = new Progress<double>(pct => mod.DeployProgress = pct);
 
             await Task.Run(() => deploymentService.DeployMod(libraryPath, GamePath, progress));
+            mod.IsDeployed = true;
 
-            MelonLoaderStatusText = $"{mod.Name} copied to game";
+            ReportSuccess("StatusDeployed", mod.Name);
         }
         catch (Exception ex)
         {
-            MelonLoaderStatusText = $"Deploy failed: {ex.Message}";
+            ReportError("StatusDeployFailed", ex.Message);
         }
         finally
         {
@@ -146,11 +169,12 @@ public partial class MainWindowViewModel
             });
 
             InstalledMods.Remove(mod);
-            MelonLoaderStatusText = $"{mod.Name} removed";
+            RefreshUpdateStatuses();
+            ReportSuccess("StatusRemoved", mod.Name);
         }
         catch (Exception ex)
         {
-            MelonLoaderStatusText = $"Remove failed: {ex.Message}";
+            ReportError("StatusRemoveFailed", ex.Message);
         }
         finally
         {
@@ -199,7 +223,7 @@ public partial class MainWindowViewModel
 
         if (onlineMatch == null)
         {
-            MelonLoaderStatusText = "Could not find this mod in the online repository";
+            ReportError("StatusNotInRepository");
             return;
         }
 
@@ -223,16 +247,16 @@ public partial class MainWindowViewModel
 
             if (redeployed)
             {
-                MelonLoaderStatusText = $"{mod.Name} updated to {onlineMatch.Version}";
+                ReportSuccess("StatusUpdated", mod.Name, onlineMatch.Version);
             }
             else
             {
-                MelonLoaderStatusText = $"{mod.Name} updated to {onlineMatch.Version}. Install it to your game to use it.";
+                ReportSuccess("StatusUpdatedNotDeployed", mod.Name, onlineMatch.Version);
             }
         }
         catch (Exception ex)
         {
-            MelonLoaderStatusText = $"Update failed: {ex.Message}";
+            ReportError("StatusUpdateFailed", ex.Message);
         }
         finally
         {
@@ -240,5 +264,18 @@ public partial class MainWindowViewModel
         }
 
         LoadInstalledMods();
+    }
+
+    [RelayCommand]
+    private async Task UpdateAllMods()
+    {
+        // UpdateMod reloads the library, so look each mod up again by id
+        foreach (var id in AvailableModUpdates.Select(m => m.Id).ToList())
+        {
+            var mod = InstalledMods.FirstOrDefault(m => m.Id == id);
+
+            if (mod?.IsUpdateAvailable == true)
+                await UpdateMod(mod);
+        }
     }
 }

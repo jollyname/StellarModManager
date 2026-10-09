@@ -10,6 +10,11 @@ public partial class InstalledModInfo : ModInfo
     // UI only
     [JsonIgnore]
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(NeedsDeploy))]
+    private bool isDeployed;
+
+    [JsonIgnore]
+    [ObservableProperty]
     private bool isDeploying;
 
     [JsonIgnore]
@@ -30,7 +35,12 @@ public partial class InstalledModInfo : ModInfo
 
     [JsonIgnore]
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(NeedsDeploy))]
     private bool isUpdateAvailable;
+
+    // Copying to the game is the next step once the mod is up to date
+    [JsonIgnore]
+    public bool NeedsDeploy => !IsDeployed && !IsUpdateAvailable;
 
     [JsonIgnore]
     [ObservableProperty]

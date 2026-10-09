@@ -14,11 +14,16 @@ namespace StellarModManager.ViewModels;
 public partial class MainWindowViewModel
 {
     public ObservableCollection<OnlineModInfo> OnlineMods { get; } = new();
+    // OnlineMods filtered by SearchText and sorted by SortIndex
+    public ObservableCollection<OnlineModInfo> VisibleOnlineMods { get; } = new();
     private readonly ModRepositoryService repositoryService = new();
     private readonly ModInstallerService installerService = new();
 
     [ObservableProperty]
     private int sortIndex;
+
+    [ObservableProperty]
+    private string searchText = "";
 
     [RelayCommand]
     private async Task InstallMod(OnlineModInfo mod)
@@ -39,15 +44,13 @@ public partial class MainWindowViewModel
             string libraryPath = Path.Combine(AppContext.BaseDirectory, "Library", mod.Id);
             await InstallToLibraryAsync(zipFile, libraryPath);
 
-            mod.IsInstalled = true;
-
             File.Delete(zipFile);
 
-            MelonLoaderStatusText = $"{mod.Name} installed";
+            ReportSuccess("StatusInstalled", mod.Name);
         }
         catch (Exception ex)
         {
-            MelonLoaderStatusText = $"Install failed: {ex.Message}";
+            ReportError("StatusInstallFailed", ex.Message);
         }
         finally
         {
@@ -72,7 +75,7 @@ public partial class MainWindowViewModel
         // catch failed refresh
         catch (Exception ex)
         {
-            MelonLoaderStatusText = $"Refresh failed: {ex.Message}";
+            ReportError("StatusRefreshFailed", ex.Message);
             return;
         }
         // remove old mods when finding mods
@@ -81,8 +84,6 @@ public partial class MainWindowViewModel
 
         foreach (var mod in mods)
         {
-            mod.IsInstalled = Directory.Exists(Path.Combine(AppContext.BaseDirectory, "Library", mod.Id));
-
             var existing = OnlineMods.FirstOrDefault(x => x.Id == mod.Id);
 
             if (existing != null)
@@ -97,7 +98,6 @@ public partial class MainWindowViewModel
                 existing.DownloadUrl = mod.DownloadUrl;
                 existing.RepoOwner = mod.RepoOwner;
                 existing.RepoName = mod.RepoName;
-                existing.IsInstalled = mod.IsInstalled;
 
                 if (versionChanged || existing.ThumbnailUrl != mod.ThumbnailUrl)
                 {
@@ -131,34 +131,46 @@ public partial class MainWindowViewModel
 
 
         RefreshUpdateStatuses();
+        ApplyOnlineView();
 
         await Task.WhenAll(OnlineMods.Select(repositoryService.LoadChangelogAsync));
-        SortMods();
+        ApplyOnlineView();
     }
 
     partial void OnSortIndexChanged(int value)
     {
-        SortMods();
-
-        var settings = settingsService.LoadAppSettings();
-        settings.ModSort = value;
-        settingsService.SaveAppSettings(settings);
+        ApplyOnlineView();
+        PersistSettings();
     }
 
-    private void SortMods()
+    partial void OnSearchTextChanged(string value) => ApplyOnlineView();
+
+    private void ApplyOnlineView()
     {
+        var filtered = OnlineMods.Where(m =>
+            string.IsNullOrWhiteSpace(SearchText) ||
+            m.Name.Contains(SearchText, StringComparison.CurrentCultureIgnoreCase) ||
+            m.Author.Contains(SearchText, StringComparison.CurrentCultureIgnoreCase));
+
         var sorted = SortIndex switch
         {
-            1 => OnlineMods.OrderByDescending(m => m.LastUpdated).ToList(),
-            2 => OnlineMods.OrderBy(m => m.Name, StringComparer.OrdinalIgnoreCase).ToList(),
-            _ => OnlineMods.OrderByDescending(m => m.Downloads).ToList()
+            1 => filtered.OrderByDescending(m => m.LastUpdated).ToList(),
+            2 => filtered.OrderBy(m => m.Name, StringComparer.OrdinalIgnoreCase).ToList(),
+            _ => filtered.OrderByDescending(m => m.Downloads).ToList()
         };
+
+        // Update in place so the list keeps its selection and scroll position
+        foreach (var gone in VisibleOnlineMods.Except(sorted).ToList())
+            VisibleOnlineMods.Remove(gone);
 
         for (int i = 0; i < sorted.Count; i++)
         {
-            int current = OnlineMods.IndexOf(sorted[i]);
-            if (current != i)
-                OnlineMods.Move(current, i);
+            int current = VisibleOnlineMods.IndexOf(sorted[i]);
+
+            if (current == -1)
+                VisibleOnlineMods.Insert(i, sorted[i]);
+            else if (current != i)
+                VisibleOnlineMods.Move(current, i);
         }
     }
 }

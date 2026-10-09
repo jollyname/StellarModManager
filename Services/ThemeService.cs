@@ -17,24 +17,34 @@ public class ThemeService
     public void ApplyTheme(ThemeDefinition theme)
     {
         var resources = Application.Current!.Resources;
-        resources["Theme.WindowGradientStart"] = Color.Parse(theme.WindowGradientStart);
-        resources["Theme.WindowGradientMid"] = Color.Parse(theme.WindowGradientMid);
-        resources["Theme.WindowGradientEnd"] = Color.Parse(theme.WindowGradientEnd);
-        resources["Theme.AccentStart"] = Color.Parse(theme.AccentStart);
-        resources["Theme.AccentEnd"] = Color.Parse(theme.AccentEnd);
-        resources["Theme.AccentSolidBrush"] = new SolidColorBrush(Color.Parse(theme.AccentStart));
-        resources["Theme.AccentEndBrush"] = new SolidColorBrush(Color.Parse(theme.AccentEnd));
-        resources["Theme.AccentHoverBrush"] = new SolidColorBrush(Color.Parse(theme.AccentHover));
-        resources["Theme.AccentPressedBrush"] = new SolidColorBrush(Color.Parse(theme.AccentPressed));
-        resources["Theme.CardBackgroundBrush"] = new SolidColorBrush(Color.Parse(theme.CardBackground));
-        resources["Theme.ModCardBackgroundBrush"] = new SolidColorBrush(Color.Parse(theme.ModCardBackground));
-        resources["Theme.ModCardBorderBrush"] = new SolidColorBrush(Color.Parse(theme.ModCardBorder));
-        resources["Theme.TextPrimaryBrush"] = new SolidColorBrush(Color.Parse(theme.TextPrimary));
-        resources["Theme.TextSecondaryBrush"] = new SolidColorBrush(Color.Parse(theme.TextSecondary));
-        resources["Theme.TextMutedBrush"] = new SolidColorBrush(Color.Parse(theme.TextMuted));
-        resources["Theme.DangerBrush"] = new SolidColorBrush(Color.Parse(theme.Danger));
-        resources["Theme.DangerHoverBrush"] = new SolidColorBrush(Color.Parse(theme.DangerHover));
-        resources["Theme.DangerPressedBrush"] = new SolidColorBrush(Color.Parse(theme.DangerPressed));
+
+        void SetBrush(string key, string hex) => resources[$"Theme.{key}Brush"] = new SolidColorBrush(Color.Parse(hex));
+
+        SetBrush("Background", theme.Background);
+        SetBrush("Content", theme.Content);
+        SetBrush("Panel", theme.Panel);
+        SetBrush("Surface", theme.Surface);
+        SetBrush("SurfaceHover", theme.SurfaceHover);
+        SetBrush("Border", theme.Border);
+        SetBrush("Accent", theme.Accent);
+        SetBrush("AccentHover", theme.AccentHover);
+        SetBrush("AccentPressed", theme.AccentPressed);
+        SetBrush("AccentForeground", theme.AccentForeground);
+        SetBrush("TextPrimary", theme.TextPrimary);
+        SetBrush("TextSecondary", theme.TextSecondary);
+        SetBrush("TextMuted", theme.TextMuted);
+        SetBrush("Success", theme.Success);
+        SetBrush("Danger", theme.Danger);
+        SetBrush("DangerHover", theme.DangerHover);
+        SetBrush("DangerPressed", theme.DangerPressed);
+
+        // Fluent controls (checkboxes, focus rings, text selection) follow the theme accent.
+        var accent = Color.Parse(theme.Accent);
+        foreach (var key in new[] { "SystemAccentColor", "SystemAccentColorLight1", "SystemAccentColorLight2", "SystemAccentColorLight3",
+                                    "SystemAccentColorDark1", "SystemAccentColorDark2", "SystemAccentColorDark3" })
+        {
+            resources[key] = accent;
+        }
     }
 
     private Dictionary<string, ThemeDefinition> LoadAllThemes()

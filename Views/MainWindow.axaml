@@ -5,20 +5,14 @@
         xmlns:loc="using:StellarModManager.Services"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="800"
+        mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="820"
         x:Class="StellarModManager.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/icon.ico"
-        Title="StellarModManager"
-        Width="900" Height="800">
-
-    <Window.Background>
-        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
-            <GradientStop Color="{DynamicResource Theme.WindowGradientStart}" Offset="0"/>
-            <GradientStop Color="{DynamicResource Theme.WindowGradientMid}" Offset="0.5"/>
-            <GradientStop Color="{DynamicResource Theme.WindowGradientEnd}" Offset="1"/>
-        </LinearGradientBrush>
-    </Window.Background>
+        Title="Stellar Mod Manager"
+        Width="1280" Height="820"
+        MinWidth="960" MinHeight="600"
+        Background="{DynamicResource Theme.BackgroundBrush}">
 
     <Design.DataContext>
         <vm:MainWindowViewModel/>
@@ -26,82 +20,175 @@
 
     <Grid>
 
-        <!-- SETUP PANEL -->
+        <!-- SETUP -->
         <views:SetupPanelView IsVisible="{Binding SetupRequired}"/>
 
         <!-- MAIN APP -->
-        <Grid
-            IsVisible="{Binding !SetupRequired}"
-            Margin="32"
-            RowDefinitions="Auto,*">
+        <SplitView
+                   IsVisible="{Binding !SetupRequired}"
+                   IsPaneOpen="{Binding IsPaneOpen}"
+                   DisplayMode="CompactInline"
+                   OpenPaneLength="280"
+                   CompactPaneLength="56"
+                   PaneBackground="Transparent">
 
-            <!-- Header -->
-            <Grid Grid.Row="0" Margin="0,0,0,20" ColumnDefinitions="*,Auto,Auto">
+            <SplitView.Pane>
+                <Grid RowDefinitions="Auto,Auto,*,Auto,Auto" Margin="4,8,4,8">
 
-                <StackPanel Grid.Column="0" Spacing="2">
-                    <TextBlock Text="StellarModManager" FontSize="26" FontWeight="Bold" Foreground="White"/>
-                    <TextBlock Text="{Binding GamePath}" FontSize="13" Foreground="#D9C8E8"/>
-                </StackPanel>
+                    <Button Grid.Row="0" Classes="ghost icon" Width="48" Height="36"
+                            Command="{Binding TogglePaneCommand}"
+                            ToolTip.Tip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ToggleNavigation]}">
+                        <PathIcon Data="{StaticResource Icon.Menu}" Width="16" Height="16"/>
+                    </Button>
 
-                <Button
-                    Grid.Column="1"
-                    Classes="secondary"
-                    Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ChangeGameFolder]}"
-                    Command="{Binding SelectGameFolderCommand}"
-                    VerticalAlignment="Center"/>
+                    <StackPanel Spacing="4" Margin="0,8,0,0">
+                        <Button Classes="nav" Classes.selected="{Binding IsBrowsePage}"
+                                Command="{Binding NavigateCommand}" CommandParameter="{x:Static vm:AppPage.Browse}">
+                            <Grid ColumnDefinitions="44,*,Auto">
+                                <Border Classes="pill"/>
+                                <PathIcon Data="{StaticResource Icon.Browse}"/>
+                                <TextBlock Grid.Column="1" VerticalAlignment="Center"
+                                           Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[NavBrowse]}"/>
+                            </Grid>
+                        </Button>
 
-                <Button
-                    Grid.Column="2"
-                    Classes="iconButton"
-                    Margin="10,0,0,0"
-                    IsVisible="{Binding IsUpdateAvailable}"
-                    Command="{Binding OpenUpdatePanelCommand}"
-                    ToolTip.Tip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[UpdateAvailableTooltip]}"
-                    VerticalAlignment="Center">
-                    <Path Width="20" Height="20" Stretch="Uniform" Fill="#FFD166"
-                          Data="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M11,16.5H13V18.5H11V16.5M11,5.5H13V14.5H11V5.5Z"/>
-                </Button>
+                        <Button Classes="nav" Classes.selected="{Binding IsLibraryPage}"
+                                Command="{Binding NavigateCommand}" CommandParameter="{x:Static vm:AppPage.Library}">
+                            <Grid ColumnDefinitions="44,*,Auto">
+                                <Border Classes="pill"/>
+                                <PathIcon Data="{StaticResource Icon.Library}"/>
+                                <TextBlock Grid.Column="1" VerticalAlignment="Center"
+                                           Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[NavLibrary]}"/>
+                                <TextBlock Grid.Column="2" Margin="0,0,14,0" VerticalAlignment="Center" FontSize="12"
+                                           Foreground="{DynamicResource Theme.TextMutedBrush}"
+                                           Text="{Binding InstalledMods.Count}"
+                                           IsVisible="{Binding !!InstalledMods.Count}"/>
+                            </Grid>
+                        </Button>
 
-                <Button
-                    Grid.Column="2"
-                    Classes="iconButton"
-                    Margin="10,0,0,0"
-                    Command="{Binding OpenSettingsCommand}"
-                    ToolTip.Tip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[SettingsTooltip]}"
-                    VerticalAlignment="Center">
-                    <Path
-                        Width="20" Height="20"
-                        Stretch="Uniform"
-                        Fill="White"
-                        Data="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.22,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.22,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.67 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z"/>
-                </Button>
+                        <Button Classes="nav" Classes.selected="{Binding IsUpdatesPage}"
+                                Command="{Binding NavigateCommand}" CommandParameter="{x:Static vm:AppPage.Updates}">
+                            <Grid ColumnDefinitions="44,*,Auto">
+                                <Border Classes="pill"/>
+                                <PathIcon Data="{StaticResource Icon.Updates}"/>
+                                <TextBlock Grid.Column="1" VerticalAlignment="Center"
+                                           Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[NavUpdates]}"/>
+                                <Border Grid.Column="2" Classes="badge" Margin="0,0,12,0"
+                                        IsVisible="{Binding !!AvailableModUpdates.Count}">
+                                    <TextBlock Text="{Binding AvailableModUpdates.Count}"/>
+                                </Border>
+                            </Grid>
+                        </Button>
+                    </StackPanel>
 
-            </Grid>
+                    <!-- Game folder -->
+                    <Button Grid.Row="3" Classes="ghost" Margin="4,0,4,8" Padding="12,10"
+                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                            Background="{DynamicResource Theme.SurfaceBrush}"
+                            IsVisible="{Binding IsPaneOpen}"
+                            Command="{Binding SelectGameFolderCommand}"
+                            ToolTip.Tip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ChangeGameFolder]}">
+                        <StackPanel Spacing="4">
+                            <TextBlock Classes="secondary"
+                                       Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[GameLabel]}"/>
+                            <TextBlock Text="{Binding GamePath}" FontSize="13" TextTrimming="PrefixCharacterEllipsis"/>
+                            <StackPanel Orientation="Horizontal" Spacing="6" IsVisible="{Binding IsMelonLoaderValid}">
+                                <PathIcon Data="{StaticResource Icon.Check}" Width="12" Height="12"
+                                          Foreground="{DynamicResource Theme.SuccessBrush}"/>
+                                <TextBlock Classes="success" FontSize="12"
+                                           Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[MelonLoaderInstalled]}"/>
+                            </StackPanel>
+                            <TextBlock FontSize="12" Foreground="{DynamicResource Theme.DangerBrush}"
+                                       IsVisible="{Binding !IsMelonLoaderValid}"
+                                       Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[MelonLoaderMissing]}"/>
+                        </StackPanel>
+                    </Button>
 
-            <!-- Card containing tabs -->
-            <Border
-                Grid.Row="1"
-                CornerRadius="20"
-                Padding="28"
-                BoxShadow="0 8 32 0 #55000000"
-                Background="{DynamicResource Theme.CardBackgroundBrush}">
+                    <Button Grid.Row="4" Classes="nav" Classes.selected="{Binding IsSettingsPage}"
+                            Command="{Binding NavigateCommand}" CommandParameter="{x:Static vm:AppPage.Settings}">
+                        <Grid ColumnDefinitions="44,*">
+                            <Border Classes="pill"/>
+                            <PathIcon Data="{StaticResource Icon.Settings}"/>
+                            <TextBlock Grid.Column="1" VerticalAlignment="Center"
+                                       Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[SettingsTitle]}"/>
+                        </Grid>
+                    </Button>
+                </Grid>
+            </SplitView.Pane>
 
-                <TabControl SelectedIndex="{Binding SelectedTabIndex}">
-                    <TabItem Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[OnlineModsTab]}">
-                        <views:OnlineModsView/>
-                    </TabItem>
+            <Border Background="{DynamicResource Theme.ContentBrush}"
+                    BorderBrush="{DynamicResource Theme.BorderBrush}"
+                    BorderThickness="1,0,0,0"
+                    ClipToBounds="True">
+                <Grid ColumnDefinitions="*,Auto">
 
-                    <TabItem Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[InstalledModsTab]}">
-                        <views:InstalledModsView/>
-                    </TabItem>
-                </TabControl>
+                    <Grid Grid.Column="0" RowDefinitions="Auto,Auto,Auto,*" Margin="32,24,24,0">
 
+                        <Panel Grid.Row="0" Margin="0,0,0,16">
+                            <TextBlock Classes="pageTitle" IsVisible="{Binding IsBrowsePage}"
+                                       Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[NavBrowse]}"/>
+                            <TextBlock Classes="pageTitle" IsVisible="{Binding IsLibraryPage}"
+                                       Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[NavLibrary]}"/>
+                            <TextBlock Classes="pageTitle" IsVisible="{Binding IsUpdatesPage}"
+                                       Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[NavUpdates]}"/>
+                            <TextBlock Classes="pageTitle" IsVisible="{Binding IsSettingsPage}"
+                                       Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[SettingsTitle]}"/>
+                        </Panel>
+
+                        <!-- App update -->
+                        <Border Classes="infoBar" Margin="0,0,0,12" IsVisible="{Binding IsUpdateBannerVisible}">
+                            <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto">
+                                <PathIcon Data="{StaticResource Icon.Info}" Width="16" Height="16"
+                                          Foreground="{DynamicResource Theme.AccentBrush}"/>
+                                <TextBlock Grid.Column="1" Margin="12,0" FontWeight="SemiBold" VerticalAlignment="Center"
+                                           Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[UpdateAvailableTitle]}"/>
+                                <TextBlock Grid.Column="2" VerticalAlignment="Center" TextWrapping="Wrap"
+                                           Foreground="{DynamicResource Theme.TextSecondaryBrush}"
+                                           Text="{Binding AvailableUpdateText}"/>
+                                <Button Grid.Column="3" Classes="subtle" Margin="12,0,4,0"
+                                        Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Update]}"
+                                        Command="{Binding OpenUpdatePanelCommand}"/>
+                                <Button Grid.Column="4" Classes="ghost icon"
+                                        Command="{Binding DismissUpdateBannerCommand}"
+                                        ToolTip.Tip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Dismiss]}">
+                                    <PathIcon Data="{StaticResource Icon.Close}" Width="12" Height="12"/>
+                                </Button>
+                            </Grid>
+                        </Border>
+
+                        <!-- Result of the last mod operation -->
+                        <Border Grid.Row="2" Classes="infoBar" Margin="0,0,0,12"
+                                IsVisible="{Binding StatusMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                            <Grid ColumnDefinitions="Auto,*,Auto">
+                                <PathIcon Data="{StaticResource Icon.Info}" Width="16" Height="16"
+                                          Foreground="{DynamicResource Theme.DangerBrush}"
+                                          IsVisible="{Binding IsStatusError}"/>
+                                <PathIcon Data="{StaticResource Icon.Check}" Width="16" Height="16"
+                                          Foreground="{DynamicResource Theme.SuccessBrush}"
+                                          IsVisible="{Binding !IsStatusError}"/>
+                                <TextBlock Grid.Column="1" Margin="12,0" VerticalAlignment="Center" TextWrapping="Wrap"
+                                           Text="{Binding StatusMessage}"/>
+                                <Button Grid.Column="2" Classes="ghost icon"
+                                        Command="{Binding DismissStatusCommand}"
+                                        ToolTip.Tip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Dismiss]}">
+                                    <PathIcon Data="{StaticResource Icon.Close}" Width="12" Height="12"/>
+                                </Button>
+                            </Grid>
+                        </Border>
+
+                        <Panel Grid.Row="3">
+                            <views:OnlineModsView IsVisible="{Binding IsBrowsePage}"/>
+                            <views:InstalledModsView IsVisible="{Binding IsLibraryPage}"/>
+                            <views:UpdatesView IsVisible="{Binding IsUpdatesPage}"/>
+                            <views:SettingsPanelView IsVisible="{Binding IsSettingsPage}"/>
+                        </Panel>
+                    </Grid>
+
+                    <views:ModDetailsView Grid.Column="1" Width="320" IsVisible="{Binding !IsSettingsPage}"/>
+                </Grid>
             </Border>
+        </SplitView>
 
-        </Grid>
-        
-        <views:ModDetailsView IsVisible="{Binding IsModDetailsOpen}"/>
-        <views:SettingsPanelView IsVisible="{Binding IsSettingsOpen}"/>
         <views:ConfirmRemoveModView IsVisible="{Binding IsConfirmRemoveOpen}"/>
         <views:UpdatePanelView IsVisible="{Binding IsUpdatePanelOpen}"/>
 

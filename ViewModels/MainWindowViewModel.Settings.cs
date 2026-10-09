@@ -1,7 +1,6 @@
 ﻿using Avalonia.Data.Converters;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using StellarModManager.Models;
 using StellarModManager.Services;
 using System.Collections.ObjectModel;
@@ -20,15 +19,7 @@ public partial class MainWindowViewModel
     public ObservableCollection<string> AvailableLanguages { get; } = new();
 
     [ObservableProperty]
-    private bool hasUnsavedSettings;
-
-    private bool suppressChangeTracking;
-
-    [ObservableProperty]
-    private string selectedTheme = "purple";
-
-    [ObservableProperty]
-    private bool isSettingsOpen;
+    private string selectedTheme = "Midnight Slate";
 
     [ObservableProperty]
     private string selectedLanguage = "en";
@@ -44,41 +35,7 @@ public partial class MainWindowViewModel
 
     private readonly DispatcherTimer updateCheckTimer;
 
-    [RelayCommand]
-    private void OpenSettings()
-    {
-        suppressChangeTracking = true;
-
-        var settings = settingsService.LoadAppSettings();
-
-        SelectedLanguage = settings.Language;
-        SelectedTheme = settings.Theme;
-        ConfirmBeforeRemove = settings.ConfirmBeforeRemove;
-        AutoCheckForModUpdates = settings.AutoCheckForModUpdates;
-        AutoCheckForAppUpdates = settings.AutoCheckForAppUpdates;
-
-        suppressChangeTracking = false;
-        HasUnsavedSettings = false;
-
-        IsSettingsOpen = true;
-    }
-
-    [RelayCommand]
-    private void SaveSettings()
-    {
-        PersistSettings();
-        HasUnsavedSettings = false;
-    }
-
-    [RelayCommand]
-    private void CloseSettings()
-    {
-        PersistSettings();
-        HasUnsavedSettings = false;
-
-        IsSettingsOpen = false;
-    }
-
+    // Settings are saved as soon as they change
     private void PersistSettings()
     {
         settingsService.SaveAppSettings(new AppSettings
@@ -95,28 +52,22 @@ public partial class MainWindowViewModel
     partial void OnSelectedLanguageChanged(string value)
     {
         LocalizationService.Instance.SetLanguage(value);
-        MarkSettingsChanged();
+        PersistSettings();
     }
 
     partial void OnSelectedThemeChanged(string value)
     {
         themeService.ApplyTheme(themeService.LoadTheme(value));
-        MarkSettingsChanged();
+        PersistSettings();
     }
 
-    partial void OnAutoCheckForAppUpdatesChanged(bool value)
-    {
-        HasUnsavedSettings = true;
-    }
+    partial void OnAutoCheckForAppUpdatesChanged(bool value) => PersistSettings();
 
-    partial void OnConfirmBeforeRemoveChanged(bool value)
-    {
-        MarkSettingsChanged();
-    }
+    partial void OnConfirmBeforeRemoveChanged(bool value) => PersistSettings();
 
     partial void OnAutoCheckForModUpdatesChanged(bool value)
     {
-        MarkSettingsChanged();
+        PersistSettings();
         ApplyAutoCheckTimerState();
     }
 
@@ -126,12 +77,6 @@ public partial class MainWindowViewModel
             updateCheckTimer.Start();
         else
             updateCheckTimer.Stop();
-    }
-
-    private void MarkSettingsChanged()
-    {
-        if (!suppressChangeTracking)
-            HasUnsavedSettings = true;
     }
 
     private void LoadAvailableThemes()

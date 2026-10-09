@@ -4,66 +4,60 @@
              xmlns:loc="using:StellarModManager.Services"
              x:Class="StellarModManager.Views.SettingsPanelView"
              x:DataType="vm:MainWindowViewModel">
-    <Border
-        Background="#66000000"
-        HorizontalAlignment="Stretch"
-        VerticalAlignment="Stretch">
-        <Border
-            Width="420"
-            Padding="32"
-            CornerRadius="20"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            BoxShadow="0 8 32 0 #55000000"
-            Background="{DynamicResource Theme.CardBackgroundBrush}">
-            <StackPanel Spacing="20">
-                <TextBlock Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[SettingsTitle]}" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource Theme.TextPrimaryBrush}"/>
-                <StackPanel Spacing="6">
-                    <TextBlock Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[LanguageLabel]}" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource Theme.TextPrimaryBrush}"/>
-                    <ComboBox
-                        ItemsSource="{Binding AvailableLanguages}"
-                        SelectedItem="{Binding SelectedLanguage}"
-                        HorizontalAlignment="Stretch">
+
+    <ScrollViewer>
+        <StackPanel Spacing="4" MaxWidth="720" HorizontalAlignment="Left" Margin="0,0,0,24">
+
+            <Border Classes="card">
+                <Grid ColumnDefinitions="*,Auto">
+                    <StackPanel Spacing="4" VerticalAlignment="Center" Margin="0,0,16,0">
+                        <TextBlock Classes="sectionTitle" FontWeight="Normal"
+                                   Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[GameFolderLabel]}"/>
+                        <TextBlock Classes="secondary" Text="{Binding GamePath}" TextTrimming="PrefixCharacterEllipsis"/>
+                    </StackPanel>
+                    <Button Grid.Column="1" Classes="subtle"
+                            Command="{Binding SelectGameFolderCommand}"
+                            Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ChangeGameFolder]}"/>
+                </Grid>
+            </Border>
+
+            <Border Classes="card">
+                <Grid ColumnDefinitions="*,Auto">
+                    <TextBlock Classes="sectionTitle" FontWeight="Normal" VerticalAlignment="Center"
+                               Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[LanguageLabel]}"/>
+                    <ComboBox Grid.Column="1" MinWidth="200"
+                              ItemsSource="{Binding AvailableLanguages}"
+                              SelectedItem="{Binding SelectedLanguage}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate x:DataType="x:String">
                                 <TextBlock Text="{Binding Converter={x:Static vm:MainWindowViewModel.LanguageNameConverter}}"/>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
+                </Grid>
+            </Border>
+
+            <Border Classes="card">
+                <Grid ColumnDefinitions="*,Auto">
+                    <TextBlock Classes="sectionTitle" FontWeight="Normal" VerticalAlignment="Center"
+                               Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ThemeLabel]}"/>
+                    <ComboBox Grid.Column="1" MinWidth="200"
+                              ItemsSource="{Binding AvailableThemes}"
+                              SelectedItem="{Binding SelectedTheme}"/>
+                </Grid>
+            </Border>
+
+            <Border Classes="card">
+                <StackPanel Spacing="8">
+                    <CheckBox Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ConfirmBeforeRemoveLabel]}"
+                              IsChecked="{Binding ConfirmBeforeRemove}"/>
+                    <CheckBox Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[AutoCheckModUpdatesLabel]}"
+                              IsChecked="{Binding AutoCheckForModUpdates}"/>
+                    <CheckBox Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[AutoCheckAppUpdatesLabel]}"
+                              IsChecked="{Binding AutoCheckForAppUpdates}"/>
                 </StackPanel>
-                <StackPanel Spacing="6">
-                    <TextBlock Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ThemeLabel]}" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource Theme.TextPrimaryBrush}"/>
-                    <ComboBox
-                        ItemsSource="{Binding AvailableThemes}"
-                        SelectedItem="{Binding SelectedTheme}"
-                        HorizontalAlignment="Stretch"/>
-                </StackPanel>
-                <CheckBox
-                    Classes="settingsCheck"
-                    Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ConfirmBeforeRemoveLabel]}"
-                    IsChecked="{Binding ConfirmBeforeRemove}"/>
-                <CheckBox
-                    Classes="settingsCheck"
-                    Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[AutoCheckModUpdatesLabel]}"
-                    IsChecked="{Binding AutoCheckForModUpdates}"/>
-                <CheckBox
-                    Classes="settingsCheck"
-                    Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[AutoCheckAppUpdatesLabel]}"
-                    IsChecked="{Binding AutoCheckForAppUpdates}"/>
-                <Button
-                    Classes="primary saveButton"
-                    Classes.shown="{Binding HasUnsavedSettings}"
-                    Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[SaveChanges]}"
-                    Command="{Binding SaveSettingsCommand}"
-                    HorizontalAlignment="Stretch"
-                    HorizontalContentAlignment="Center"/>
-                <Button
-                    Classes="primary"
-                    Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Close]}"
-                    Command="{Binding CloseSettingsCommand}"
-                    HorizontalAlignment="Stretch"
-                    HorizontalContentAlignment="Center"/>
-            </StackPanel>
-        </Border>
-    </Border>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>
