@@ -112,7 +112,7 @@
                                 Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[InstallToGame]}"/>
 
                         <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center"
-                                    IsVisible="{Binding SelectedInstalledMod.IsDeployed, FallbackValue=False}">
+                                    IsVisible="{Binding SelectedInstalledMod.IsDeployedAndCurrent, FallbackValue=False}">
                             <PathIcon Data="{StaticResource Icon.Check}" Width="14" Height="14"
                                       Foreground="{DynamicResource Theme.SuccessBrush}"/>
                             <TextBlock Classes="success" VerticalAlignment="Center"
