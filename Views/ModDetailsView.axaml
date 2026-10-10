@@ -5,99 +5,185 @@
     xmlns:imaging="using:Avalonia.Media.Imaging"
     xmlns:models="using:StellarModManager.Models"
     x:Class="StellarModManager.Views.ModDetailsView"
-    x:DataType="vm:MainWindowViewModel">
+    x:DataType="vm:MainWindowViewModel"
+    Background="{DynamicResource Theme.PanelBrush}">
 
-    <Border Background="#66000000">
-        <Border Margin="40" MaxWidth="1100" VerticalAlignment="Center" Padding="28"
-            CornerRadius="20"
-            BoxShadow="0 8 32 0 #55000000"
-            Background="{DynamicResource Theme.CardBackgroundBrush}">
+    <Panel>
+        <TextBlock Classes="secondary" FontSize="14" Margin="24"
+                   HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap"
+                   IsVisible="{Binding !HasSelection}"
+                   Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[NoSelection]}"/>
 
-            <ScrollViewer x:Name="DetailsScroll" AllowAutoHide="False">
-                <StackPanel Spacing="16" Margin="0,0,20,0">
+        <ScrollViewer x:Name="DetailsScroll" IsVisible="{Binding HasSelection}">
+            <StackPanel Spacing="16" Margin="24">
 
-                    <Grid ColumnDefinitions="*,Auto">
-                        <StackPanel Grid.Column="0" Spacing="4">
-                            <TextBlock Text="{Binding SelectedMod.Name}" FontSize="30"
-                                FontWeight="Bold"
-                                Foreground="{DynamicResource Theme.TextPrimaryBrush}" />
-                            <StackPanel Orientation="Horizontal" Spacing="10">
-                                <TextBlock Text="{Binding SelectedMod.Version}" FontSize="15"
-                                    FontWeight="SemiBold"
-                                    Foreground="{DynamicResource Theme.AccentEndBrush}" />
-                                <TextBlock Text="{Binding SelectedMod.Author}" FontSize="15"
-                                    Foreground="{DynamicResource Theme.TextSecondaryBrush}" />
-                                <TextBlock Text="{Binding SelectedMod.StatsText}" FontSize="15"
-                                    Foreground="{DynamicResource Theme.TextSecondaryBrush}" />
-                            </StackPanel>
-                        </StackPanel>
-
-                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8"
-                            VerticalAlignment="Center">
-                            <Button Classes="secondary"
-                                Content="{Binding SelectedMod.InstallButtonText}"
-                                IsEnabled="{Binding !SelectedMod.IsInstalling}"
-                                Command="{Binding InstallModCommand}"
-                                CommandParameter="{Binding SelectedMod}" />
-                            <Button Classes="secondary"
-                                Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Close]}"
-                                Command="{Binding CloseModDetailsCommand}" />
-                        </StackPanel>
-                    </Grid>
-
-                    <Border Height="300"
-                        IsVisible="{Binding !!SelectedMod.GalleryImages.Count}"
-                        CornerRadius="12" ClipToBounds="True" Background="#22000000">
-                        <Image Source="{Binding #GalleryList.SelectedItem}" Stretch="Uniform" />
+                <!-- Gallery -->
+                <StackPanel Spacing="10">
+                    <Border Classes="thumbnail" Height="190" CornerRadius="6">
+                        <Panel>
+                            <Image Source="{Binding SelectedMod.ThumbnailImage, FallbackValue={x:Null}}" Stretch="UniformToFill"/>
+                            <Image Source="{Binding #GalleryDots.SelectedItem}" Stretch="UniformToFill"/>
+                        </Panel>
                     </Border>
 
-                    <ListBox x:Name="GalleryList"
-                        AutoScrollToSelectedItem="False"
-                        IsVisible="{Binding !!SelectedMod.GalleryImages.Count}"
-                        ItemsSource="{Binding SelectedMod.GalleryImages}"
-                        SelectionMode="AlwaysSelected"
-                        Background="Transparent"
-                        ScrollViewer.HorizontalScrollBarVisibility="Auto">
+                    <ListBox x:Name="GalleryDots"
+                             HorizontalAlignment="Center"
+                             Background="Transparent"
+                             SelectionMode="AlwaysSelected"
+                             AutoScrollToSelectedItem="False"
+                             IsVisible="{Binding !!SelectedMod.GalleryImages.Count, FallbackValue=False}"
+                             ItemsSource="{Binding SelectedMod.GalleryImages, FallbackValue={x:Null}}">
                         <ListBox.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <StackPanel Orientation="Horizontal" Spacing="8" />
+                                <StackPanel Orientation="Horizontal" Spacing="2"/>
                             </ItemsPanelTemplate>
                         </ListBox.ItemsPanel>
+                        <ListBox.Styles>
+                            <Style Selector="ListBoxItem">
+                                <Setter Property="Padding" Value="4"/>
+                                <Setter Property="MinHeight" Value="0"/>
+                                <Setter Property="Background" Value="Transparent"/>
+                            </Style>
+                            <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter#PART_ContentPresenter, ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter, ListBoxItem:selected:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+                                <Setter Property="Background" Value="Transparent"/>
+                            </Style>
+                            <Style Selector="ListBoxItem Border.dot">
+                                <Setter Property="Width" Value="6"/>
+                                <Setter Property="Height" Value="6"/>
+                                <Setter Property="CornerRadius" Value="3"/>
+                                <Setter Property="Background" Value="{DynamicResource Theme.TextMutedBrush}"/>
+                            </Style>
+                            <Style Selector="ListBoxItem:selected Border.dot">
+                                <Setter Property="Width" Value="18"/>
+                                <Setter Property="Background" Value="{DynamicResource Theme.AccentBrush}"/>
+                            </Style>
+                        </ListBox.Styles>
                         <ListBox.ItemTemplate>
                             <DataTemplate x:DataType="imaging:Bitmap">
-                                <Border Width="160" Height="90" CornerRadius="6" ClipToBounds="True">
-                                    <Image Source="{Binding}" Stretch="UniformToFill" />
-                                </Border>
+                                <Border Classes="dot"/>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
+                </StackPanel>
 
-                    <TextBlock Text="{Binding SelectedMod.Description}" FontSize="15"
-                        TextWrapping="Wrap"
-                        Foreground="{DynamicResource Theme.TextPrimaryBrush}" />
+                <!-- Title and meta -->
+                <StackPanel Spacing="4">
+                    <TextBlock Text="{Binding DetailsMod.Name, FallbackValue={x:Null}}" FontSize="22" FontWeight="SemiBold"
+                               TextWrapping="Wrap" Foreground="{DynamicResource Theme.TextPrimaryBrush}"/>
+                    <WrapPanel>
+                        <TextBlock Classes="secondary" Text="{Binding DetailsMod.Author, FallbackValue={x:Null}}"/>
+                        <TextBlock Classes="secondary" Text="{Binding DetailsMod.Version, StringFormat={} · v{0}, FallbackValue={x:Null}}"/>
+                        <TextBlock Classes="secondary accent" Text="{Binding SelectedInstalledMod.LatestVersion, StringFormat={} → {0}, FallbackValue={x:Null}}"
+                                   IsVisible="{Binding SelectedInstalledMod.IsUpdateAvailable, FallbackValue=False}"/>
+                        <TextBlock Classes="secondary" Text="{Binding SelectedMod.DownloadsText, StringFormat={} · {0}, FallbackValue={x:Null}}"
+                                   IsVisible="{Binding SelectedMod, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+                    </WrapPanel>
+                </StackPanel>
 
-                    <TextBlock Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Changelog]}"
-                        FontSize="16" FontWeight="Bold"
-                        IsVisible="{Binding !!SelectedMod.Changelog.Count}"
-                        Foreground="{DynamicResource Theme.TextPrimaryBrush}" />
+                <TextBlock Text="{Binding DetailsMod.Description, FallbackValue={x:Null}}" TextWrapping="Wrap" FontSize="14"
+                           Foreground="{DynamicResource Theme.TextSecondaryBrush}"/>
 
-                    <ItemsControl ItemsSource="{Binding SelectedMod.Changelog}">
+                <!-- Main action -->
+                <Grid ColumnDefinitions="*,Auto">
+                    <Panel Grid.Column="0">
+                        <Button Classes="accent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                                IsVisible="{Binding CanInstallSelected}"
+                                IsEnabled="{Binding !SelectedMod.IsInstalling, FallbackValue=False}"
+                                Command="{Binding InstallModCommand}"
+                                CommandParameter="{Binding SelectedMod}"
+                                Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Install]}"/>
+
+                        <Button Classes="accent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                                IsVisible="{Binding SelectedInstalledMod.IsUpdateAvailable, FallbackValue=False}"
+                                IsEnabled="{Binding !SelectedInstalledMod.IsUpdating, FallbackValue=False}"
+                                Command="{Binding UpdateModCommand}"
+                                CommandParameter="{Binding SelectedInstalledMod}">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <TextBlock Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Update]}"/>
+                                <TextBlock Text="{Binding SelectedInstalledMod.LatestVersion, FallbackValue={x:Null}}"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Button Classes="accent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                                IsVisible="{Binding SelectedInstalledMod.NeedsDeploy, FallbackValue=False}"
+                                IsEnabled="{Binding !SelectedInstalledMod.IsDeploying, FallbackValue=False}"
+                                Command="{Binding DeployModCommand}"
+                                CommandParameter="{Binding SelectedInstalledMod}"
+                                Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[InstallToGame]}"/>
+
+                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center"
+                                    IsVisible="{Binding SelectedInstalledMod.IsDeployedAndCurrent, FallbackValue=False}">
+                            <PathIcon Data="{StaticResource Icon.Check}" Width="14" Height="14"
+                                      Foreground="{DynamicResource Theme.SuccessBrush}"/>
+                            <TextBlock Classes="success" VerticalAlignment="Center"
+                                       Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[StateDeployed]}"/>
+                        </StackPanel>
+                    </Panel>
+
+                    <Button Grid.Column="1" Classes="subtle icon" Margin="8,0,0,0"
+                            IsVisible="{Binding SelectedMod.RepoUrl, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=False}"
+                            Command="{Binding OpenRepositoryCommand}"
+                            ToolTip.Tip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[OpenRepository]}">
+                        <PathIcon Data="{StaticResource Icon.OpenExternal}" Width="14" Height="14"/>
+                    </Button>
+                </Grid>
+
+                <!-- Secondary actions for mods in the library -->
+                <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding IsSelectedInstalled}">
+                    <Button Classes="subtle"
+                            IsVisible="{Binding SelectedMod, Converter={x:Static ObjectConverters.IsNotNull}}"
+                            IsEnabled="{Binding !SelectedMod.IsInstalling, FallbackValue=False}"
+                            Command="{Binding InstallModCommand}"
+                            CommandParameter="{Binding SelectedMod}"
+                            Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Reinstall]}"/>
+                    <Button Classes="subtle"
+                            Foreground="{DynamicResource Theme.DangerBrush}"
+                            IsEnabled="{Binding !SelectedInstalledMod.IsRemoving, FallbackValue=False}"
+                            Command="{Binding RequestRemoveModCommand}"
+                            CommandParameter="{Binding SelectedInstalledMod}"
+                            Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Remove]}"/>
+                </StackPanel>
+
+                <!-- Progress of the running operation -->
+                <StackPanel Spacing="6" IsVisible="{Binding SelectedMod.IsInstalling, FallbackValue=False}">
+                    <TextBlock Classes="secondary" Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Installing]}"/>
+                    <ProgressBar Classes="modProgress" Minimum="0" Maximum="100" Value="{Binding SelectedMod.DownloadProgress, FallbackValue=0}"/>
+                </StackPanel>
+                <StackPanel Spacing="6" IsVisible="{Binding SelectedInstalledMod.IsUpdating, FallbackValue=False}">
+                    <TextBlock Classes="secondary" Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Updating]}"/>
+                    <ProgressBar Classes="modProgress" Minimum="0" Maximum="100" Value="{Binding SelectedInstalledMod.UpdateProgress, FallbackValue=0}"/>
+                </StackPanel>
+                <StackPanel Spacing="6" IsVisible="{Binding SelectedInstalledMod.IsDeploying, FallbackValue=False}">
+                    <TextBlock Classes="secondary" Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[CopyingToGame]}"/>
+                    <ProgressBar Classes="modProgress" Minimum="0" Maximum="100" Value="{Binding SelectedInstalledMod.DeployProgress, FallbackValue=0}"/>
+                </StackPanel>
+                <TextBlock Classes="secondary" IsVisible="{Binding SelectedInstalledMod.IsRemoving, FallbackValue=False}"
+                           Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Removing]}"/>
+
+                <!-- Release notes -->
+                <StackPanel Spacing="10" IsVisible="{Binding !!SelectedMod.Changelog.Count, FallbackValue=False}">
+                    <Rectangle Classes="separator" Margin="0,4,0,6"/>
+                    <TextBlock Classes="sectionTitle" Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Changelog]}"/>
+                    <ItemsControl ItemsSource="{Binding SelectedMod.Changelog, FallbackValue={x:Null}}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Spacing="12"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate x:DataType="models:ChangelogEntry">
-                                <StackPanel Spacing="4" Margin="0,0,0,12">
-                                    <TextBlock Text="{Binding Version, StringFormat='v{0}'}" FontWeight="SemiBold"
-                                        Foreground="{DynamicResource Theme.AccentEndBrush}" />
-                                    <TextBlock Text="{Binding Notes}" TextWrapping="Wrap"
-                                        Foreground="{DynamicResource Theme.TextPrimaryBrush}" />
+                                <StackPanel Spacing="2">
+                                    <TextBlock Classes="accent" FontSize="13" FontWeight="SemiBold" Text="{Binding Version}"/>
+                                    <TextBlock FontSize="13" TextWrapping="Wrap" Text="{Binding Notes}"
+                                               Foreground="{DynamicResource Theme.TextSecondaryBrush}"/>
                                 </StackPanel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-
                 </StackPanel>
-            </ScrollViewer>
-        </Border>
-    </Border>
 
+            </StackPanel>
+        </ScrollViewer>
+    </Panel>
 
 </UserControl>

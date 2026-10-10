@@ -16,7 +16,8 @@ public partial class OnlineModInfo : ModInfo
         LocalizationService.Instance.LanguageChanged += (_, _) =>
         {
             OnPropertyChanged(nameof(InstallButtonText));
-            OnPropertyChanged(nameof(StatsText));
+            OnPropertyChanged(nameof(UpdatedText));
+            OnPropertyChanged(nameof(DownloadsText));
         };
     }
 
@@ -47,6 +48,11 @@ public partial class OnlineModInfo : ModInfo
     public string RepoOwner { get; set; } = "";
 
     [JsonIgnore]
+    public string? RepoUrl => string.IsNullOrEmpty(RepoOwner) || string.IsNullOrEmpty(RepoName)
+        ? null
+        : $"https://github.com/{RepoOwner}/{RepoName}";
+
+    [JsonIgnore]
     public ObservableCollection<ChangelogEntry> Changelog { get; } = new();
 
     [JsonIgnore]
@@ -54,18 +60,19 @@ public partial class OnlineModInfo : ModInfo
 
     [JsonIgnore]
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(StatsText))]
+    [NotifyPropertyChangedFor(nameof(DownloadsText))]
     private long downloads;
 
     [JsonIgnore]
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(StatsText))]
+    [NotifyPropertyChangedFor(nameof(UpdatedText))]
     private DateTime? lastUpdated;
 
     [JsonIgnore]
-    public string StatsText => LastUpdated is DateTime updated
-        ? string.Format(LocalizationService.Instance["StatsFormat"], Downloads, Ago(updated))
-        : "";
+    public string DownloadsText => string.Format(LocalizationService.Instance["DownloadsFormat"], Downloads);
+
+    [JsonIgnore]
+    public string UpdatedText => LastUpdated is DateTime updated ? Ago(updated) : "";
 
     private static string Ago(DateTime updated)
     {
@@ -82,6 +89,7 @@ public partial class OnlineModInfo : ModInfo
 
     [JsonIgnore]
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowInstalledState), nameof(ShowUpdateState), nameof(ShowNoState))]
     private bool isInstalling;
 
     [JsonIgnore]
@@ -90,7 +98,24 @@ public partial class OnlineModInfo : ModInfo
 
     [JsonIgnore]
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowInstalledState), nameof(ShowUpdateState), nameof(ShowNoState))]
     private bool isInstalled;
+
+    // Set when the installed copy is older than this version
+    [JsonIgnore]
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowInstalledState), nameof(ShowUpdateState))]
+    private bool hasUpdate;
+
+    // State column: exactly one of these (or IsInstalling) is shown
+    [JsonIgnore]
+    public bool ShowInstalledState => IsInstalled && !HasUpdate && !IsInstalling;
+
+    [JsonIgnore]
+    public bool ShowUpdateState => HasUpdate && !IsInstalling;
+
+    [JsonIgnore]
+    public bool ShowNoState => !IsInstalled && !IsInstalling;
 
     [JsonIgnore]
     public string InstallButtonText => IsInstalled ? LocalizationService.Instance["Reinstall"] : LocalizationService.Instance["Install"];

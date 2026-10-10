@@ -1,5 +1,6 @@
 ﻿using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using StellarModManager.Services;
 using System;
 
@@ -12,6 +13,15 @@ public partial class MainWindowViewModel : ViewModelBase
 
     [ObservableProperty]
     private string melonLoaderStatusText = "";
+
+    // Result of the last mod operation, shown in an info bar
+    [ObservableProperty]
+    private string? statusMessage;
+
+    [ObservableProperty]
+    private bool isStatusError;
+
+    private readonly DispatcherTimer statusTimer = new() { Interval = TimeSpan.FromSeconds(5) };
 
     private readonly SettingsService settingsService = new();
 
@@ -35,6 +45,8 @@ public partial class MainWindowViewModel : ViewModelBase
             selectedLanguage = appSettings.Language = usedLanguage;
             settingsService.SaveAppSettings(appSettings);
         }
+
+        statusTimer.Tick += (_, _) => DismissStatus();
 
         updateCheckTimer = new DispatcherTimer { Interval = TimeSpan.FromMinutes(30) };
         updateCheckTimer.Tick += async (_, _) => await RefreshMods();
@@ -68,5 +80,27 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             _ = CheckForAppUpdates();
         }
+    }
+
+    // Successes fade out on their own; errors stay until dismissed
+    private void ReportSuccess(string key, params object[] args) => ShowStatus(LocalizationService.Instance.Format(key, args), false);
+
+    private void ReportError(string key, params object[] args) => ShowStatus(LocalizationService.Instance.Format(key, args), true);
+
+    private void ShowStatus(string message, bool isError)
+    {
+        StatusMessage = message;
+        IsStatusError = isError;
+
+        statusTimer.Stop();
+        if (!isError)
+            statusTimer.Start();
+    }
+
+    [RelayCommand]
+    private void DismissStatus()
+    {
+        statusTimer.Stop();
+        StatusMessage = null;
     }
 }

@@ -4,65 +4,50 @@
              xmlns:loc="using:StellarModManager.Services"
              x:Class="StellarModManager.Views.UpdatePanelView"
              x:DataType="vm:MainWindowViewModel">
-    <Grid Background="#AA000000">
-        <Border
-            Width="420"
-            MaxHeight="480"
-            CornerRadius="20"
-            Padding="28"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            BoxShadow="0 8 32 0 #55000000"
-            Background="{DynamicResource Theme.CardBackgroundBrush}">
+    <Border Classes="overlay">
+        <Border Classes="dialog" Width="460" MaxHeight="520">
             <StackPanel Spacing="16">
                 <TextBlock
                     Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[UpdateAvailableTitle]}"
-                    FontSize="20" FontWeight="Bold"
-                    Foreground="{DynamicResource Theme.TextPrimaryBrush}"/>
+                    FontSize="20" FontWeight="SemiBold"/>
                 <TextBlock
-                    Text="{Binding AvailableUpdate.Version, StringFormat='Version {0} is available'}"
-                    FontSize="14"
+                    Text="{Binding AvailableUpdateText}"
                     Foreground="{DynamicResource Theme.TextSecondaryBrush}"/>
-                <ScrollViewer MaxHeight="220">
+                <ScrollViewer MaxHeight="240">
                     <TextBlock
-                        Text="{Binding AvailableUpdate.ReleaseNotes}"
+                        Text="{Binding AvailableUpdate.ReleaseNotes, FallbackValue={x:Null}}"
                         TextWrapping="Wrap"
                         FontSize="13"
                         Foreground="{DynamicResource Theme.TextSecondaryBrush}"/>
                 </ScrollViewer>
-                <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right"
-                            IsVisible="{Binding !IsDownloadingUpdate}">
+
+                <Grid ColumnDefinitions="*,*" Margin="0,8,0,0" IsVisible="{Binding !IsDownloadingUpdate}">
                     <Button
-                        Classes="secondary"
-                        MinWidth="100"
-                        MinHeight="36"
+                        Grid.Column="0"
+                        Classes="accent"
+                        Margin="0,0,4,0"
+                        HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Center"
-                        VerticalContentAlignment="Center"
-                        Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Later]}"
-                        Command="{Binding CloseUpdatePanelCommand}"/>
-                    <Button
-                        Classes="primary"
-                        MinWidth="100"
-                        MinHeight="36"
-                        HorizontalContentAlignment="Center"
-                        VerticalContentAlignment="Center"
                         Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Download]}"
                         Command="{Binding DownloadUpdateCommand}"/>
-                </StackPanel>
+                    <Button
+                        Grid.Column="1"
+                        Classes="subtle"
+                        Margin="4,0,0,0"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Center"
+                        Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Later]}"
+                        Command="{Binding CloseUpdatePanelCommand}"/>
+                </Grid>
 
                 <StackPanel Spacing="6" IsVisible="{Binding IsDownloadingUpdate}">
-                    <ProgressBar
-                        Minimum="0"
-                        Maximum="100"
-                        Value="{Binding DownloadProgress}"
-                        Height="8"/>
-                    <TextBlock
-                        Text="{Binding DownloadProgress, StringFormat='Downloading... {0:0}%'}"
-                        FontSize="12"
-                        HorizontalAlignment="Right"
-                        Foreground="{DynamicResource Theme.TextSecondaryBrush}"/>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Classes="secondary" Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Downloading]}"/>
+                        <TextBlock Grid.Column="1" Classes="secondary" Text="{Binding DownloadProgress, StringFormat={}{0:0} %}"/>
+                    </Grid>
+                    <ProgressBar Classes="modProgress" Minimum="0" Maximum="100" Value="{Binding DownloadProgress}"/>
                 </StackPanel>
             </StackPanel>
         </Border>
-    </Grid>
+    </Border>
 </UserControl>

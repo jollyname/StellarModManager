@@ -1,21 +1,36 @@
-using Avalonia;
+using System;
+using System.ComponentModel;
 using Avalonia.Controls;
+using StellarModManager.ViewModels;
 
 namespace StellarModManager.Views;
 
 public partial class ModDetailsView : UserControl
 {
+    private MainWindowViewModel? viewModel;
+
     public ModDetailsView()
     {
         InitializeComponent();
     }
 
-    // fix auto scroll down on expanded view
-    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+    // Start each newly selected mod at the top of the pane
+    protected override void OnDataContextChanged(EventArgs e)
     {
-        base.OnPropertyChanged(change);
+        base.OnDataContextChanged(e);
 
-        if (change.Property == IsVisibleProperty && IsVisible)
+        if (viewModel != null)
+            viewModel.PropertyChanged -= OnViewModelPropertyChanged;
+
+        viewModel = DataContext as MainWindowViewModel;
+
+        if (viewModel != null)
+            viewModel.PropertyChanged += OnViewModelPropertyChanged;
+    }
+
+    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(MainWindowViewModel.DetailsMod))
             DetailsScroll.ScrollToHome();
     }
 }

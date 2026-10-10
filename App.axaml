@@ -2,41 +2,52 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="StellarModManager.App"
              xmlns:local="using:StellarModManager"
-             RequestedThemeVariant="Default">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+             RequestedThemeVariant="Dark">
 
     <Application.DataTemplates>
         <local:ViewLocator/>
     </Application.DataTemplates>
-  
+
     <Application.Styles>
         <FluentTheme />
         <StyleInclude Source="avares://StellarModManager/Styles/AppStyles.axaml"/>
     </Application.Styles>
 
     <Application.Resources>
-        <Color x:Key="Theme.WindowGradientStart">#24104F</Color>
-        <Color x:Key="Theme.WindowGradientMid">#5B2C83</Color>
-        <Color x:Key="Theme.WindowGradientEnd">#9B59B6</Color>
+        <!-- Defaults; replaced at startup by ThemeService from Data/Themes -->
+        <SolidColorBrush x:Key="Theme.BackgroundBrush" Color="#202020"/>
+        <SolidColorBrush x:Key="Theme.ContentBrush" Color="#282828"/>
+        <SolidColorBrush x:Key="Theme.PanelBrush" Color="#1C1C1C"/>
+        <SolidColorBrush x:Key="Theme.SurfaceBrush" Color="#2F2F2F"/>
+        <SolidColorBrush x:Key="Theme.SurfaceHoverBrush" Color="#383838"/>
+        <SolidColorBrush x:Key="Theme.BorderBrush" Color="#3A3A3A"/>
 
-        <Color x:Key="Theme.AccentStart">#5B2C83</Color>
-        <Color x:Key="Theme.AccentEnd">#9B59B6</Color>
+        <SolidColorBrush x:Key="Theme.AccentBrush" Color="#60CDFF"/>
+        <SolidColorBrush x:Key="Theme.AccentHoverBrush" Color="#4CC2FF"/>
+        <SolidColorBrush x:Key="Theme.AccentPressedBrush" Color="#3AA7DD"/>
+        <SolidColorBrush x:Key="Theme.AccentForegroundBrush" Color="#000000"/>
 
-        <SolidColorBrush x:Key="Theme.AccentSolidBrush" Color="#5B2C83"/>
-        <SolidColorBrush x:Key="Theme.AccentEndBrush" Color="#9B59B6"/>
-        <SolidColorBrush x:Key="Theme.AccentHoverBrush" Color="#4A2369"/>
-        <SolidColorBrush x:Key="Theme.AccentPressedBrush" Color="#3A1B52"/>
+        <SolidColorBrush x:Key="Theme.TextPrimaryBrush" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="Theme.TextSecondaryBrush" Color="#C5C5C5"/>
+        <SolidColorBrush x:Key="Theme.TextMutedBrush" Color="#8A8A8A"/>
 
-        <SolidColorBrush x:Key="Theme.CardBackgroundBrush" Color="#F7F5FA"/>
-        <SolidColorBrush x:Key="Theme.ModCardBackgroundBrush" Color="#FAF8FC"/>
-        <SolidColorBrush x:Key="Theme.ModCardBorderBrush" Color="#EAE3F0"/>
+        <SolidColorBrush x:Key="Theme.SuccessBrush" Color="#6CCB5F"/>
 
-        <SolidColorBrush x:Key="Theme.TextPrimaryBrush" Color="#2B1B3D"/>
-        <SolidColorBrush x:Key="Theme.TextSecondaryBrush" Color="#6B5C7A"/>
-        <SolidColorBrush x:Key="Theme.TextMutedBrush" Color="#8A7F91"/>
+        <SolidColorBrush x:Key="Theme.DangerBrush" Color="#C42B1C"/>
+        <SolidColorBrush x:Key="Theme.DangerHoverBrush" Color="#B0261A"/>
+        <SolidColorBrush x:Key="Theme.DangerPressedBrush" Color="#9A2016"/>
 
-        <SolidColorBrush x:Key="Theme.DangerBrush" Color="#C0392B"/>
-        <SolidColorBrush x:Key="Theme.DangerHoverBrush" Color="#A5281A"/>
-        <SolidColorBrush x:Key="Theme.DangerPressedBrush" Color="#7F1D12"/>
+        <!-- Icons (Material Design Icons) -->
+        <StreamGeometry x:Key="Icon.Menu">M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z</StreamGeometry>
+        <StreamGeometry x:Key="Icon.Browse">M16.36,14C16.44,13.34 16.5,12.68 16.5,12C16.5,11.32 16.44,10.66 16.36,10H19.74C19.9,10.64 20,11.31 20,12C20,12.69 19.9,13.36 19.74,14M14.59,19.56C15.19,18.45 15.65,17.25 15.97,16H18.92C17.96,17.65 16.43,18.93 14.59,19.56M14.34,14H9.66C9.56,13.34 9.5,12.68 9.5,12C9.5,11.32 9.56,10.65 9.66,10H14.34C14.43,10.65 14.5,11.32 14.5,12C14.5,12.68 14.43,13.34 14.34,14M12,19.96C11.17,18.76 10.5,17.43 10.09,16H13.91C13.5,17.43 12.83,18.76 12,19.96M8,8H5.08C6.03,6.34 7.57,5.06 9.4,4.44C8.8,5.55 8.35,6.75 8,8M5.08,16H8C8.35,17.25 8.8,18.45 9.4,19.56C7.57,18.93 6.03,17.65 5.08,16M4.26,14C4.1,13.36 4,12.69 4,12C4,11.31 4.1,10.64 4.26,10H7.64C7.56,10.66 7.5,11.32 7.5,12C7.5,12.68 7.56,13.34 7.64,14M12,4.03C12.83,5.23 13.5,6.57 13.91,8H10.09C10.5,6.57 11.17,5.23 12,4.03M18.92,8H15.97C15.65,6.75 15.19,5.55 14.59,4.44C16.43,5.07 17.96,6.34 18.92,8M12,2C6.47,2 2,6.5 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z</StreamGeometry>
+        <StreamGeometry x:Key="Icon.Library">M19,19H5V5H15V3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V11H19M7.91,10.08L6.5,11.5L11,16L21,6L19.59,4.58L11,13.17L7.91,10.08Z</StreamGeometry>
+        <StreamGeometry x:Key="Icon.Updates">M2,12H4V17H20V12H22V17C22,18.11 21.11,19 20,19H4C2.9,19 2,18.11 2,17V12M12,15L17.55,9.54L16.13,8.13L13,11.25V2H11V11.25L7.88,8.13L6.46,9.55L12,15Z</StreamGeometry>
+        <StreamGeometry x:Key="Icon.Settings">M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.22,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.22,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.67 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z</StreamGeometry>
+        <StreamGeometry x:Key="Icon.Search">M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z</StreamGeometry>
+        <StreamGeometry x:Key="Icon.Refresh">M17.65,6.35C16.2,4.9 14.21,4 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20C15.73,20 18.84,17.45 19.73,14H17.65C16.83,16.33 14.61,18 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6C13.66,6 15.14,6.69 16.22,7.78L13,11H20V4L17.65,6.35Z</StreamGeometry>
+        <StreamGeometry x:Key="Icon.Close">M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z</StreamGeometry>
+        <StreamGeometry x:Key="Icon.OpenExternal">M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z</StreamGeometry>
+        <StreamGeometry x:Key="Icon.Check">M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z</StreamGeometry>
+        <StreamGeometry x:Key="Icon.Info">M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M11,16.5H13V18.5H11V16.5M11,5.5H13V14.5H11V5.5Z</StreamGeometry>
     </Application.Resources>
 </Application>

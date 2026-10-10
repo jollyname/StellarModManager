@@ -18,7 +18,7 @@ Stellar Mod Manager makes it easier to install, update, and manage mods for Stel
 2. Launch Stellar Mod Manager.
 3. Select your StellarDrive installation folder when prompted.
 4. If MelonLoader is not installed, the manager can install it automatically.
-5. Use the Online and Installed tabs to manage your mods.
+5. Use Browse, Library and Updates in the sidebar to manage your mods.
 
 ## Download
 

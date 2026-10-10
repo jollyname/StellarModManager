@@ -15,10 +15,18 @@ public partial class MainWindowViewModel
     private bool isUpdateAvailable;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(AvailableUpdateText))]
     private UpdateInfo? availableUpdate;
+
+    public string AvailableUpdateText => AvailableUpdate is null
+        ? ""
+        : LocalizationService.Instance.Format("NewVersionFormat", AvailableUpdate.Version);
 
     [ObservableProperty]
     private bool isUpdatePanelOpen;
+
+    [ObservableProperty]
+    private bool isUpdateBannerVisible;
 
     [ObservableProperty]
     private bool isDownloadingUpdate;
@@ -33,7 +41,7 @@ public partial class MainWindowViewModel
 
         AvailableUpdate = update;
         IsUpdateAvailable = true;
-        IsUpdatePanelOpen = true;
+        IsUpdateBannerVisible = true;
     }
 
     [RelayCommand]
@@ -42,6 +50,9 @@ public partial class MainWindowViewModel
         if (AvailableUpdate is null) return;
         IsUpdatePanelOpen = true;
     }
+
+    [RelayCommand]
+    private void DismissUpdateBanner() => IsUpdateBannerVisible = false;
 
     [RelayCommand]
     private void CloseUpdatePanel()
