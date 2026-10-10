@@ -9,19 +9,20 @@
     <Grid RowDefinitions="Auto,*">
 
         <!-- Column headers -->
-        <Grid Grid.Row="0" ColumnDefinitions="60,*,80,80,150" Height="32" Margin="12,0">
+        <Grid Grid.Row="0" IsVisible="{Binding !IsCompactView}" ColumnDefinitions="60,*,80,80,150" Height="32" Margin="12,0">
             <TextBlock Grid.Column="1" Classes="columnHeader" Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ColumnName]}"/>
             <TextBlock Grid.Column="2" Classes="columnHeader" Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ColumnVersion]}"/>
             <TextBlock Grid.Column="3" Classes="columnHeader" Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ColumnLatest]}"/>
             <TextBlock Grid.Column="4" Classes="columnHeader" Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ColumnState]}"/>
         </Grid>
-        <Rectangle Grid.Row="0" Classes="separator" VerticalAlignment="Bottom"/>
+        <Rectangle Grid.Row="0" Classes="separator" VerticalAlignment="Bottom" IsVisible="{Binding !IsCompactView}"/>
 
         <TextBlock Grid.Row="1" Classes="secondary" FontSize="14" Margin="12,16"
                    IsVisible="{Binding !InstalledMods.Count}"
                    Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[NoInstalledMods]}"/>
 
-        <ListBox Grid.Row="1" Classes="table" Margin="0,4,0,0"
+        <ListBox Grid.Row="1" Classes="table" IsVisible="{Binding !IsCompactView}"
+                 Margin="0,4,0,0"
                  ItemsSource="{Binding InstalledMods}"
                  SelectedItem="{Binding LibrarySelection}">
             <ListBox.ItemTemplate>
@@ -52,6 +53,41 @@
                                            Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[StateNotDeployed]}"/>
                             </Panel>
                         </Grid>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <!-- Compact view: card grid -->
+        <ListBox Grid.Row="1" Classes="cards" Margin="0,4,0,0"
+                 IsVisible="{Binding IsCompactView}"
+                 ItemsSource="{Binding InstalledMods}"
+                 SelectedItem="{Binding LibrarySelection}">
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="models:InstalledModInfo">
+                    <Grid RowDefinitions="Auto,Auto">
+                        <Border Classes="cardThumbnail">
+                            <Image Source="{Binding Online.ThumbnailImage, FallbackValue={x:Null}}" Stretch="UniformToFill"/>
+                        </Border>
+
+                        <StackPanel Grid.Row="1" Margin="12,10,12,12" Spacing="2">
+                            <TextBlock Text="{Binding Name}" FontSize="14" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"
+                                       Foreground="{DynamicResource Theme.TextPrimaryBrush}"/>
+                            <TextBlock Classes="secondary" Text="{Binding Author}" TextTrimming="CharacterEllipsis"/>
+
+                            <Grid ColumnDefinitions="*,Auto" Margin="0,8,0,0">
+                                <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
+                                    <TextBlock Classes="secondary" Text="{Binding Version}"/>
+                                    <TextBlock Classes="secondary" Text="→" IsVisible="{Binding IsUpdateAvailable}"/>
+                                    <TextBlock Classes="secondary accent" Text="{Binding LatestVersion}" IsVisible="{Binding IsUpdateAvailable}"/>
+                                </StackPanel>
+                                <Panel Grid.Column="1" Margin="8,0,0,0">
+                                    <TextBlock Classes="secondary success" IsVisible="{Binding IsDeployed}"
+                                               Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[StateDeployed]}"/>
+                                    <TextBlock Classes="secondary" IsVisible="{Binding !IsDeployed}"
+                                               Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[StateNotDeployed]}"/>
+                                </Panel>
+                            </Grid>
+                        </StackPanel>
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>

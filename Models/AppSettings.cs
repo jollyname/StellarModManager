@@ -10,4 +10,5 @@ public class AppSettings
     public bool AutoCheckForAppUpdates { get; set; } = true;
     public string Theme { get; set; } = "Midnight Slate";
     public int ModSort { get; set; }
+    public bool CompactModList { get; set; }
 }

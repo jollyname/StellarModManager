@@ -46,6 +46,8 @@
   "MelonLoaderInstalled": "MelonLoader instalado",
   "MelonLoaderMissing": "MelonLoader no instalado",
   "SearchPlaceholder": "Buscar mods",
+  "ViewList": "Vista de lista",
+  "ViewCompact": "Vista compacta",
   "SortLabel": "Ordenar",
   "ColumnName": "Nombre",
   "ColumnVersion": "Versión",

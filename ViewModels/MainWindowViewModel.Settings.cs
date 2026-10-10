@@ -1,6 +1,7 @@
 ﻿using Avalonia.Data.Converters;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using StellarModManager.Models;
 using StellarModManager.Services;
 using System.Collections.ObjectModel;
@@ -33,6 +34,10 @@ public partial class MainWindowViewModel
     [ObservableProperty]
     private bool autoCheckForModUpdates = true;
 
+    // Mod lists show a three-column card grid instead of the table
+    [ObservableProperty]
+    private bool isCompactView;
+
     private readonly DispatcherTimer updateCheckTimer;
 
     // Settings are saved as soon as they change
@@ -45,7 +50,8 @@ public partial class MainWindowViewModel
             ConfirmBeforeRemove = ConfirmBeforeRemove,
             AutoCheckForModUpdates = AutoCheckForModUpdates,
             AutoCheckForAppUpdates = AutoCheckForAppUpdates,
-            ModSort = SortIndex
+            ModSort = SortIndex,
+            CompactModList = IsCompactView
         });
     }
 
@@ -64,6 +70,14 @@ public partial class MainWindowViewModel
     partial void OnAutoCheckForAppUpdatesChanged(bool value) => PersistSettings();
 
     partial void OnConfirmBeforeRemoveChanged(bool value) => PersistSettings();
+
+    partial void OnIsCompactViewChanged(bool value) => PersistSettings();
+
+    [RelayCommand]
+    private void ShowListView() => IsCompactView = false;
+
+    [RelayCommand]
+    private void ShowCompactView() => IsCompactView = true;
 
     partial void OnAutoCheckForModUpdatesChanged(bool value)
     {

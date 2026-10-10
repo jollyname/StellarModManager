@@ -46,6 +46,8 @@
   "MelonLoaderInstalled": "MelonLoader установлен",
   "MelonLoaderMissing": "MelonLoader не установлен",
   "SearchPlaceholder": "Поиск модов",
+  "ViewList": "Список",
+  "ViewCompact": "Компактный вид",
   "SortLabel": "Сортировка",
   "ColumnName": "Название",
   "ColumnVersion": "Версия",

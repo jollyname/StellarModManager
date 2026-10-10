@@ -124,16 +124,34 @@
 
                     <Grid Grid.Column="0" RowDefinitions="Auto,Auto,Auto,*" Margin="32,24,24,0">
 
-                        <Panel Grid.Row="0" Margin="0,0,0,16">
-                            <TextBlock Classes="pageTitle" IsVisible="{Binding IsBrowsePage}"
-                                       Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[NavBrowse]}"/>
-                            <TextBlock Classes="pageTitle" IsVisible="{Binding IsLibraryPage}"
-                                       Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[NavLibrary]}"/>
-                            <TextBlock Classes="pageTitle" IsVisible="{Binding IsUpdatesPage}"
-                                       Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[NavUpdates]}"/>
-                            <TextBlock Classes="pageTitle" IsVisible="{Binding IsSettingsPage}"
-                                       Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[SettingsTitle]}"/>
-                        </Panel>
+                        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,16">
+                            <Panel>
+                                <TextBlock Classes="pageTitle" IsVisible="{Binding IsBrowsePage}"
+                                           Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[NavBrowse]}"/>
+                                <TextBlock Classes="pageTitle" IsVisible="{Binding IsLibraryPage}"
+                                           Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[NavLibrary]}"/>
+                                <TextBlock Classes="pageTitle" IsVisible="{Binding IsUpdatesPage}"
+                                           Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[NavUpdates]}"/>
+                                <TextBlock Classes="pageTitle" IsVisible="{Binding IsSettingsPage}"
+                                           Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[SettingsTitle]}"/>
+                            </Panel>
+
+                            <!-- List / compact view switch -->
+                            <Border Grid.Column="1" Classes="segmented" IsVisible="{Binding !IsSettingsPage}">
+                                <StackPanel Orientation="Horizontal" Spacing="2">
+                                    <Button Classes="ghost" Classes.selected="{Binding !IsCompactView}"
+                                            Command="{Binding ShowListViewCommand}"
+                                            ToolTip.Tip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ViewList]}">
+                                        <PathIcon Data="{StaticResource Icon.ViewList}"/>
+                                    </Button>
+                                    <Button Classes="ghost" Classes.selected="{Binding IsCompactView}"
+                                            Command="{Binding ShowCompactViewCommand}"
+                                            ToolTip.Tip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ViewCompact]}">
+                                        <PathIcon Data="{StaticResource Icon.ViewGrid}"/>
+                                    </Button>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
 
                         <!-- App update -->
                         <Border Classes="infoBar" Margin="0,0,0,12" IsVisible="{Binding IsUpdateBannerVisible}">

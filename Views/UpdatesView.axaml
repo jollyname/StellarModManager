@@ -17,7 +17,8 @@
                    IsVisible="{Binding !AvailableModUpdates.Count}"
                    Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[NoUpdates]}"/>
 
-        <ListBox Grid.Row="1" Classes="table"
+        <ListBox Grid.Row="1" Classes="table" IsVisible="{Binding !IsCompactView}"
+                
                  ItemsSource="{Binding AvailableModUpdates}"
                  SelectedItem="{Binding UpdatesSelection}">
             <ListBox.ItemTemplate>
@@ -51,6 +52,42 @@
                                              Minimum="0" Maximum="100" Value="{Binding UpdateProgress}"/>
                             </Panel>
                         </Grid>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <!-- Compact view: card grid -->
+        <ListBox Grid.Row="1" Classes="cards" Margin="0"
+                 IsVisible="{Binding IsCompactView}"
+                 ItemsSource="{Binding AvailableModUpdates}"
+                 SelectedItem="{Binding UpdatesSelection}">
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="models:InstalledModInfo">
+                    <Grid RowDefinitions="Auto,Auto">
+                        <Border Classes="cardThumbnail">
+                            <Image Source="{Binding Online.ThumbnailImage, FallbackValue={x:Null}}" Stretch="UniformToFill"/>
+                        </Border>
+
+                        <StackPanel Grid.Row="1" Margin="12,10,12,12" Spacing="2">
+                            <TextBlock Text="{Binding Name}" FontSize="14" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"
+                                       Foreground="{DynamicResource Theme.TextPrimaryBrush}"/>
+                            <TextBlock Classes="secondary" Text="{Binding Author}" TextTrimming="CharacterEllipsis"/>
+
+                            <StackPanel Orientation="Horizontal" Spacing="4" Margin="0,8,0,0">
+                                <TextBlock Classes="secondary" Text="{Binding Version}"/>
+                                <TextBlock Classes="secondary" Text="→"/>
+                                <TextBlock Classes="secondary accent" Text="{Binding LatestVersion}"/>
+                            </StackPanel>
+                            <Panel Margin="0,8,0,0">
+                                <Button Classes="subtle" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                                        IsVisible="{Binding !IsUpdating}"
+                                        Command="{Binding $parent[UserControl].((vm:MainWindowViewModel)DataContext).UpdateModCommand}"
+                                        CommandParameter="{Binding}"
+                                        Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Update]}"/>
+                                <ProgressBar Classes="modProgress" IsVisible="{Binding IsUpdating}" VerticalAlignment="Center"
+                                             Minimum="0" Maximum="100" Value="{Binding UpdateProgress}"/>
+                            </Panel>
+                        </StackPanel>
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>

@@ -239,6 +239,73 @@
         <Setter Property="Background" Value="{DynamicResource Theme.SurfaceBrush}"/>
     </Style>
 
+    <!-- Mod card grid (compact view): three cards per row -->
+    <Style Selector="ListBox.cards">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="ItemsPanel">
+            <ItemsPanelTemplate>
+                <UniformGrid Columns="3"/>
+            </ItemsPanelTemplate>
+        </Setter>
+    </Style>
+    <Style Selector="ListBox.cards ListBoxItem">
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Margin" Value="0,0,12,12"/>
+        <Setter Property="CornerRadius" Value="6"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource Theme.BorderBrush}"/>
+        <Setter Property="Background" Value="{DynamicResource Theme.SurfaceBrush}"/>
+        <Setter Property="ClipToBounds" Value="True"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+    </Style>
+    <Style Selector="ListBox.cards ListBoxItem /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource Theme.SurfaceBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource Theme.BorderBrush}"/>
+    </Style>
+    <Style Selector="ListBox.cards ListBoxItem:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource Theme.SurfaceHoverBrush}"/>
+    </Style>
+    <Style Selector="ListBox.cards ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter, ListBox.cards ListBoxItem:selected:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource Theme.SurfaceHoverBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource Theme.AccentBrush}"/>
+    </Style>
+    <Style Selector="Border.cardThumbnail">
+        <Setter Property="Height" Value="110"/>
+        <Setter Property="Background" Value="{DynamicResource Theme.SurfaceHoverBrush}"/>
+    </Style>
+
+    <!-- List / compact segmented switch -->
+    <Style Selector="Border.segmented">
+        <Setter Property="Background" Value="{DynamicResource Theme.SurfaceBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource Theme.BorderBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="Padding" Value="2"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+    <Style Selector="Border.segmented Button">
+        <Setter Property="Width" Value="30"/>
+        <Setter Property="Height" Value="26"/>
+        <Setter Property="MinHeight" Value="0"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="CornerRadius" Value="3"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Foreground" Value="{DynamicResource Theme.TextMutedBrush}"/>
+    </Style>
+    <Style Selector="Border.segmented Button.selected">
+        <Setter Property="Foreground" Value="{DynamicResource Theme.TextPrimaryBrush}"/>
+    </Style>
+    <Style Selector="Border.segmented Button.selected /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource Theme.SurfaceHoverBrush}"/>
+    </Style>
+    <Style Selector="Border.segmented Button PathIcon">
+        <Setter Property="Width" Value="14"/>
+        <Setter Property="Height" Value="14"/>
+    </Style>
+
     <!-- Inputs -->
     <Style Selector="TextBox">
         <Setter Property="CornerRadius" Value="4"/>
