@@ -3,6 +3,7 @@
         xmlns:vm="using:StellarModManager.ViewModels"
         xmlns:views="using:StellarModManager.Views"
         xmlns:loc="using:StellarModManager.Services"
+        xmlns:svg="clr-namespace:Avalonia.Svg.Skia;assembly=Svg.Controls.Skia.Avalonia"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="820"
@@ -35,10 +36,16 @@
             <SplitView.Pane>
                 <Grid RowDefinitions="Auto,Auto,*,Auto,Auto" Margin="4,8,4,8">
 
-                    <Button Grid.Row="0" Classes="ghost icon" Width="48" Height="36"
+                    <Button Grid.Row="1" Classes="ghost icon" Width="48" Height="36"
                             Command="{Binding TogglePaneCommand}"
                             ToolTip.Tip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ToggleNavigation]}">
-                        <PathIcon Data="{StaticResource Icon.Menu}" Width="16" Height="16"/>
+                        <svg:Svg Grid.Column="0"
+                            Path="/Assets/Icons/menu.svg"
+                            Width="24"
+                            Height="24"
+                            Stretch="Uniform"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"/>
                     </Button>
 
                     <StackPanel Spacing="4" Margin="0,8,0,0">
@@ -46,7 +53,13 @@
                                 Command="{Binding NavigateCommand}" CommandParameter="{x:Static vm:AppPage.Browse}">
                             <Grid ColumnDefinitions="44,*,Auto">
                                 <Border Classes="pill"/>
-                                <PathIcon Data="{StaticResource Icon.Browse}"/>
+                                <svg:Svg Grid.Column="0"
+                                         Path="/Assets/Icons/browse.svg"
+                                         Width="24"
+                                         Height="24"
+                                         Stretch="Uniform"
+                                         VerticalAlignment="Center"
+                                         HorizontalAlignment="Center"/>
                                 <TextBlock Grid.Column="1" VerticalAlignment="Center"
                                            Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[NavBrowse]}"/>
                             </Grid>
@@ -56,7 +69,13 @@
                                 Command="{Binding NavigateCommand}" CommandParameter="{x:Static vm:AppPage.Library}">
                             <Grid ColumnDefinitions="44,*,Auto">
                                 <Border Classes="pill"/>
-                                <PathIcon Data="{StaticResource Icon.Library}"/>
+                                <svg:Svg Grid.Column="0"
+                                         Path="/Assets/Icons/library.svg"
+                                         Width="24"
+                                         Height="24"
+                                         Stretch="Uniform"
+                                         VerticalAlignment="Center"
+                                         HorizontalAlignment="Center"/>
                                 <TextBlock Grid.Column="1" VerticalAlignment="Center"
                                            Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[NavLibrary]}"/>
                                 <TextBlock Grid.Column="2" Margin="0,0,14,0" VerticalAlignment="Center" FontSize="12"
@@ -70,7 +89,13 @@
                                 Command="{Binding NavigateCommand}" CommandParameter="{x:Static vm:AppPage.Updates}">
                             <Grid ColumnDefinitions="44,*,Auto">
                                 <Border Classes="pill"/>
-                                <PathIcon Data="{StaticResource Icon.Updates}"/>
+                                <svg:Svg Grid.Column="0"
+                                         Path="/Assets/Icons/update.svg"
+                                         Width="24"
+                                         Height="24"
+                                         Stretch="Uniform"
+                                         VerticalAlignment="Center"
+                                         HorizontalAlignment="Center"/>
                                 <TextBlock Grid.Column="1" VerticalAlignment="Center"
                                            Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[NavUpdates]}"/>
                                 <Border Grid.Column="2" Classes="badge" Margin="0,0,12,0"
@@ -93,8 +118,13 @@
                                        Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[GameLabel]}"/>
                             <TextBlock Text="{Binding GamePath}" FontSize="13" TextTrimming="PrefixCharacterEllipsis"/>
                             <StackPanel Orientation="Horizontal" Spacing="6" IsVisible="{Binding IsMelonLoaderValid}">
-                                <PathIcon Data="{StaticResource Icon.Check}" Width="12" Height="12"
-                                          Foreground="{DynamicResource Theme.SuccessBrush}"/>
+                                <svg:Svg Grid.Column="0"
+                                    Path="/Assets/Icons/check.svg"
+                                    Width="12"
+                                    Height="12"
+                                    Stretch="Uniform"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Center"/>   
                                 <TextBlock Classes="success" FontSize="12"
                                            Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[MelonLoaderInstalled]}"/>
                             </StackPanel>
@@ -108,7 +138,13 @@
                             Command="{Binding NavigateCommand}" CommandParameter="{x:Static vm:AppPage.Settings}">
                         <Grid ColumnDefinitions="44,*">
                             <Border Classes="pill"/>
-                            <PathIcon Data="{StaticResource Icon.Settings}"/>
+                            <svg:Svg Grid.Column="0"
+                                Path="/Assets/Icons/settings.svg"
+                                Width="24"
+                                Height="24"
+                                Stretch="Uniform"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"/>
                             <TextBlock Grid.Column="1" VerticalAlignment="Center"
                                        Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[SettingsTitle]}"/>
                         </Grid>
@@ -156,8 +192,13 @@
                         <!-- App update -->
                         <Border Classes="infoBar" Margin="0,0,0,12" IsVisible="{Binding IsUpdateBannerVisible}">
                             <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto">
-                                <PathIcon Data="{StaticResource Icon.Info}" Width="16" Height="16"
-                                          Foreground="{DynamicResource Theme.AccentBrush}"/>
+                                <svg:Svg Grid.Column="0"
+                                    Path="/Assets/Icons/info.svg"
+                                    Width="16"
+                                    Height="16"
+                                    Stretch="Uniform"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Center"/>   
                                 <TextBlock Grid.Column="1" Margin="12,0" FontWeight="SemiBold" VerticalAlignment="Center"
                                            Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[UpdateAvailableTitle]}"/>
                                 <TextBlock Grid.Column="2" VerticalAlignment="Center" TextWrapping="Wrap"
@@ -169,7 +210,13 @@
                                 <Button Grid.Column="4" Classes="ghost icon"
                                         Command="{Binding DismissUpdateBannerCommand}"
                                         ToolTip.Tip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Dismiss]}">
-                                    <PathIcon Data="{StaticResource Icon.Close}" Width="12" Height="12"/>
+                                <svg:Svg Grid.Column="0"
+                                    Path="/Assets/Icons/close.svg"
+                                    Width="24"
+                                    Height="24"
+                                    Stretch="Uniform"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Center"/>   
                                 </Button>
                             </Grid>
                         </Border>
@@ -178,18 +225,34 @@
                         <Border Grid.Row="2" Classes="infoBar" Margin="0,0,0,12"
                                 IsVisible="{Binding StatusMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
                             <Grid ColumnDefinitions="Auto,*,Auto">
-                                <PathIcon Data="{StaticResource Icon.Info}" Width="16" Height="16"
-                                          Foreground="{DynamicResource Theme.DangerBrush}"
-                                          IsVisible="{Binding IsStatusError}"/>
-                                <PathIcon Data="{StaticResource Icon.Check}" Width="16" Height="16"
-                                          Foreground="{DynamicResource Theme.SuccessBrush}"
-                                          IsVisible="{Binding !IsStatusError}"/>
+                                <svg:Svg Grid.Column="0"
+                                    Path="/Assets/Icons/info.svg"
+                                    Width="16"
+                                    Height="16"
+                                    Stretch="Uniform"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Center"   
+                                    IsVisible="{Binding IsStatusError}"/>
+                                <svg:Svg Grid.Column="0"
+                                    Path="/Assets/Icons/check.svg"
+                                    Width="16"
+                                    Height="16"
+                                    Stretch="Uniform"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Center"
+                                    IsVisible="{Binding !IsStatusError}"/>
                                 <TextBlock Grid.Column="1" Margin="12,0" VerticalAlignment="Center" TextWrapping="Wrap"
                                            Text="{Binding StatusMessage}"/>
                                 <Button Grid.Column="2" Classes="ghost icon"
                                         Command="{Binding DismissStatusCommand}"
                                         ToolTip.Tip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Dismiss]}">
-                                    <PathIcon Data="{StaticResource Icon.Close}" Width="12" Height="12"/>
+                                <svg:Svg Grid.Column="0"
+                                    Path="/Assets/Icons/close.svg"
+                                    Width="24"
+                                    Height="24"
+                                    Stretch="Uniform"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Center"/>   
                                 </Button>
                             </Grid>
                         </Border>

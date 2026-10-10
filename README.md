@@ -20,6 +20,12 @@ Stellar Mod Manager makes it easier to install, update, and manage mods for Stel
 4. If MelonLoader is not installed, the manager can install it automatically.
 5. Use Browse, Library and Updates in the sidebar to manage your mods.
 
+## Submitting Your Mods
+
+Want to make your mod available to other StellarDrive players? You can submit your mod for inclusion in Stellar Mod Manager.
+
+Visit the [Mod Submission page](https://voxar.dev/submit/) to submit your mod for review.
+
 ## Download
 
 You can find releases in the GitHub Releases section.

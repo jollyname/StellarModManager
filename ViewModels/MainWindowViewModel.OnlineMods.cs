@@ -69,7 +69,7 @@ public partial class MainWindowViewModel
         try
         {
             mods = await repositoryService.GetModsAsync(
-                "https://raw.githubusercontent.com/jollyname/StellarModRepository/main/mods.json"
+                "https://voxar.dev/mods.json"
             );
         }
         // catch failed refresh

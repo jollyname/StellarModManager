@@ -2,6 +2,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:vm="using:StellarModManager.ViewModels"
     xmlns:loc="using:StellarModManager.Services"
+    xmlns:svg="clr-namespace:Avalonia.Svg.Skia;assembly=Svg.Controls.Skia.Avalonia"
     xmlns:imaging="using:Avalonia.Media.Imaging"
     xmlns:models="using:StellarModManager.Models"
     x:Class="StellarModManager.Views.ModDetailsView"
@@ -124,7 +125,13 @@
                             IsVisible="{Binding SelectedMod.RepoUrl, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=False}"
                             Command="{Binding OpenRepositoryCommand}"
                             ToolTip.Tip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[OpenRepository]}">
-                        <PathIcon Data="{StaticResource Icon.OpenExternal}" Width="14" Height="14"/>
+                        <svg:Svg Grid.Column="0"
+                            Path="/Assets/Icons/openExternal.svg"
+                            Width="22"
+                            Height="22"
+                            Stretch="Uniform"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"/>  
                     </Button>
                 </Grid>
 
