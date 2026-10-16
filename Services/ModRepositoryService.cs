@@ -7,6 +7,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Media.Imaging;
 using System.Linq; // thumbnailss
@@ -17,6 +18,7 @@ namespace StellarModManager.Services;
 public class ModRepositoryService
 {
     private readonly HttpClient httpClient = new();
+    private readonly SemaphoreSlim commitSlots = new(4);
 
     public ModRepositoryService()
     {
@@ -42,22 +44,23 @@ public class ModRepositoryService
         return Bitmap.DecodeToWidth(stream, 192);
     }
 
-    // request no cache (even tho im almost certain this doesnt work, we still try...)
+    // The catalogue host sends Cache-Control: no-cache. raw.githubusercontent.com ignores a query string.
     private static string NoCache(string url) => $"{url}?t={DateTime.UtcNow.Ticks}";
 
-    public async Task<List<OnlineModInfo>> GetModsAsync(string url)
+    public async Task<ModListResult> GetModsAsync(string url)
     {
         string json = await httpClient.GetStringAsync(NoCache(url));
 
         RepositoryResponse? response = JsonSerializer.Deserialize<RepositoryResponse>(json);
+        var result = new ModListResult();
 
         if (response == null)
-            return new();
+            return result;
 
         //load every mod at once, to speed up request
-        OnlineModInfo?[] mods = await Task.WhenAll(response.Mods.Select(LoadModAsync));
-
-        return mods.OfType<OnlineModInfo>().ToList();
+        OnlineModInfo?[] mods = await Task.WhenAll(response.Mods.Select(entry => LoadModAsync(entry, result)));
+        result.Mods.AddRange(mods.OfType<OnlineModInfo>());
+        return result;
     }
 
     private static readonly Regex GitHubName = new(@"^[A-Za-z0-9][A-Za-z0-9._-]*$");
@@ -68,21 +71,25 @@ public class ModRepositoryService
         return GitHubName.IsMatch(entry.Author) && GitHubName.IsMatch(entry.Repo) && RepoPath.IsMatch(entry.MetadataPath);
     }
 
-    private async Task<OnlineModInfo?> LoadModAsync(ModRegistryEntry entry)
+    private async Task<OnlineModInfo?> LoadModAsync(ModRegistryEntry entry, ModListResult result)
     {
         if (!IsSafe(entry))
             return null;
 
         try
         {
-            string metadataUrl = $"https://raw.githubusercontent.com/{entry.Author}/{entry.Repo}/main/{entry.MetadataPath}/mod.json";
+            string commit = await LatestCommitAsync(entry.Author, entry.Repo);
+            string metadataUrl = GithubFiles.RawFile(entry.Author, entry.Repo, commit, entry.MetadataPath, "mod.json");
 
-            string modJson = await httpClient.GetStringAsync(NoCache(metadataUrl));
+            string modJson = await httpClient.GetStringAsync(metadataUrl);
 
             OnlineModInfo? mod = JsonSerializer.Deserialize<OnlineModInfo>(modJson);
 
             if (mod == null)
+            {
+                result.AddFailure(entry.Author, entry.Repo);
                 return null;
+            }
 
             mod.RepoOwner = entry.Author;
             mod.RepoName = entry.Repo;
@@ -97,8 +104,7 @@ public class ModRepositoryService
             mod.DownloadUrl = $"https://github.com/{entry.Author}/{entry.Repo}/releases/download/v{mod.Version}/{entry.Repo}.zip";
 
             // grab every image with thumbnail at the same time
-            string baseUrl = $"https://raw.githubusercontent.com/{entry.Author}/{entry.Repo}/main/{entry.MetadataPath}/";
-            string ToUrl(string path) => $"{baseUrl}{path}";
+            string ToUrl(string path) => GithubFiles.RawFile(entry.Author, entry.Repo, commit, entry.MetadataPath, path);
 
             if (!string.IsNullOrWhiteSpace(mod.Thumbnail))
             {
@@ -111,8 +117,28 @@ public class ModRepositoryService
         }
         catch (Exception ex)
         {
+            result.AddFailure(entry.Author, entry.Repo);
             Console.WriteLine($"Failed to load mod from {entry.Repo}: {ex.Message}");
             return null;
+        }
+    }
+
+    private async Task<string> LatestCommitAsync(string owner, string repo)
+    {
+        await commitSlots.WaitAsync();
+        try
+        {
+            string atom = await httpClient.GetStringAsync($"https://github.com/{owner}/{repo}/commits/main.atom");
+            string? commit = GithubFiles.CommitFromAtom(atom);
+
+            if (commit == null)
+                throw new InvalidOperationException($"No commit for {owner}/{repo}");
+
+            return commit;
+        }
+        finally
+        {
+            commitSlots.Release();
         }
     }
 
@@ -188,8 +214,7 @@ public class ModRepositoryService
 
         try
         {
-            byte[] bytes = await httpClient.GetByteArrayAsync(
-                NoCache(mod.ThumbnailUrl));
+            byte[] bytes = await httpClient.GetByteArrayAsync(mod.ThumbnailUrl);
 
             using var contentStream = new MemoryStream(bytes);
             mod.ThumbnailImage = Bitmap.DecodeToWidth(contentStream, 192);
@@ -220,7 +245,7 @@ public class ModRepositoryService
         {
             try
             {
-                byte[] bytes = await httpClient.GetByteArrayAsync(NoCache(url));
+                byte[] bytes = await httpClient.GetByteArrayAsync(url);
                 using var contentStream = new MemoryStream(bytes);
                 mod.GalleryImages.Add(Bitmap.DecodeToWidth(contentStream, 1280));
             }

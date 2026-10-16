@@ -64,11 +64,11 @@ public partial class MainWindowViewModel
     [RelayCommand]
     private async Task RefreshMods()
     {
-        List<OnlineModInfo> mods;
+        ModListResult loaded;
 
         try
         {
-            mods = await repositoryService.GetModsAsync(
+            loaded = await repositoryService.GetModsAsync(
                 "https://jollyname.dev/mods.json"
             );
         }
@@ -78,9 +78,17 @@ public partial class MainWindowViewModel
             ReportError("StatusRefreshFailed", ex.Message);
             return;
         }
-        // Remove old mods when finding mods
+
+        List<OnlineModInfo> mods = loaded.Mods;
+
+        // A repository that failed to answer keeps the card already on screen.
         foreach (var gone in OnlineMods.Where(o => mods.All(m => m.Id != o.Id)).ToList())
+        {
+            if (loaded.Failed(gone.RepoOwner, gone.RepoName))
+                continue;
+
             OnlineMods.Remove(gone);
+        }
 
         foreach (var mod in mods)
         {
