@@ -81,5 +81,6 @@
   "StatusNotInRepository": "Этот мод не найден в онлайн-репозитории.",
   "StatusUpdated": "{0} обновлён до {1}.",
   "StatusUpdatedNotDeployed": "{0} обновлён до {1}. Установите его в игру, чтобы использовать.",
-  "StatusUpdateFailed": "Ошибка обновления: {0}"
+  "StatusUpdateFailed": "Ошибка обновления: {0}",
+  "Videos": "Видео"
 }

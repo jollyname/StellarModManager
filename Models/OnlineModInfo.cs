@@ -41,6 +41,17 @@ public partial class OnlineModInfo : ModInfo
     public List<string> ImageUrls { get; set; } = new();
 
     [JsonIgnore]
+    public ObservableCollection<ModVideo> VideoCards { get; } = new();
+
+    public void RebuildVideos()
+    {
+        VideoCards.Clear();
+
+        foreach (ModVideo card in VideoLinks.Cards(Videos))
+            VideoCards.Add(card);
+    }
+
+    [JsonIgnore]
     public ObservableCollection<Bitmap> GalleryImages { get; } = new(); 
 
     [JsonIgnore]

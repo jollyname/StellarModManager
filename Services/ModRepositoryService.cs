@@ -106,6 +106,7 @@ public class ModRepositoryService
             }
 
             mod.ImageUrls = mod.Images.Where(path => !string.IsNullOrWhiteSpace(path)).Select(ToUrl).ToList();
+            mod.RebuildVideos();
 
             return mod;
         }
@@ -200,6 +201,26 @@ public class ModRepositoryService
                 $"Thumbnail loading failed for {mod.Name}: {ex.Message}");
 
             mod.ThumbnailImage = LoadDefaultThumbnail(mod);
+        }
+    }
+
+    public async Task LoadVideosAsync(OnlineModInfo mod)
+    {
+        foreach (ModVideo card in mod.VideoCards)
+        {
+            if (card.Poster != null || string.IsNullOrWhiteSpace(card.PosterUrl))
+                continue;
+
+            try
+            {
+                byte[] bytes = await httpClient.GetByteArrayAsync(card.PosterUrl);
+                using var contentStream = new MemoryStream(bytes);
+                card.Poster = Bitmap.DecodeToWidth(contentStream, 640);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Video poster failed for {mod.Name}: {ex.Message}");
+            }
         }
     }
 

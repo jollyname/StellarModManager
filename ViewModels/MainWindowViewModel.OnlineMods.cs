@@ -102,6 +102,18 @@ public partial class MainWindowViewModel
                 existing.RepoOwner = mod.RepoOwner;
                 existing.RepoName = mod.RepoName;
 
+                var nextVideos = mod.Videos ?? new();
+                bool videosChanged = existing.Videos == null || !existing.Videos.SequenceEqual(nextVideos);
+                existing.Videos = nextVideos;
+
+                if (videosChanged)
+                {
+                    existing.RebuildVideos();
+
+                    if (ReferenceEquals(SelectedMod, existing))
+                        _ = repositoryService.LoadVideosAsync(existing);
+                }
+
                 if (versionChanged || existing.ThumbnailUrl != mod.ThumbnailUrl)
                 {
                     existing.ThumbnailUrl = mod.ThumbnailUrl;

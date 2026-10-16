@@ -81,5 +81,6 @@
   "StatusNotInRepository": "This mod could not be found in the online repository.",
   "StatusUpdated": "{0} updated to {1}.",
   "StatusUpdatedNotDeployed": "{0} updated to {1}. Install it to your game to use it.",
-  "StatusUpdateFailed": "Update failed: {0}"
+  "StatusUpdateFailed": "Update failed: {0}",
+  "Videos": "Videos"
 }
