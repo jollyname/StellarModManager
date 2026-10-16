@@ -103,7 +103,9 @@
                                             <DataTemplate x:DataType="models:ModTag">
                                                 <Border Classes="tag"
                                                         Classes.assisted="{Binding IsAssisted}"
-                                                        Classes.vibecoded="{Binding IsVibecoded}">
+                                                        Classes.vibecoded="{Binding IsVibecoded}"
+                                                        Classes.active="{Binding IsActive}"
+                                                        Classes.inactive="{Binding IsInactive}">
                                                     <TextBlock Text="{Binding Text}"/>
                                                 </Border>
                                             </DataTemplate>
@@ -170,6 +172,8 @@
                                         <Border Classes="tag"
                                                 Classes.assisted="{Binding IsAssisted}"
                                                 Classes.vibecoded="{Binding IsVibecoded}"
+                                                Classes.active="{Binding IsActive}"
+                                                Classes.inactive="{Binding IsInactive}"
                                                 Margin="0,0,4,4">
                                             <TextBlock Text="{Binding Text}"/>
                                         </Border>

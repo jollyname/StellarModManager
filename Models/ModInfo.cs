@@ -30,6 +30,10 @@ namespace StellarModManager.Models
         [JsonPropertyName("ai")]
         public string Ai { get; set; } = "";
 
+        // "active" or "inactive". Empty means the author did not say.
+        [JsonPropertyName("development")]
+        public string Development { get; set; } = "";
+
         [JsonPropertyName("tags")]
         public List<string> Tags { get; set; } = new();
     }

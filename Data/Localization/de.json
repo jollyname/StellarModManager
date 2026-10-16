@@ -81,5 +81,7 @@
   "StatusNotInRepository": "Dieser Mod wurde im Online-Repository nicht gefunden.",
   "StatusUpdated": "{0} auf {1} aktualisiert.",
   "StatusUpdatedNotDeployed": "{0} auf {1} aktualisiert. Installiere ihn ins Spiel, um ihn zu nutzen.",
-  "StatusUpdateFailed": "Update fehlgeschlagen: {0}"
+  "StatusUpdateFailed": "Update fehlgeschlagen: {0}",
+  "DevelopmentActive": "In Entwicklung",
+  "DevelopmentInactive": "Inaktiv"
 }

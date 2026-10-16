@@ -94,6 +94,7 @@ public partial class MainWindowViewModel
                 existing.Name = mod.Name;
                 existing.Author = mod.Author;
                 existing.Ai = mod.Ai;
+                existing.Development = mod.Development;
                 existing.Tags = mod.Tags;
                 existing.RebuildTags();
                 existing.Version = mod.Version;

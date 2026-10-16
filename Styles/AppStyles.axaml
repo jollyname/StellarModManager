@@ -213,6 +213,17 @@
     <Style Selector="Border.tag.vibecoded TextBlock">
         <Setter Property="Foreground" Value="White"/>
     </Style>
+    <Style Selector="Border.tag.active">
+        <Setter Property="Background" Value="#2F9E6B"/>
+        <Setter Property="BorderBrush" Value="#2F9E6B"/>
+    </Style>
+    <Style Selector="Border.tag.active TextBlock">
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+    <Style Selector="Border.tag.inactive">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource Theme.TextMutedBrush}"/>
+    </Style>
 
     <!-- Info bars and cards -->
     <Style Selector="Border.infoBar">

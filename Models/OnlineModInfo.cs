@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace StellarModManager.Models;
 
 // Reuse for regular tags and ai tag
-public record ModTag(string Text, bool IsAssisted = false, bool IsVibecoded = false);
+public record ModTag(string Text, bool IsAssisted = false, bool IsVibecoded = false, bool IsActive = false, bool IsInactive = false);
 
 public partial class OnlineModInfo : ModInfo
 {
@@ -22,6 +22,7 @@ public partial class OnlineModInfo : ModInfo
             OnPropertyChanged(nameof(InstallButtonText));
             OnPropertyChanged(nameof(UpdatedText));
             OnPropertyChanged(nameof(DownloadsText));
+            RebuildTags();
         };
     }
 
@@ -58,7 +59,7 @@ public partial class OnlineModInfo : ModInfo
 
     // I just put AI tags in here so they can't be used as regular tags
     private static readonly HashSet<string> ReservedTags = new(StringComparer.OrdinalIgnoreCase)
-    { "ai-free", "ai-assisted", "vibecoded" };
+    { "ai-free", "ai-assisted", "vibecoded", "active", "inactive" };
 
     [JsonIgnore]
     public List<ModTag> _Tags { get; private set; } = new();
@@ -73,6 +74,16 @@ public partial class OnlineModInfo : ModInfo
             case "ai-free": list.Add(new ModTag("AI-free", IsAssisted: false, IsVibecoded: false)); break;
             case "ai-assisted": list.Add(new ModTag("AI-assisted", IsAssisted: true)); break;
             case "vibecoded": list.Add(new ModTag("Vibecoded", IsVibecoded: true)); break;
+        }
+
+        switch ((Development ?? "").Trim().ToLowerInvariant())
+        {
+            case "active":
+                list.Add(new ModTag(LocalizationService.Instance["DevelopmentActive"], IsActive: true));
+                break;
+            case "inactive":
+                list.Add(new ModTag(LocalizationService.Instance["DevelopmentInactive"], IsInactive: true));
+                break;
         }
 
         list.AddRange((Tags ?? new())
