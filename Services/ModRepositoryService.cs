@@ -7,6 +7,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Media.Imaging;
 using System.Linq; // thumbnailss
@@ -17,6 +18,11 @@ namespace StellarModManager.Services;
 public class ModRepositoryService
 {
     private readonly HttpClient httpClient = new();
+    private readonly SemaphoreSlim releaseSlots = new(4);
+    private readonly DownloadCountStore downloadCounts = new(DownloadCountStore.DefaultPath);
+    private readonly HashSet<string> fetchedReleases = new(StringComparer.OrdinalIgnoreCase);
+    private readonly object limitGate = new();
+    private DateTime blockedUntil;
 
     public ModRepositoryService()
     {
@@ -116,36 +122,106 @@ public class ModRepositoryService
         }
     }
 
-    // reuse request instead of always starting a new one
+    // Reuse a finished request. A rate-limit response keeps the saved counts and does not retry until GitHub allows it.
     public Task LoadChangelogAsync(OnlineModInfo mod)
     {
-        if (mod.ChangelogTask == null)
-            mod.ChangelogTask = FetchChangelogAsync(mod);
+        downloadCounts.Apply(mod);
 
-        return mod.ChangelogTask;
+        if (IsBlocked())
+            return Task.CompletedTask;
+
+        string key = mod.RepoOwner + "/" + mod.RepoName;
+
+        lock (fetchedReleases)
+        {
+            if (fetchedReleases.Contains(key))
+                return Task.CompletedTask;
+
+            if (mod.ChangelogTask is { IsCompleted: false })
+                return mod.ChangelogTask;
+
+            mod.ChangelogTask = FetchChangelogAsync(mod, key);
+            return mod.ChangelogTask;
+        }
     }
 
-    private async Task FetchChangelogAsync(OnlineModInfo mod)
+    public void InvalidateChangelog(OnlineModInfo mod)
     {
+        lock (fetchedReleases)
+            fetchedReleases.Remove(mod.RepoOwner + "/" + mod.RepoName);
+
+        mod.ChangelogTask = null;
+    }
+
+    private bool IsBlocked()
+    {
+        lock (limitGate)
+            return DateTime.UtcNow < blockedUntil;
+    }
+
+    private void Block(DateTime until)
+    {
+        lock (limitGate)
+        {
+            if (until > blockedUntil)
+                blockedUntil = until;
+        }
+    }
+
+    private async Task FetchChangelogAsync(OnlineModInfo mod, string key)
+    {
+        if (IsBlocked())
+            return;
+
+        await releaseSlots.WaitAsync();
+
         try
         {
-            var releases = await httpClient.GetFromJsonAsync<List<GitHubRelease>>(
-                $"https://api.github.com/repos/{mod.RepoOwner}/{mod.RepoName}/releases?per_page=30") ?? new();
+            if (IsBlocked())
+                return;
 
-            mod.Downloads = releases.Sum(release => release.assets?.Sum(asset => asset.download_count) ?? 0);
-            mod.LastUpdated = releases.Max(release => release.published_at);
+            using HttpResponseMessage response = await httpClient.GetAsync(
+                $"https://api.github.com/repos/{mod.RepoOwner}/{mod.RepoName}/releases?per_page=30");
 
-            foreach (var release in releases)
+            if (ReleaseCounts.IsLimited(response))
             {
-                if (Version.TryParse(release.tag_name.TrimStart('v'), out var version))
-                    mod.Changelog.Add(new ChangelogEntry(version, release.body ?? ""));
+                Block(ReleaseCounts.BlockedUntil(response, DateTime.UtcNow));
+                Console.WriteLine($"GitHub rate limit hit for {mod.Name}; keeping saved download counts.");
+                return;
             }
+
+            if (!response.IsSuccessStatusCode)
+            {
+                Console.WriteLine($"Changelog failed for {mod.Name}: {(int)response.StatusCode}");
+                return;
+            }
+
+            List<GitHubRelease> releases = await response.Content.ReadFromJsonAsync<List<GitHubRelease>>() ?? new();
+            mod.Downloads = ReleaseCounts.Total(releases);
+            mod.LastUpdated = ReleaseCounts.Latest(releases);
+            mod.Changelog.Clear();
+
+            foreach (GitHubRelease release in releases)
+            {
+                if (!string.IsNullOrWhiteSpace(release.tag_name)
+                    && Version.TryParse(release.tag_name.TrimStart('v'), out Version? version))
+                {
+                    mod.Changelog.Add(new ChangelogEntry(version, release.body ?? ""));
+                }
+            }
+
+            downloadCounts.Remember(mod);
+
+            lock (fetchedReleases)
+                fetchedReleases.Add(key);
         }
         catch (Exception ex)
         {
-            // for retrying the changelog fetch later
-            mod.ChangelogTask = null;
             Console.WriteLine($"Changelog failed for {mod.Name}: {ex.Message}");
+        }
+        finally
+        {
+            releaseSlots.Release();
         }
     }
 

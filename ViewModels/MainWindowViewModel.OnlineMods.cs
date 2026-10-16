@@ -120,7 +120,7 @@ public partial class MainWindowViewModel
                 if (versionChanged)
                 {
                     existing.Changelog.Clear();
-                    existing.ChangelogTask = null;
+                    repositoryService.InvalidateChangelog(existing);
                 }
             }
             else
