@@ -67,6 +67,37 @@
                     </ListBox>
                 </StackPanel>
 
+                <StackPanel Spacing="10" IsVisible="{Binding !!SelectedMod.VideoCards.Count, FallbackValue=False}">
+                    <TextBlock Classes="sectionTitle"
+                               Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Videos]}"/>
+                    <ItemsControl ItemsSource="{Binding SelectedMod.VideoCards}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Spacing="10"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="models:ModVideo">
+                                <Button Classes="videoCard" Click="OpenVideoClicked">
+                                    <Border Classes="thumbnail" Height="152" CornerRadius="6">
+                                        <Panel>
+                                            <Image Source="{Binding Poster}" Stretch="UniformToFill"/>
+                                            <Ellipse Width="44" Height="44" Fill="#B3000000"
+                                                     HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            <Path Fill="White" Width="16" Height="18" Stretch="Uniform"
+                                                  HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                  Data="M 5,2 L 5,16 L 15,9 Z"/>
+                                            <Border VerticalAlignment="Bottom" Background="#99000000" Padding="8,4">
+                                                <TextBlock Text="{Binding Label}" Foreground="White" FontSize="12"/>
+                                            </Border>
+                                        </Panel>
+                                    </Border>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+
                 <!-- Title and meta -->
                 <StackPanel Spacing="4">
                     <TextBlock Text="{Binding DetailsMod.Name, FallbackValue={x:Null}}" FontSize="22" FontWeight="SemiBold"

@@ -82,6 +82,7 @@
   "StatusUpdated": "{0} mis à jour vers {1}.",
   "StatusUpdatedNotDeployed": "{0} mis à jour vers {1}. Installez-le dans le jeu pour l'utiliser.",
   "StatusUpdateFailed": "Échec de la mise à jour : {0}",
+  "Videos": "Vidéos"
   "DevelopmentActive": "En développement",
   "DevelopmentInactive": "Inactif"
 }

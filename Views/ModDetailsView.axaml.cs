@@ -1,6 +1,8 @@
 using System;
 using System.ComponentModel;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
+using StellarModManager.Models;
 using StellarModManager.ViewModels;
 
 namespace StellarModManager.Views;
@@ -32,5 +34,11 @@ public partial class ModDetailsView : UserControl
     {
         if (e.PropertyName == nameof(MainWindowViewModel.DetailsMod))
             DetailsScroll.ScrollToHome();
+    }
+
+    private void OpenVideoClicked(object? sender, RoutedEventArgs e)
+    {
+        if (sender is Button { DataContext: ModVideo video })
+            viewModel?.OpenVideoCommand.Execute(video);
     }
 }

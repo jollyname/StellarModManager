@@ -44,6 +44,19 @@
         <Setter Property="BorderThickness" Value="1"/>
     </Style>
 
+    <Style Selector="Button.videoCard">
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="MinHeight" Value="0"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="CornerRadius" Value="6"/>
+    </Style>
+    <Style Selector="Button.videoCard:pointerover /template/ ContentPresenter#PART_ContentPresenter, Button.videoCard:pressed /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
+
     <!-- Accent (primary) button -->
     <Style Selector="Button.accent">
         <Setter Property="Background" Value="{DynamicResource Theme.AccentBrush}"/>
