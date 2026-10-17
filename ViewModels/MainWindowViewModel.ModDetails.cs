@@ -50,7 +50,6 @@ public partial class MainWindowViewModel
             return;
 
         _ = repositoryService.LoadGalleryAsync(value);
-        _ = repositoryService.LoadVideosAsync(value);
         _ = repositoryService.LoadChangelogAsync(value);
     }
 
@@ -71,13 +70,6 @@ public partial class MainWindowViewModel
                 SelectedMod = UpdatesSelection?.Online;
                 break;
         }
-    }
-
-    [RelayCommand]
-    private async Task OpenVideo(ModVideo video)
-    {
-        if (App.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime { MainWindow: Window window })
-            await window.Launcher.LaunchUriAsync(new Uri(video.Url));
     }
 
     [RelayCommand]

@@ -82,7 +82,6 @@
   "StatusUpdated": "{0} updated to {1}.",
   "StatusUpdatedNotDeployed": "{0} updated to {1}. Install it to your game to use it.",
   "StatusUpdateFailed": "Update failed: {0}",
-  "Videos": "Videos"
   "DevelopmentActive": "In development",
   "DevelopmentInactive": "Inactive"
 }
