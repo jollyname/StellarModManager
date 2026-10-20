@@ -68,12 +68,14 @@ public partial class OnlineModInfo : ModInfo
     {
         var list = new List<ModTag>();
 
+        var loc = LocalizationService.Instance;
+
         // AI badge
         switch ((Ai ?? "").Trim().ToLowerInvariant())
         {
-            case "ai-free": list.Add(new ModTag("AI-free", IsAssisted: false, IsVibecoded: false)); break;
-            case "ai-assisted": list.Add(new ModTag("AI-assisted", IsAssisted: true)); break;
-            case "vibecoded": list.Add(new ModTag("Vibecoded", IsVibecoded: true)); break;
+            case "ai-free": list.Add(new ModTag(loc["AiFree"])); break;
+            case "ai-assisted": list.Add(new ModTag(loc["AiAssisted"], IsAssisted: true)); break;
+            case "vibecoded": list.Add(new ModTag(loc["AiVibecoded"], IsVibecoded: true)); break;
         }
 
         switch ((Development ?? "").Trim().ToLowerInvariant())

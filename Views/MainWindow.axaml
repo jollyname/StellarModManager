@@ -282,6 +282,8 @@
         </SplitView>
 
         <views:ConfirmRemoveModView IsVisible="{Binding IsConfirmRemoveOpen}"/>
+        <views:ConfirmRemoveModView IsVisible="{Binding IsConfirmRemoveOpen}"/>
+        <views:ConfirmDeployModView IsVisible="{Binding IsConfirmDeployOpen}"/>
         <views:UpdatePanelView IsVisible="{Binding IsUpdatePanelOpen}"/>
 
     </Grid>

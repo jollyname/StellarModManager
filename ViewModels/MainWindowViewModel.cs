@@ -34,6 +34,7 @@ public partial class MainWindowViewModel : ViewModelBase
         selectedTheme = appSettings.Theme;
         selectedLanguage = appSettings.Language;
         confirmBeforeRemove = appSettings.ConfirmBeforeRemove;
+        AutoDeployDependencies = appSettings.AutoDeployDependencies;
         autoCheckForModUpdates = appSettings.AutoCheckForModUpdates;
         autoCheckForAppUpdates = appSettings.AutoCheckForAppUpdates;
         sortIndex = appSettings.ModSort;
@@ -48,6 +49,9 @@ public partial class MainWindowViewModel : ViewModelBase
         }
 
         statusTimer.Tick += (_, _) => DismissStatus();
+
+        // Rebuild the dependency tooltips when the language changes
+        LocalizationService.Instance.LanguageChanged += (_, _) => RefreshDependencyStatuses();
 
         updateCheckTimer = new DispatcherTimer { Interval = TimeSpan.FromMinutes(30) };
         updateCheckTimer.Tick += async (_, _) => await RefreshMods();

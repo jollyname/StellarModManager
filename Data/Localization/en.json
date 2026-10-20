@@ -1,4 +1,4 @@
-﻿{
+{
   "LanguageName": "English",
   "ChangeGameFolder": "Change Game Folder",
   "SettingsTitle": "Settings",
@@ -82,6 +82,20 @@
   "StatusUpdated": "{0} updated to {1}.",
   "StatusUpdatedNotDeployed": "{0} updated to {1}. Install it to your game to use it.",
   "StatusUpdateFailed": "Update failed: {0}",
+  "AiFree": "AI-free",
+  "AiAssisted": "AI-assisted",
+  "AiVibecoded": "Vibecoded",
   "DevelopmentActive": "In development",
-  "DevelopmentInactive": "Inactive"
+  "DevelopmentInactive": "Inactive",
+  "ConfirmDeployTitle": "Deploy dependencies too?",
+  "ConfirmDeployButton": "Deploy all",
+  "AutoDeployDependenciesLabel": "Deploy dependencies automatically",
+  "ConfirmDeployMessage": "{0} needs {1}. Deploy them too?",
+  "StatusDependencyNotInList": "Can't install {0}: these required mods aren't in the mod list: {1}",
+  "StatusInstalledWithDependencies": "{0} installed, along with: {1}",
+  "ConfirmRemoveDependentsMessage": "Other mods depend on {1} ({0}). Remove it anyway?",
+  "DependencyMissingLine": "Missing dependencies: {0}",
+  "DependencyNotInGameLine": "Dependencies not in game: {0}",
+  "StatusDeployDependencyMissing": "Can't copy {0} to the game: these required mods aren't installed: {1}",
+  "StatusDeployedWithDependencies": "{0} copied to the game, along with: {1}"
 }

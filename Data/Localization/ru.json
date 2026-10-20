@@ -1,4 +1,4 @@
-﻿{
+{
   "LanguageName": "Русский",
   "ChangeGameFolder": "Изменить папку игры",
   "SettingsTitle": "Настройки",
@@ -82,6 +82,20 @@
   "StatusUpdated": "{0} обновлён до {1}.",
   "StatusUpdatedNotDeployed": "{0} обновлён до {1}. Установите его в игру, чтобы использовать.",
   "StatusUpdateFailed": "Ошибка обновления: {0}",
+  "AiFree": "Без ИИ",
+  "AiAssisted": "С помощью ИИ",
+  "AiVibecoded": "Вайбкод",
   "DevelopmentActive": "В разработке",
-  "DevelopmentInactive": "Неактивен"
+  "DevelopmentInactive": "Неактивен",
+  "ConfirmDeployTitle": "Развернуть зависимости тоже?",
+  "ConfirmDeployButton": "Развернуть все",
+  "AutoDeployDependenciesLabel": "Автоматически развёртывать зависимости",
+  "ConfirmDeployMessage": "{0} требует: {1}. Развернуть их тоже?",
+  "StatusDependencyNotInList": "Невозможно установить {0}: этих необходимых модов нет в списке модов: {1}",
+  "StatusInstalledWithDependencies": "{0} установлен вместе с: {1}",
+  "ConfirmRemoveDependentsMessage": "Другие моды зависят от {1} ({0}). Всё равно удалить?",
+  "DependencyMissingLine": "Отсутствующие зависимости: {0}",
+  "DependencyNotInGameLine": "Зависимости не в игре: {0}",
+  "StatusDeployDependencyMissing": "Невозможно скопировать {0} в игру: эти необходимые моды не установлены: {1}",
+  "StatusDeployedWithDependencies": "{0} скопирован в игру вместе с: {1}"
 }

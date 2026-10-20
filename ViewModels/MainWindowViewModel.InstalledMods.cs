@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using StellarModManager.Models;
 using StellarModManager.Services;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -79,6 +80,8 @@ public partial class MainWindowViewModel
             }
         }
 
+        RefreshDependencyStatuses();
+
         AvailableModUpdates.Clear();
 
         foreach (var installed in InstalledMods.Where(m => m.IsUpdateAvailable))
@@ -114,6 +117,12 @@ public partial class MainWindowViewModel
         return wasDeployed;
     }
 
+    private InstalledModInfo? modPendingDeploy;
+    private DeployPlan? pendingDeployPlan;
+
+    [ObservableProperty] private bool isConfirmDeployOpen;
+    [ObservableProperty] private string confirmDeployMessage = "";
+
     [RelayCommand]
     private async Task DeployMod(InstalledModInfo mod)
     {
@@ -123,6 +132,68 @@ public partial class MainWindowViewModel
             return;
         }
 
+        var plan = DependencyResolver.ResolveDeploy(mod, InstalledMods);
+
+        if (plan.Missing.Count > 0)
+        {
+            ReportError("StatusDeployDependencyMissing", mod.Name, string.Join(", ", plan.Missing.Select(DisplayNameFor)));
+            return;
+        }
+
+        if (plan.ToDeploy.Count == 0 || AutoDeployDependencies)
+        {
+            await DeployWithDependenciesAsync(mod, plan);
+            return;
+        }
+
+        modPendingDeploy = mod;
+        pendingDeployPlan = plan;
+        ConfirmDeployMessage = LocalizationService.Instance.Format("ConfirmDeployMessage", mod.Name, string.Join(", ", plan.ToDeploy.Select(d => d.Name)));
+        IsConfirmDeployOpen = true;
+    }
+
+    [RelayCommand]
+    private async Task ConfirmDeploy()
+    {
+        IsConfirmDeployOpen = false;
+
+        if (modPendingDeploy != null && pendingDeployPlan != null)
+            await DeployWithDependenciesAsync(modPendingDeploy, pendingDeployPlan);
+
+        modPendingDeploy = null;
+        pendingDeployPlan = null;
+    }
+
+    [RelayCommand]
+    private void CancelDeploy()
+    {
+        IsConfirmDeployOpen = false;
+        modPendingDeploy = null;
+        pendingDeployPlan = null;
+    }
+
+    private async Task DeployWithDependenciesAsync(InstalledModInfo mod, DeployPlan plan)
+    {
+        try
+        {
+            foreach (var dep in plan.ToDeploy)
+                await DeployOneAsync(dep);
+
+            await DeployOneAsync(mod);
+
+            if (plan.ToDeploy.Count == 0)
+                ReportSuccess("StatusDeployed", mod.Name);
+            else
+                ReportSuccess("StatusDeployedWithDependencies", mod.Name, string.Join(", ", plan.ToDeploy.Select(d => d.Name)));
+        }
+        catch (Exception ex)
+        {
+            ReportError("StatusDeployFailed", ex.Message);
+        }
+    }
+
+    private async Task DeployOneAsync(InstalledModInfo mod)
+    {
         mod.IsDeploying = true;
         mod.DeployProgress = 0;
 
@@ -133,18 +204,35 @@ public partial class MainWindowViewModel
 
             await Task.Run(() => deploymentService.DeployMod(libraryPath, GamePath, progress));
             mod.IsDeployed = true;
-
-            ReportSuccess("StatusDeployed", mod.Name);
-        }
-        catch (Exception ex)
-        {
-            ReportError("StatusDeployFailed", ex.Message);
+            RefreshDependencyStatuses();
         }
         finally
         {
             mod.IsDeploying = false;
         }
     }
+
+    private void RefreshDependencyStatuses()
+    {
+        var loc = LocalizationService.Instance;
+
+        foreach (var installed in InstalledMods)
+        {
+            var plan = DependencyResolver.ResolveDeploy(installed, InstalledMods);
+            var lines = new List<string>();
+
+            if (plan.Missing.Count > 0)
+                lines.Add(loc.Format("DependencyMissingLine", string.Join(", ", plan.Missing.Select(DisplayNameFor))));
+
+            if (installed.IsDeployed && plan.ToDeploy.Count > 0)
+                lines.Add(loc.Format("DependencyNotInGameLine", string.Join(", ", plan.ToDeploy.Select(d => d.Name))));
+
+            installed.DependencyWarning = string.Join("\n", lines);
+        }
+    }
+
+    // Shows the name instead of id when the mod is in the online list
+    private string DisplayNameFor(string id) => OnlineMods.FirstOrDefault(o => o.Id.Equals(id, StringComparison.OrdinalIgnoreCase))?.Name ?? id;
 
     [RelayCommand]
     private async Task RemoveMod(InstalledModInfo mod)
@@ -185,6 +273,19 @@ public partial class MainWindowViewModel
     [RelayCommand]
     private void RequestRemoveMod(InstalledModInfo mod)
     {
+        var dependents = DependencyResolver.FindDependents(mod, InstalledMods);
+
+        // Always ask when other mods need this one, even if the user turned confirmations off!!!!
+        if (dependents.Count > 0)
+        {
+            string names = string.Join(", ", dependents.Select(d => d.Name));
+
+            modPendingRemoval = mod;
+            ConfirmRemoveMessage = LocalizationService.Instance.Format("ConfirmRemoveDependentsMessage", names, mod.Name);
+            IsConfirmRemoveOpen = true;
+            return;
+        }
+
         if (ConfirmBeforeRemove)
         {
             modPendingRemoval = mod;

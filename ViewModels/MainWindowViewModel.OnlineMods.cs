@@ -25,8 +25,40 @@ public partial class MainWindowViewModel
     [ObservableProperty]
     private string searchText = "";
 
+    // Install a mod and its dependencies
     [RelayCommand]
     private async Task InstallMod(OnlineModInfo mod)
+    {
+        var deps = DependencyResolver.Resolve(mod, OnlineMods, id => InstalledMods.Any(m => m.Id.Equals(id, StringComparison.OrdinalIgnoreCase)));
+
+        if (deps.Missing.Count > 0)
+        {
+            ReportError("StatusDependencyNotInList", mod.Name, string.Join(", ", deps.Missing));
+            return;
+        }
+
+        try
+        {
+            foreach (var dep in deps.ToInstall)
+                await InstallOneAsync(dep);
+
+            await InstallOneAsync(mod);
+
+            if (deps.ToInstall.Count == 0)
+                ReportSuccess("StatusInstalled", mod.Name);
+            else
+                ReportSuccess("StatusInstalledWithDependencies", mod.Name, string.Join(", ", deps.ToInstall.Select(d => d.Name)));
+        }
+        catch (Exception ex)
+        {
+            ReportError("StatusInstallFailed", ex.Message);
+        }
+
+        LoadInstalledMods();
+    }
+
+    // Install one mod, no dependency check or anything
+    private async Task InstallOneAsync(OnlineModInfo mod)
     {
         mod.IsInstalling = true;
         mod.DownloadProgress = 0;
@@ -45,20 +77,11 @@ public partial class MainWindowViewModel
             await InstallToLibraryAsync(zipFile, libraryPath);
 
             File.Delete(zipFile);
-
-            ReportSuccess("StatusInstalled", mod.Name);
-        }
-        catch (Exception ex)
-        {
-            ReportError("StatusInstallFailed", ex.Message);
         }
         finally
         {
             mod.IsInstalling = false;
         }
-
-        // Refresh no longer needed
-        LoadInstalledMods();
     }
 
     [RelayCommand]

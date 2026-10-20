@@ -1,4 +1,4 @@
-﻿{
+{
   "LanguageName": "Français",
   "ChangeGameFolder": "Changer le dossier du jeu",
   "SettingsTitle": "Paramètres",
@@ -82,6 +82,20 @@
   "StatusUpdated": "{0} mis à jour vers {1}.",
   "StatusUpdatedNotDeployed": "{0} mis à jour vers {1}. Installez-le dans le jeu pour l'utiliser.",
   "StatusUpdateFailed": "Échec de la mise à jour : {0}",
+  "AiFree": "Sans IA",
+  "AiAssisted": "Assisté par IA",
+  "AiVibecoded": "Vibecoded",
   "DevelopmentActive": "En développement",
-  "DevelopmentInactive": "Inactif"
+  "DevelopmentInactive": "Inactif",
+  "ConfirmDeployTitle": "Déployer aussi les dépendances ?",
+  "ConfirmDeployButton": "Tout déployer",
+  "AutoDeployDependenciesLabel": "Déployer automatiquement les dépendances",
+  "ConfirmDeployMessage": "{0} nécessite {1}. Les déployer aussi ?",
+  "StatusDependencyNotInList": "Impossible d'installer {0} : ces mods requis ne figurent pas dans la liste des mods : {1}",
+  "StatusInstalledWithDependencies": "{0} installé, avec : {1}",
+  "ConfirmRemoveDependentsMessage": "D'autres mods dépendent de {1} ({0}). Le supprimer quand même ?",
+  "DependencyMissingLine": "Dépendances manquantes : {0}",
+  "DependencyNotInGameLine": "Dépendances absentes du jeu : {0}",
+  "StatusDeployDependencyMissing": "Impossible de copier {0} dans le jeu : ces mods requis ne sont pas installés : {1}",
+  "StatusDeployedWithDependencies": "{0} copié dans le jeu, avec : {1}"
 }

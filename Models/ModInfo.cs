@@ -27,13 +27,19 @@ namespace StellarModManager.Models
         [JsonPropertyName("images")]
         public List<string> Images { get; set; } = new();
 
+        // ids of other mods this one needs
+        [JsonPropertyName("needs")]
+        public List<string> Needs { get; set; } = new();
+
+        // "ai-free", "ai-assisted", or "vibecoded"
         [JsonPropertyName("ai")]
         public string Ai { get; set; } = "";
 
-        // "active" or "inactive". Empty means the author did not say.
+        // "active" or "inactive"
         [JsonPropertyName("development")]
         public string Development { get; set; } = "";
 
+        // TODO!!!
         [JsonPropertyName("tags")]
         public List<string> Tags { get; set; } = new();
     }

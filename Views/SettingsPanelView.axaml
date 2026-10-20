@@ -51,6 +51,8 @@
                 <StackPanel Spacing="8">
                     <CheckBox Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ConfirmBeforeRemoveLabel]}"
                               IsChecked="{Binding ConfirmBeforeRemove}"/>
+                    <CheckBox Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[AutoDeployDependenciesLabel]}"
+                              IsChecked="{Binding AutoDeployDependencies}"/>
                     <CheckBox Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[AutoCheckModUpdatesLabel]}"
                               IsChecked="{Binding AutoCheckForModUpdates}"/>
                     <CheckBox Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[AutoCheckAppUpdatesLabel]}"

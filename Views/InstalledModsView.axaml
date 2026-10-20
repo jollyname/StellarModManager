@@ -36,8 +36,15 @@
                             </Border>
 
                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2" Margin="0,0,12,0">
-                                <TextBlock Text="{Binding Name}" FontSize="14" TextTrimming="CharacterEllipsis"
-                                           Foreground="{DynamicResource Theme.TextPrimaryBrush}"/>
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <TextBlock Text="{Binding Name}" FontSize="14" MaxWidth="200"
+                                               TextTrimming="CharacterEllipsis" VerticalAlignment="Center"
+                                               Foreground="{DynamicResource Theme.TextPrimaryBrush}"/>
+                                    <Border Classes="depWarn" IsVisible="{Binding HasDependencyWarning}"
+                                            ToolTip.Tip="{Binding DependencyWarning}">
+                                        <TextBlock Text="!"/>
+                                    </Border>
+                                </StackPanel>
 
                                 <StackPanel Orientation="Horizontal" Spacing="8">
                                     <TextBlock Classes="secondary" Text="{Binding Author}" MaxWidth="160"
@@ -104,8 +111,16 @@
                         </c:AspectRatio>
 
                         <StackPanel Grid.Row="1" Margin="12,10,12,12" Spacing="2">
-                            <TextBlock Text="{Binding Name}" FontSize="14" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"
-                                       Foreground="{DynamicResource Theme.TextPrimaryBrush}"/>
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Text="{Binding Name}" FontSize="14" FontWeight="SemiBold"
+                                           TextTrimming="CharacterEllipsis"
+                                           Foreground="{DynamicResource Theme.TextPrimaryBrush}"/>
+                                <Border Grid.Column="1" Margin="6,0,0,0" Classes="depWarn"
+                                        IsVisible="{Binding HasDependencyWarning}"
+                                        ToolTip.Tip="{Binding DependencyWarning}">
+                                    <TextBlock Text="!"/>
+                                </Border>
+                            </Grid>
                             <TextBlock Classes="secondary" Text="{Binding Author}" TextTrimming="CharacterEllipsis"/>
 
                             <ItemsControl ItemsSource="{Binding Online._Tags}" Margin="0,6,0,0"

@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Media.Imaging;
-using System.Linq; // thumbnailss
+using System.Linq; // thumbnails
 using Avalonia.Platform;
 
 namespace StellarModManager.Services;

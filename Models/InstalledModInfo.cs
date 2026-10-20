@@ -38,7 +38,16 @@ public partial class InstalledModInfo : ModInfo
     [NotifyPropertyChangedFor(nameof(NeedsDeploy), nameof(IsDeployedAndCurrent))]
     private bool isUpdateAvailable;
 
-    // Copying to the game is the next step once the mod is up to date
+    // Shown in the "!" tooltip, empty means no missing dependencies
+    [JsonIgnore]
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasDependencyWarning))]
+    private string dependencyWarning = "";
+
+    [JsonIgnore]
+    public bool HasDependencyWarning => !string.IsNullOrEmpty(DependencyWarning);
+
+    // Deploying to the game is the next step once the mod is up to date
     [JsonIgnore]
     public bool NeedsDeploy => !IsDeployed && !IsUpdateAvailable;
 
