@@ -22,9 +22,11 @@ Stellar Mod Manager makes it easier to install, update, and manage mods for Stel
 
 ## Submitting Your Mods
 
-Want to make your mod available to other StellarDrive players? You can submit your mod for inclusion in Stellar Mod Manager.
+Want to make your mod available to other StellarDrive players? Your mod has to be **open source** and hosted in a public GitHub repository, with an open source license file (for example MIT) in the root.
 
-Visit the [Mod Submission page](https://jollyname.dev/submit/) to submit your mod for review.
+1. Create your `mod.json` with the [Mod Metadata Generator](https://jollyname.dev/create/) and save it in the root of your repository, together with the images it lists.
+2. Publish a GitHub release tagged `v` plus your version (for version `1.0.0`, the tag is `v1.0.0`). Attach a zip named exactly like your repository (`<repository name>.zip`) containing `mod.json` and a `Mods` folder with your built `.dll`.
+3. Visit the [Mod Submission page](https://jollyname.dev/submit/) and submit your repository. Submissions are checked and reviewed before they appear in the manager.
 
 ## Download
 
