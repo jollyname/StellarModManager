@@ -1,5 +1,52 @@
 <Styles xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:svg="clr-namespace:Avalonia.Svg.Skia;assembly=Svg.Controls.Skia.Avalonia">
+
+    <!-- Window caption buttons -->
+    <Style Selector="Button.caption">
+        <Setter Property="Width" Value="46"/>
+        <Setter Property="Height" Value="48"/>
+        <Setter Property="MinHeight" Value="0"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="CornerRadius" Value="0"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{DynamicResource Theme.TextPrimaryBrush}"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="IsTabStop" Value="False"/>
+    </Style>
+    <Style Selector="Button.caption:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource Theme.SurfaceHoverBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource Theme.TextPrimaryBrush}"/>
+    </Style>
+    <Style Selector="Button.caption:pressed /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource Theme.SurfaceBrush}"/>
+    </Style>
+    <Style Selector="Button.caption.close:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource Theme.DangerBrush}"/>
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+    <Style Selector="Button.caption.close:pressed /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource Theme.DangerPressedBrush}"/>
+    </Style>
+    <Style Selector="Button.caption svg|Svg.icon">
+        <Setter Property="Css" Value="path, rect { stroke: #E6E6E6; }"/>
+    </Style>
+    <Style Selector="Button.caption.close:pointerover svg|Svg.icon">
+        <Setter Property="Css" Value="path, rect { stroke: #FFFFFF; }"/>
+    </Style>
+
+    <!-- Maximize / restore icon swap -->
+    <Style Selector="svg|Svg.glyphRestore">
+        <Setter Property="IsVisible" Value="False"/>
+    </Style>
+    <Style Selector="Window.maximized svg|Svg.glyphMaximize">
+        <Setter Property="IsVisible" Value="False"/>
+    </Style>
+    <Style Selector="Window.maximized svg|Svg.glyphRestore">
+        <Setter Property="IsVisible" Value="True"/>
+    </Style>
 
     <!-- Typography -->
     <Style Selector="TextBlock.pageTitle">
@@ -189,8 +236,8 @@
 
     <!-- Tags -->
     <Style Selector="Border.tag">
-        <Setter Property="Background" Value="{DynamicResource Theme.SurfaceBrush}"/>
-        <Setter Property="BorderBrush" Value="{DynamicResource Theme.BorderBrush}"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource Theme.TextMutedBrush}"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="CornerRadius" Value="9"/>
         <Setter Property="Padding" Value="7,1"/>

@@ -14,6 +14,17 @@
     </Application.Styles>
 
     <Application.Resources>
+        <StaticResource x:Key="ComboBoxDropDownBackground" ResourceKey="Theme.ContentBrush"/>
+        <StaticResource x:Key="ComboBoxDropDownBorderBrush" ResourceKey="Theme.BorderBrush"/>
+        <StaticResource x:Key="ComboBoxItemBackgroundPointerOver" ResourceKey="Theme.SurfaceBrush"/>
+        <StaticResource x:Key="ComboBoxItemForegroundPointerOver" ResourceKey="Theme.TextPrimaryBrush"/>
+        <StaticResource x:Key="ComboBoxItemBackgroundSelected" ResourceKey="Theme.SurfaceHoverBrush"/>
+        <StaticResource x:Key="ComboBoxItemForegroundSelected" ResourceKey="Theme.TextPrimaryBrush"/>
+        <StaticResource x:Key="ComboBoxItemBackgroundSelectedPointerOver" ResourceKey="Theme.SurfaceHoverBrush"/>
+        <StaticResource x:Key="ComboBoxItemForegroundSelectedPointerOver" ResourceKey="Theme.TextPrimaryBrush"/>
+        <StaticResource x:Key="ComboBoxItemBackgroundPressed" ResourceKey="Theme.SurfaceHoverBrush"/>
+        <StaticResource x:Key="ComboBoxItemBackgroundSelectedPressed" ResourceKey="Theme.SurfaceHoverBrush"/>
+        
         <!-- Defaults; replaced at startup by ThemeService from Data/Themes -->
         <SolidColorBrush x:Key="Theme.BackgroundBrush" Color="#202020"/>
         <SolidColorBrush x:Key="Theme.ContentBrush" Color="#282828"/>
