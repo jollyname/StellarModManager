@@ -22,7 +22,7 @@
                      PlaceholderText="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[SearchPlaceholder]}"
                      Text="{Binding SearchText}">
                 <TextBox.InnerRightContent>
-                    <svg:Svg Grid.Column="0"
+                    <svg:Svg Css="{DynamicResource Theme.IconCss}" Grid.Column="0"
                              Path="/Assets/Icons/search.svg"
                              Width="16"
                              Height="16"
@@ -44,7 +44,7 @@
 
             <Button Grid.Column="3" Classes="ghost" Command="{Binding RefreshModsCommand}">
                 <StackPanel Orientation="Horizontal" Spacing="8">
-                    <svg:Svg Grid.Column="0"
+                    <svg:Svg Css="{DynamicResource Theme.IconCss}" Grid.Column="0"
                              Path="/Assets/Icons/refresh.svg"
                              Width="16"
                              Height="16"

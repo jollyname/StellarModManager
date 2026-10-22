@@ -14,6 +14,7 @@
     </Application.Styles>
 
     <Application.Resources>
+        <!-- Dropdowns -->
         <StaticResource x:Key="ComboBoxDropDownBackground" ResourceKey="Theme.ContentBrush"/>
         <StaticResource x:Key="ComboBoxDropDownBorderBrush" ResourceKey="Theme.BorderBrush"/>
         <StaticResource x:Key="ComboBoxItemBackgroundPointerOver" ResourceKey="Theme.SurfaceBrush"/>
@@ -24,8 +25,8 @@
         <StaticResource x:Key="ComboBoxItemForegroundSelectedPointerOver" ResourceKey="Theme.TextPrimaryBrush"/>
         <StaticResource x:Key="ComboBoxItemBackgroundPressed" ResourceKey="Theme.SurfaceHoverBrush"/>
         <StaticResource x:Key="ComboBoxItemBackgroundSelectedPressed" ResourceKey="Theme.SurfaceHoverBrush"/>
-        
-        <!-- Defaults; replaced at startup by ThemeService from Data/Themes -->
+
+        <!-- Defaults, replaced at startup by ThemeService from Data/Themes -->
         <SolidColorBrush x:Key="Theme.BackgroundBrush" Color="#202020"/>
         <SolidColorBrush x:Key="Theme.ContentBrush" Color="#282828"/>
         <SolidColorBrush x:Key="Theme.PanelBrush" Color="#1C1C1C"/>
@@ -47,5 +48,7 @@
         <SolidColorBrush x:Key="Theme.DangerBrush" Color="#C42B1C"/>
         <SolidColorBrush x:Key="Theme.DangerHoverBrush" Color="#B0261A"/>
         <SolidColorBrush x:Key="Theme.DangerPressedBrush" Color="#9A2016"/>
+
+        <x:String x:Key="Theme.IconCss">.icon-fill { fill: #FFFFFF; } .icon-stroke { stroke: #FFFFFF; }</x:String>
     </Application.Resources>
 </Application>

@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Media;
+using Avalonia.Styling;
 using StellarModManager.Models;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,18 @@ public class ThemeService
     {
         var resources = Application.Current!.Resources;
 
-        void SetBrush(string key, string hex) => resources[$"Theme.{key}Brush"] = new SolidColorBrush(Color.Parse(hex));
+        Application.Current!.RequestedThemeVariant = theme.IsLight ? ThemeVariant.Light : ThemeVariant.Dark;
+
+        void SetBrush(string key, string hex)
+        {
+            var color = Color.Parse(hex);
+            var resourceKey = $"Theme.{key}Brush";
+
+            if (resources.TryGetValue(resourceKey, out var existing) && existing is SolidColorBrush brush)
+                brush.Color = color;
+            else
+                resources[resourceKey] = new SolidColorBrush(color);
+        }
 
         SetBrush("Background", theme.Background);
         SetBrush("Content", theme.Content);
@@ -37,6 +49,9 @@ public class ThemeService
         SetBrush("Danger", theme.Danger);
         SetBrush("DangerHover", theme.DangerHover);
         SetBrush("DangerPressed", theme.DangerPressed);
+
+        // Set the icon color for SVGs to match the primary text color.
+        resources["Theme.IconCss"] = $".icon-fill {{ fill: {theme.TextPrimary}; }} .icon-stroke {{ stroke: {theme.TextPrimary}; }}";
 
         // Fluent controls (checkboxes, focus rings, text selection) follow the theme accent.
         var accent = Color.Parse(theme.Accent);

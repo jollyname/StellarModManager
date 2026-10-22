@@ -125,7 +125,7 @@
                             IsVisible="{Binding SelectedMod.RepoUrl, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=False}"
                             Command="{Binding OpenRepositoryCommand}"
                             ToolTip.Tip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[OpenRepository]}">
-                        <svg:Svg Grid.Column="0"
+                        <svg:Svg Css="{DynamicResource Theme.IconCss}" Grid.Column="0"
                             Path="/Assets/Icons/openExternal.svg"
                             Width="22"
                             Height="22"

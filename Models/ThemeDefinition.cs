@@ -3,6 +3,8 @@ namespace StellarModManager.Models;
 public class ThemeDefinition
 {
     public string Name { get; set; } = "Default";
+ 
+    public bool IsLight { get; set; } = false;
 
     // Sidebar and title bar
     public string Background { get; set; } = "#202020";

@@ -46,7 +46,7 @@
                         <!-- Play -->
                         <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding !IsGameRunning}"
                                     ToolTip.Tip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[PlayGame]}">
-                            <svg:Svg Path="/Assets/Icons/play.svg" Width="14" Height="14" Stretch="Uniform"
+                            <svg:Svg Css="{DynamicResource Theme.IconCss}" Path="/Assets/Icons/play.svg" Width="14" Height="14" Stretch="Uniform"
                                      VerticalAlignment="Center"/>
                             <TextBlock VerticalAlignment="Center" FontSize="13" FontWeight="SemiBold"
                                        Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[PlayButton]}"/>
@@ -55,7 +55,7 @@
                         <!-- Stop -->
                         <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding IsGameRunning}"
                                     ToolTip.Tip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[StopGame]}">
-                            <svg:Svg Path="/Assets/Icons/square.svg" Width="14" Height="14" Stretch="Uniform"
+                            <svg:Svg Css="{DynamicResource Theme.IconCss}" Path="/Assets/Icons/square.svg" Width="14" Height="14" Stretch="Uniform"
                                      VerticalAlignment="Center"/>
                             <TextBlock VerticalAlignment="Center" FontSize="13" FontWeight="SemiBold"
                                        Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[StopButton]}"/>
@@ -67,22 +67,22 @@
             <StackPanel Grid.Column="2" Orientation="Horizontal">
                 <Button Classes="caption" Click="OnMinimizeClick"
                         WindowDecorationProperties.ElementRole="MinimizeButton">
-                    <svg:Svg Path="/Assets/Icons/minimize.svg" Width="16" Height="16" Stretch="Uniform"/>
+                    <svg:Svg Css="{DynamicResource Theme.IconCss}" Path="/Assets/Icons/minimize.svg" Width="16" Height="16" Stretch="Uniform"/>
                 </Button>
 
                 <Button Classes="caption" Click="OnMaximizeClick"
                         WindowDecorationProperties.ElementRole="MaximizeButton">
                     <Panel>
-                        <svg:Svg Classes="glyphMaximize" Path="/Assets/Icons/square.svg"
+                        <svg:Svg Css="{DynamicResource Theme.IconCss}" Classes="glyphMaximize" Path="/Assets/Icons/square.svg"
                                  Width="16" Height="16" Stretch="Uniform"/>
-                        <svg:Svg Classes="glyphRestore" Path="/Assets/Icons/restore.svg"
+                        <svg:Svg Css="{DynamicResource Theme.IconCss}" Classes="glyphRestore" Path="/Assets/Icons/restore.svg"
                                  Width="16" Height="16" Stretch="Uniform"/>
                     </Panel>
                 </Button>
 
                 <Button Classes="caption close" Click="OnCloseClick"
                         WindowDecorationProperties.ElementRole="CloseButton">
-                    <svg:Svg Path="/Assets/Icons/close.svg" Width="16" Height="16" Stretch="Uniform"/>
+                    <svg:Svg Css="{DynamicResource Theme.IconCss}" Path="/Assets/Icons/close.svg" Width="16" Height="16" Stretch="Uniform"/>
                 </Button>
             </StackPanel>
         </Grid>
@@ -109,19 +109,19 @@
                                 ToolTip.Tip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ToggleNavigation]}">
                             <svg:Svg Grid.Column="0"
                                 Path="/Assets/Icons/menu.svg"
+                                Css="{DynamicResource Theme.IconCss}"
                                 Width="20"
                                 Height="20"
                                 Stretch="Uniform"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Center"/>
                         </Button>
-
                         <StackPanel Spacing="4" Margin="0,8,0,0">
                             <Button Classes="nav" Classes.selected="{Binding IsBrowsePage}"
                                     Command="{Binding NavigateCommand}" CommandParameter="{x:Static vm:AppPage.Browse}">
                                 <Grid ColumnDefinitions="44,*,Auto">
                                     <Border Classes="pill"/>
-                                    <svg:Svg Grid.Column="0"
+                                    <svg:Svg Css="{DynamicResource Theme.IconCss}" Grid.Column="0"
                                              Path="/Assets/Icons/browse.svg"
                                              Width="24"
                                              Height="24"
@@ -137,7 +137,7 @@
                                     Command="{Binding NavigateCommand}" CommandParameter="{x:Static vm:AppPage.Library}">
                                 <Grid ColumnDefinitions="44,*,Auto">
                                     <Border Classes="pill"/>
-                                    <svg:Svg Grid.Column="0"
+                                    <svg:Svg Css="{DynamicResource Theme.IconCss}" Grid.Column="0"
                                              Path="/Assets/Icons/library.svg"
                                              Width="24"
                                              Height="24"
@@ -157,7 +157,7 @@
                                     Command="{Binding NavigateCommand}" CommandParameter="{x:Static vm:AppPage.Updates}">
                                 <Grid ColumnDefinitions="44,*,Auto">
                                     <Border Classes="pill"/>
-                                    <svg:Svg Grid.Column="0"
+                                    <svg:Svg Css="{DynamicResource Theme.IconCss}" Grid.Column="0"
                                              Path="/Assets/Icons/update.svg"
                                              Width="24"
                                              Height="24"
@@ -186,7 +186,7 @@
                                            Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[GameLabel]}"/>
                                 <TextBlock Text="{Binding GamePath}" FontSize="13" TextTrimming="PrefixCharacterEllipsis"/>
                                 <StackPanel Orientation="Horizontal" Spacing="6" IsVisible="{Binding IsMelonLoaderValid}">
-                                    <svg:Svg Grid.Column="0"
+                                    <svg:Svg Css="{DynamicResource Theme.IconCss}" Grid.Column="0"
                                         Path="/Assets/Icons/check.svg"
                                         Width="12"
                                         Height="12"
@@ -206,7 +206,7 @@
                                 Command="{Binding NavigateCommand}" CommandParameter="{x:Static vm:AppPage.Settings}">
                             <Grid ColumnDefinitions="44,*">
                                 <Border Classes="pill"/>
-                                <svg:Svg Grid.Column="0"
+                                <svg:Svg Css="{DynamicResource Theme.IconCss}" Grid.Column="0"
                                     Path="/Assets/Icons/settings.svg"
                                     Width="24"
                                     Height="24"
@@ -247,7 +247,7 @@
                                         <Button Classes="ghost" Classes.selected="{Binding !IsCompactView}"
                                                 Command="{Binding ShowListViewCommand}"
                                                 ToolTip.Tip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ViewList]}">
-                                            <svg:Svg Grid.Column="0"
+                                            <svg:Svg Css="{DynamicResource Theme.IconCss}" Grid.Column="0"
                                                 Path="/Assets/Icons/viewList.svg"
                                                 Width="18"
                                                 Height="18"
@@ -257,7 +257,7 @@
                                         <Button Classes="ghost" Classes.selected="{Binding IsCompactView}"
                                                 Command="{Binding ShowCompactViewCommand}"
                                                 ToolTip.Tip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ViewCompact]}">
-                                            <svg:Svg Grid.Column="0"
+                                            <svg:Svg Css="{DynamicResource Theme.IconCss}" Grid.Column="0"
                                                 Path="/Assets/Icons/viewGrid.svg"
                                                 Width="18"
                                                 Height="18"
@@ -272,7 +272,7 @@
                             <!-- App update -->
                             <Border Classes="infoBar" Margin="0,0,0,12" IsVisible="{Binding IsUpdateBannerVisible}">
                                 <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto">
-                                    <svg:Svg Grid.Column="0"
+                                    <svg:Svg Css="{DynamicResource Theme.IconCss}" Grid.Column="0"
                                         Path="/Assets/Icons/info.svg"
                                         Width="16"
                                         Height="16"
@@ -290,7 +290,7 @@
                                     <Button Grid.Column="4" Classes="ghost icon"
                                             Command="{Binding DismissUpdateBannerCommand}"
                                             ToolTip.Tip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Dismiss]}">
-                                    <svg:Svg Grid.Column="0"
+                                    <svg:Svg Css="{DynamicResource Theme.IconCss}" Grid.Column="0"
                                         Path="/Assets/Icons/close.svg"
                                         Width="24"
                                         Height="24"
@@ -305,7 +305,7 @@
                             <Border Grid.Row="2" Classes="infoBar" Margin="0,0,0,12"
                                     IsVisible="{Binding StatusMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
                                 <Grid ColumnDefinitions="Auto,*,Auto">
-                                    <svg:Svg Grid.Column="0"
+                                    <svg:Svg Css="{DynamicResource Theme.IconCss}" Grid.Column="0"
                                         Path="/Assets/Icons/info.svg"
                                         Width="16"
                                         Height="16"
@@ -313,7 +313,7 @@
                                         VerticalAlignment="Center"
                                         HorizontalAlignment="Center"   
                                         IsVisible="{Binding IsStatusError}"/>
-                                    <svg:Svg Grid.Column="0"
+                                    <svg:Svg Css="{DynamicResource Theme.IconCss}" Grid.Column="0"
                                         Path="/Assets/Icons/check.svg"
                                         Width="16"
                                         Height="16"
@@ -326,7 +326,7 @@
                                     <Button Grid.Column="2" Classes="ghost icon"
                                             Command="{Binding DismissStatusCommand}"
                                             ToolTip.Tip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Dismiss]}">
-                                    <svg:Svg Grid.Column="0"
+                                    <svg:Svg Css="{DynamicResource Theme.IconCss}" Grid.Column="0"
                                         Path="/Assets/Icons/close.svg"
                                         Width="24"
                                         Height="24"

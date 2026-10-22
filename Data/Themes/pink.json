@@ -1,0 +1,21 @@
+{
+  "name": "Cotton Pink",
+  "isLight": true,
+  "background": "#D3A5BC",
+  "content": "#E2BFD0",
+  "panel": "#C795AF",
+  "surface": "#EBCEDB",
+  "surfaceHover": "#DDB4C8",
+  "border": "#B07F98",
+  "accent": "#CC4580",
+  "accentHover": "#BA3A73",
+  "accentPressed": "#A32F63",
+  "accentForeground": "#FFFFFF",
+  "textPrimary": "#33192A",
+  "textSecondary": "#5E3548",
+  "textMuted": "#744A5E",
+  "success": "#237F48",
+  "danger": "#BD2F3A",
+  "dangerHover": "#A92732",
+  "dangerPressed": "#93202A"
+}
