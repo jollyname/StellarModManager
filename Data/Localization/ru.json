@@ -97,5 +97,12 @@
   "DependencyMissingLine": "Отсутствующие зависимости: {0}",
   "DependencyNotInGameLine": "Зависимости не в игре: {0}",
   "StatusDeployDependencyMissing": "Невозможно скопировать {0} в игру: эти необходимые моды не установлены: {1}",
-  "StatusDeployedWithDependencies": "{0} скопирован в игру вместе с: {1}"
+  "StatusDeployedWithDependencies": "{0} скопирован в игру вместе с: {1}",
+  "PlayButton": "Играть",
+  "PlayGame": "Запустить игру",
+  "StopGame": "Закрыть игру",
+  "StopButton": "Стоп",
+  "StatusStopFailed": "Не удалось закрыть игру: {0}",
+  "StatusGameNotFound": "Исполняемый файл игры не найден в выбранной папке.",
+  "StatusLaunchFailed": "Не удалось запустить игру: {0}"
 }

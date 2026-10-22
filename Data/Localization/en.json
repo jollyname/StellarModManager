@@ -97,5 +97,12 @@
   "DependencyMissingLine": "Missing dependencies: {0}",
   "DependencyNotInGameLine": "Dependencies not in game: {0}",
   "StatusDeployDependencyMissing": "Can't copy {0} to the game: these required mods aren't installed: {1}",
-  "StatusDeployedWithDependencies": "{0} copied to the game, along with: {1}"
+  "StatusDeployedWithDependencies": "{0} copied to the game, along with: {1}",
+  "PlayButton": "Play",
+  "PlayGame": "Launch game",
+  "StopGame": "Close game",
+  "StopButton": "Stop",
+  "StatusStopFailed": "Could not close the game: {0}",
+  "StatusGameNotFound": "Game executable not found in the selected folder.",
+  "StatusLaunchFailed": "Could not launch the game: {0}"
 }

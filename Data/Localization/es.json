@@ -97,5 +97,12 @@
   "DependencyMissingLine": "Dependencias que faltan: {0}",
   "DependencyNotInGameLine": "Dependencias fuera del juego: {0}",
   "StatusDeployDependencyMissing": "No se puede copiar {0} al juego: estos mods necesarios no están instalados: {1}",
-  "StatusDeployedWithDependencies": "{0} copiado al juego, junto con: {1}"
+  "StatusDeployedWithDependencies": "{0} copiado al juego, junto con: {1}",
+  "PlayButton": "Jugar",
+  "PlayGame": "Iniciar juego",
+  "StopGame": "Cerrar juego",
+  "StopButton": "Detener",
+  "StatusStopFailed": "No se pudo cerrar el juego: {0}",
+  "StatusGameNotFound": "No se encontró el ejecutable del juego en la carpeta seleccionada.",
+  "StatusLaunchFailed": "No se pudo iniciar el juego: {0}"
 }

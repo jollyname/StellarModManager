@@ -27,9 +27,42 @@
         <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Background="Transparent"
               WindowDecorationProperties.ElementRole="TitleBar">
             <Image Grid.Column="0" Source="/Assets/icon.ico" Width="16" Height="16" Margin="12,0,8,0"/>
-            <TextBlock Grid.Column="1" Classes="secondary" VerticalAlignment="Center"
-                       TextTrimming="CharacterEllipsis"
-                       Text="{Binding $parent[Window].Title}"/>
+            
+            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                <TextBlock Classes="secondary" VerticalAlignment="Center"
+                           TextTrimming="CharacterEllipsis"
+                           Text="{Binding $parent[Window].Title}"/>
+
+                <!-- Play/Stop button -->
+                <Button Classes="ghost" Height="30" Margin="24,0,0,0" Padding="10,0,12,0"
+                        VerticalAlignment="Center" CornerRadius="6"
+                        Background="{DynamicResource Theme.SurfaceBrush}"
+                        BorderBrush="{DynamicResource Theme.BorderBrush}" BorderThickness="1"
+                        Command="{Binding ToggleGameCommand}"
+                        IsVisible="{Binding !SetupRequired}"
+                        WindowDecorationProperties.ElementRole="User">
+
+                    <Panel>
+                        <!-- Play -->
+                        <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding !IsGameRunning}"
+                                    ToolTip.Tip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[PlayGame]}">
+                            <svg:Svg Path="/Assets/Icons/play.svg" Width="14" Height="14" Stretch="Uniform"
+                                     VerticalAlignment="Center"/>
+                            <TextBlock VerticalAlignment="Center" FontSize="13" FontWeight="SemiBold"
+                                       Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[PlayButton]}"/>
+                        </StackPanel>
+
+                        <!-- Stop -->
+                        <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding IsGameRunning}"
+                                    ToolTip.Tip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[StopGame]}">
+                            <svg:Svg Path="/Assets/Icons/square.svg" Width="14" Height="14" Stretch="Uniform"
+                                     VerticalAlignment="Center"/>
+                            <TextBlock VerticalAlignment="Center" FontSize="13" FontWeight="SemiBold"
+                                       Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[StopButton]}"/>
+                        </StackPanel>
+                    </Panel>
+                </Button>
+            </StackPanel>
 
             <StackPanel Grid.Column="2" Orientation="Horizontal">
                 <Button Classes="caption" Click="OnMinimizeClick"
@@ -40,7 +73,7 @@
                 <Button Classes="caption" Click="OnMaximizeClick"
                         WindowDecorationProperties.ElementRole="MaximizeButton">
                     <Panel>
-                        <svg:Svg Classes="glyphMaximize" Path="/Assets/Icons/maximize.svg"
+                        <svg:Svg Classes="glyphMaximize" Path="/Assets/Icons/square.svg"
                                  Width="16" Height="16" Stretch="Uniform"/>
                         <svg:Svg Classes="glyphRestore" Path="/Assets/Icons/restore.svg"
                                  Width="16" Height="16" Stretch="Uniform"/>

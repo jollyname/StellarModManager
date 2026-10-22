@@ -97,5 +97,12 @@
   "DependencyMissingLine": "Fehlende Abhängigkeiten: {0}",
   "DependencyNotInGameLine": "Abhängigkeiten nicht im Spiel: {0}",
   "StatusDeployDependencyMissing": "{0} kann nicht ins Spiel kopiert werden: Diese benötigten Mods sind nicht installiert: {1}",
-  "StatusDeployedWithDependencies": "{0} ins Spiel kopiert, zusammen mit: {1}"
+  "StatusDeployedWithDependencies": "{0} ins Spiel kopiert, zusammen mit: {1}",
+  "PlayButton": "Spielen",
+  "PlayGame": "Spiel starten",
+  "StopGame": "Spiel beenden",
+  "StopButton": "Stopp",
+  "StatusStopFailed": "Spiel konnte nicht beendet werden: {0}",
+  "StatusGameNotFound": "Die Spieldatei wurde im gewählten Ordner nicht gefunden.",
+  "StatusLaunchFailed": "Spiel konnte nicht gestartet werden: {0}"
 }
