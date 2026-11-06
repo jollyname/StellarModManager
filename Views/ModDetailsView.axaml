@@ -87,14 +87,14 @@
                 <!-- Main action -->
                 <Grid ColumnDefinitions="*,Auto">
                     <Panel Grid.Column="0">
-                        <Button Classes="accent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                        <Button Classes="subtle" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
                                 IsVisible="{Binding CanInstallSelected}"
                                 IsEnabled="{Binding !SelectedMod.IsInstalling, FallbackValue=False}"
                                 Command="{Binding InstallModCommand}"
                                 CommandParameter="{Binding SelectedMod}"
                                 Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Install]}"/>
 
-                        <Button Classes="accent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                        <Button Classes="subtle" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
                                 IsVisible="{Binding SelectedInstalledMod.IsUpdateAvailable, FallbackValue=False}"
                                 IsEnabled="{Binding !SelectedInstalledMod.IsUpdating, FallbackValue=False}"
                                 Command="{Binding UpdateModCommand}"
@@ -105,7 +105,7 @@
                             </StackPanel>
                         </Button>
 
-                        <Button Classes="accent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                        <Button Classes="subtle" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
                                 IsVisible="{Binding SelectedInstalledMod.NeedsDeploy, FallbackValue=False}"
                                 IsEnabled="{Binding !SelectedInstalledMod.IsDeploying, FallbackValue=False}"
                                 Command="{Binding DeployModCommand}"

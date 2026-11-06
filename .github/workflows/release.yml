@@ -29,6 +29,7 @@ jobs:
         run: |
           dotnet publish StellarModManager.csproj -c Release -r win-x64 `
             --self-contained true -p:PublishSingleFile=true `
+            -p:DebugType=None -p:DebugSymbols=false `
             -p:Version=$env:VERSION -o App
           Copy-Item License.txt, PostInfo.txt App\
           Copy-Item Assets\icon.ico App\icon.ico

@@ -8,6 +8,7 @@
     <ScrollViewer>
         <StackPanel Spacing="4" MaxWidth="720" HorizontalAlignment="Left" Margin="0,0,0,24">
 
+            <!-- Game folder -->
             <Border Classes="card">
                 <Grid ColumnDefinitions="*,Auto">
                     <StackPanel Spacing="4" VerticalAlignment="Center" Margin="0,0,16,0">
@@ -21,6 +22,7 @@
                 </Grid>
             </Border>
 
+            <!-- Languages -->
             <Border Classes="card">
                 <Grid ColumnDefinitions="*,Auto">
                     <TextBlock Classes="sectionTitle" FontWeight="Normal" VerticalAlignment="Center"
@@ -37,6 +39,7 @@
                 </Grid>
             </Border>
 
+            <!-- Themes -->
             <Border Classes="card">
                 <Grid ColumnDefinitions="*,Auto">
                     <TextBlock Classes="sectionTitle" FontWeight="Normal" VerticalAlignment="Center"
@@ -58,6 +61,16 @@
                     <CheckBox Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[AutoCheckAppUpdatesLabel]}"
                               IsChecked="{Binding AutoCheckForAppUpdates}"/>
                 </StackPanel>
+            </Border>
+
+            <!-- Version -->
+            <Border Classes="card">
+                <Grid ColumnDefinitions="*,Auto">
+                    <TextBlock Classes="sectionTitle" FontWeight="Normal" VerticalAlignment="Center"
+                               Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[AppVersionLabel]}"/>
+                    <TextBlock Grid.Column="1" Classes="secondary" VerticalAlignment="Center"
+                               Text="{Binding AppVersion}"/>
+                </Grid>
             </Border>
 
         </StackPanel>

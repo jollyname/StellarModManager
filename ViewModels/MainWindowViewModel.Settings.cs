@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using StellarModManager.Models;
 using StellarModManager.Services;
 using System.Collections.ObjectModel;
+using System.Reflection;
 
 namespace StellarModManager.ViewModels;
 
@@ -15,6 +16,8 @@ public partial class MainWindowViewModel
         code is null ? "" : LocalizationService.Instance.GetLanguageDisplayName(code));
 
     private readonly ThemeService themeService = new();
+
+    public string AppVersion { get; } = Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
 
     public ObservableCollection<string> AvailableThemes { get; } = new();
     public ObservableCollection<string> AvailableLanguages { get; } = new();

@@ -14,7 +14,7 @@
         WindowDecorations="BorderOnly"
         Title="Stellar Mod Manager"
         Width="1280" Height="820"
-        MinWidth="1010" MinHeight="600"
+        MinWidth="1100" MinHeight="600"
         Background="{DynamicResource Theme.BackgroundBrush}">
 
     <Design.DataContext>
@@ -26,6 +26,7 @@
         <!-- Title bar -->
         <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Background="Transparent"
               WindowDecorationProperties.ElementRole="TitleBar">
+
             <Image Grid.Column="0" Source="/Assets/icon.ico" Width="16" Height="16" Margin="12,0,8,0"/>
             
             <StackPanel Grid.Column="1" Orientation="Horizontal">
@@ -36,7 +37,7 @@
                 <!-- Play/Stop button -->
                 <Button Classes="ghost" Height="30" Margin="24,0,0,0" Padding="10,0,12,0"
                         VerticalAlignment="Center" CornerRadius="6"
-                        Background="{DynamicResource Theme.SurfaceBrush}"
+                        Background="Transparent"
                         BorderBrush="{DynamicResource Theme.BorderBrush}" BorderThickness="1"
                         Command="{Binding ToggleGameCommand}"
                         IsVisible="{Binding !SetupRequired}"

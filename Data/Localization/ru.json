@@ -7,6 +7,7 @@
   "ConfirmBeforeRemoveLabel": "Подтверждать удаление мода",
   "AutoCheckModUpdatesLabel": "Автоматически проверять обновления модов",
   "AutoCheckAppUpdatesLabel": "Автоматически проверять обновления приложения",
+  "AppVersionLabel": "Версия",
   "WelcomeTitle": "Добро пожаловать в StellarModManager",
   "WelcomeDescription": "Выберите папку с вашей Unity-игрой, чтобы начать. Менеджер может автоматически установить MelonLoader или продолжить работу, если он уже установлен вручную.",
   "InstallMelonLoaderAuto": "Установить MelonLoader автоматически",
