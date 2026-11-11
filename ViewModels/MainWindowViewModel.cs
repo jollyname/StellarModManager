@@ -3,6 +3,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using StellarModManager.Services;
 using System;
+using System.Diagnostics;
+using System.IO;
 
 namespace StellarModManager.ViewModels;
 
@@ -22,6 +24,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private bool isStatusError;
 
     private readonly DispatcherTimer statusTimer = new() { Interval = TimeSpan.FromSeconds(5) };
+    private readonly DispatcherTimer checkProcessTimer = new() { Interval = TimeSpan.FromSeconds(10) }; // not sure what the ideal value here would be
 
     private readonly SettingsService settingsService = new();
 
@@ -85,6 +88,11 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             _ = CheckForAppUpdates();
         }
+
+
+        checkProcessTimer.Start();
+        checkProcessTimer.Tick += (_, _) => SearchGameProcessIfNull();
+        SearchGameProcessIfNull();
     }
 
     // Successes fade out on their own; errors stay until dismissed
