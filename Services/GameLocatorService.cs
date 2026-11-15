@@ -19,8 +19,6 @@ public static class GameLocatorService
 
     public static IReadOnlyList<GameInstallationInfo> Locate()
     {
-        if (!OperatingSystem.IsWindows()) return [];
-
         try
         {
             var installs = SteamInfoService.GetSteamGames()

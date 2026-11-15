@@ -17,10 +17,10 @@ public static partial class SteamInfoService
 
     [SupportedOSPlatform("windows")]
     public static readonly (RegistryKey root, string subKey, string valueName)[] RegistryPaths =
-    [
+    OperatingSystem.IsWindows() ? [
         (Registry.CurrentUser, @"SOFTWARE\Valve\Steam", "SteamPath"),
         (Registry.LocalMachine, @"SOFTWARE\WOW6432Node\Valve\Steam", "InstallPath")
-    ];
+    ] : [];
 
     [GeneratedRegex("""(?:"path")(?:\s*)(?:")(?<path>.*)(?:")""")]
     private static partial Regex PathExtractionRegex();
@@ -43,6 +43,10 @@ public static partial class SteamInfoService
 
     public static IEnumerable<DirectoryInfo> GetSteamLibraries()
     {
+        const string macSteamPath = @"Y:\Library\Application Support\Steam";
+        if (Directory.Exists(macSteamPath))
+            return [new DirectoryInfo(macSteamPath)];
+
         var potentialSteamPaths = GetSteamPathFromRegistry();
 
         string? fileContent = null;
