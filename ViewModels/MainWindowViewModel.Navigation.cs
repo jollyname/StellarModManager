@@ -36,8 +36,8 @@ public partial class MainWindowViewModel
         ShowDetails();
 
         if (value == AppPage.Browse)
-        {
             RefreshModsCommand.Execute(null);
-        }
+        else if (value == AppPage.Library)
+            QueueExternalScan();
     }
 }

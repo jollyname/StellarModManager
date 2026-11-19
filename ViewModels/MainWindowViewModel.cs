@@ -1,4 +1,4 @@
-﻿using Avalonia.Threading;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using StellarModManager.Services;
@@ -37,7 +37,6 @@ public partial class MainWindowViewModel : ViewModelBase
         selectedTheme = appSettings.Theme;
         selectedLanguage = appSettings.Language;
         confirmBeforeRemove = appSettings.ConfirmBeforeRemove;
-        AutoDeployDependencies = appSettings.AutoDeployDependencies;
         autoCheckForModUpdates = appSettings.AutoCheckForModUpdates;
         autoCheckForAppUpdates = appSettings.AutoCheckForAppUpdates;
         sortIndex = appSettings.ModSort;
@@ -59,28 +58,7 @@ public partial class MainWindowViewModel : ViewModelBase
         updateCheckTimer = new DispatcherTimer { Interval = TimeSpan.FromMinutes(30) };
         updateCheckTimer.Tick += async (_, _) => await RefreshMods();
 
-        var profile = settingsService.LoadGameProfile();
-
-        if (profile != null)
-        {
-            GamePath = profile.GamePath;
-
-            var detector = new MelonLoaderDetector();
-            var result = detector.CheckInstallation(profile.GamePath);
-
-            if (result == MelonLoaderStatus.Installed)
-            {
-                IsMelonLoaderValid = true;
-                SetupRequired = false;
-
-                LoadInstalledMods();
-                _ = RefreshMods();
-            }
-            else
-            {
-                MelonLoaderStatusText = "Previously saved game path is no longer valid";
-            }
-        }
+        Dispatcher.UIThread.Post(async () => await RestoreGameAsync());
 
         ApplyAutoCheckTimerState();
 
@@ -92,9 +70,6 @@ public partial class MainWindowViewModel : ViewModelBase
 
         checkProcessTimer.Start();
         checkProcessTimer.Tick += (_, _) => SearchGameProcessIfNull();
-        SearchGameProcessIfNull();
-
-        LoadProfiles();
     }
 
     // Successes fade out on their own; errors stay until dismissed

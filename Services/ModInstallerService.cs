@@ -1,57 +1,97 @@
-﻿using System;
+﻿using StellarModManager.Models;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Text.Json;
 
 namespace StellarModManager.Services;
 
-public class ModInstallerService
+internal sealed record ProfilePackage(InstalledModInfo Mod, List<string> Files);
+internal sealed record StagedMod(ProfilePackage Package, string Directory);
+
+internal class ModInstallerService
 {
-    public async Task InstallAsync(string zipPath, string libraryPath)
+    public StagedMod Extract(string zipPath, string destination, string expectedId)
     {
-        if (!File.Exists(zipPath))
+        using var archive = ZipFile.OpenRead(zipPath);
+        var entries = archive.Entries
+            .Where(entry => entry.Name.Length > 0 && !entry.FullName.EndsWith('\\'))
+            .Select(entry => (Entry: entry, Path: NormalizePath(entry.FullName)))
+            .ToList();
+
+        var metadata = entries
+            .Where(entry => IsMetadata(entry.Path))
+            .OrderBy(entry => entry.Path.Count(character => character == '/'))
+            .FirstOrDefault();
+        if (metadata.Entry == null)
+            throw new InvalidDataException("Invalid mod package: mod.json missing.");
+
+        using var stream = metadata.Entry.Open();
+        var mod = ReadMetadata(stream);
+        if (!string.Equals(mod.Id, expectedId, StringComparison.OrdinalIgnoreCase))
+            throw new InvalidDataException($"Expected mod '{expectedId}', but the package contains '{mod.Id}'.");
+
+        var prefix = metadata.Path[..(metadata.Path.LastIndexOf('/') + 1)];
+        var paths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var (entry, archivePath) in entries)
         {
-            throw new FileNotFoundException("Mod zip not found", zipPath);
+            if (!archivePath.StartsWith(prefix, StringComparison.Ordinal) || IsInternalFile(archivePath))
+                continue;
+
+            var path = GameRelativePath(archivePath[prefix.Length..]);
+            if (!paths.Add(path))
+                throw new InvalidDataException($"Duplicate package path: {path}");
+
+            var target = Path.Combine(destination, path);
+            Directory.CreateDirectory(Path.GetDirectoryName(target)!);
+            entry.ExtractToFile(target);
         }
 
-        if (Directory.Exists(libraryPath))
+        return new StagedMod(new ProfilePackage(mod, [.. paths]), destination);
+    }
+
+    internal static InstalledModInfo ReadMetadata(Stream stream)
+    {
+        var mod = JsonSerializer.Deserialize<InstalledModInfo>(stream);
+        if (mod == null || string.IsNullOrWhiteSpace(mod.Id))
+            throw new InvalidDataException("Invalid mod package: missing mod ID.");
+        return mod;
+    }
+
+    internal static bool IsInternalFile(string path) =>
+        IsMetadata(path) || Path.GetFileName(path).Equals(".deployment.json", StringComparison.OrdinalIgnoreCase);
+
+    private static bool IsMetadata(string path) =>
+        Path.GetFileName(path).Equals("mod.json", StringComparison.OrdinalIgnoreCase);
+
+    internal static string GameRelativePath(string path)
+    {
+        path = NormalizePath(path);
+        if (path.Equals("Mods", StringComparison.OrdinalIgnoreCase))
+            throw new InvalidDataException("A mod package must use Mods as a directory.");
+        return InMods(path) ? "Mods" + path[4..] : path;
+    }
+
+    internal static bool InMods(string path) => path.StartsWith("Mods/", StringComparison.OrdinalIgnoreCase);
+
+    internal static string NormalizePath(string path)
+    {
+        var parts = path.Replace('\\', '/').Split('/');
+        foreach (var part in parts)
         {
-            Directory.Delete(libraryPath, true);
+            var name = part.Split('.')[0].ToUpperInvariant();
+            if (part.Length == 0 || part.EndsWith('.') || part.EndsWith(' ')
+                || part.Any(character => character < ' ' || "<>:\"|?*".Contains(character))
+                || part.StartsWith(".smm-", StringComparison.OrdinalIgnoreCase)
+                || name is "CON" or "PRN" or "AUX" or "NUL"
+                || (name.Length == 4 && (name.StartsWith("COM") || name.StartsWith("LPT"))
+                    && "0123456789¹²³".Contains(name[3])))
+                throw new InvalidDataException($"Invalid mod file path: {path}");
         }
 
-        Directory.CreateDirectory(libraryPath);
-
-        ZipFile.ExtractToDirectory(zipPath, libraryPath);
-
-        string? modJson = Directory.GetFiles(libraryPath, "mod.json", SearchOption.AllDirectories).FirstOrDefault();
-
-        if (modJson == null)
-        {
-            throw new Exception("Invalid mod package: mod.json missing");
-        }
-
-        string modRoot = Path.GetDirectoryName(modJson)!;
-
-        if (modRoot != libraryPath)
-        {
-            foreach (string item in Directory.GetFileSystemEntries(modRoot))
-            {
-                string destination = Path.Combine(libraryPath, Path.GetFileName(item));
-
-                if (Directory.Exists(item))
-                {
-                    Directory.Move(item, destination);
-                }
-                else
-                {
-                    File.Move(item, destination);
-                }
-            }
-
-            Directory.Delete(modRoot, true);
-        }
-
-        await Task.CompletedTask;
+        return string.Join('/', parts);
     }
 }

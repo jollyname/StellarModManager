@@ -1,10 +1,11 @@
-﻿using Avalonia.Controls;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using StellarModManager.Models;
 using StellarModManager.Services;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -26,9 +27,27 @@ public partial class MainWindowViewModel
     [ObservableProperty]
     private string installProgressText = "";
 
+    [ObservableProperty]
+    private string setupGamePath = "No game selected";
+
+    [ObservableProperty]
+    private string? setupError;
+
     private readonly MelonLoaderInstaller melonLoaderInstaller = new();
 
-    partial void OnGamePathChanged(string value) => InstallMelonLoaderCommand.NotifyCanExecuteChanged();
+    partial void OnSetupGamePathChanged(string value) => InstallMelonLoaderCommand.NotifyCanExecuteChanged();
+
+    partial void OnIsProfileBusyChanged(bool value)
+    {
+        CancelGameSetupCommand.NotifyCanExecuteChanged();
+        CloseSetupCommand.NotifyCanExecuteChanged();
+        InstallMelonLoaderCommand.NotifyCanExecuteChanged();
+        if (!value && retryExternalScan)
+        {
+            retryExternalScan = false;
+            QueueExternalScan();
+        }
+    }
 
     partial void OnIsMelonLoaderValidChanged(bool value)
     {
@@ -37,7 +56,12 @@ public partial class MainWindowViewModel
         ApplyAutoCheckTimerState();
     }
 
-    partial void OnIsInstallingMelonLoaderChanged(bool value) => InstallMelonLoaderCommand.NotifyCanExecuteChanged();
+    partial void OnIsInstallingMelonLoaderChanged(bool value)
+    {
+        CancelGameSetupCommand.NotifyCanExecuteChanged();
+        CloseSetupCommand.NotifyCanExecuteChanged();
+        InstallMelonLoaderCommand.NotifyCanExecuteChanged();
+    }
 
     private bool CheckMelonLoader(string path)
     {
@@ -54,79 +78,116 @@ public partial class MainWindowViewModel
         return result == MelonLoaderStatus.Installed;
     }
 
-    [RelayCommand]
-    private void SelectSuggestedFolder(GameInstallationInfo info)
+    private async Task RestoreGameAsync()
     {
-        var path = info.Directory.FullName;
-        GamePath = path;
+        await RunProfileOperation("StatusProfileSetupFailed", async () =>
+        {
+            try
+            {
+                var path = await Task.Run(() => profileStorage.GetSavedGamePath() ?? settingsService.LoadGameProfile()?.GamePath);
+                if (path == null)
+                    return;
 
-        bool valid = CheckMelonLoader(path);
-        IsMelonLoaderValid = valid;
+                SetupGamePath = path;
+                IsMelonLoaderValid = CheckMelonLoader(path);
+                if (!IsMelonLoaderValid)
+                    return;
 
-        if (!valid) return;
-
-        settingsService.SaveGameProfile(new GameProfile { GamePath = path });
+                await FinishGameSetupAsync(path);
+            }
+            catch (Exception ex)
+            {
+                SetupError = LocalizationService.Instance.Format("StatusProfileSetupFailed", ex.Message);
+            }
+        });
     }
+
+    [RelayCommand]
+    private Task SelectSuggestedFolder(GameInstallationInfo info) => ChooseGameFolderAsync(info.Directory.FullName);
 
     [RelayCommand]
     private async Task SelectGameFolder()
     {
-        Window? window = null;
-        if (App.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        if (IsProfileBusy || IsInstallingMelonLoader || GetMainWindow() is not { } window)
+            return;
+
+        var folders = await window.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
         {
-            window = desktop.MainWindow;
-        }
+            Title = "Select Unity Game Folder",
+            AllowMultiple = false
+        });
 
-        if (window == null)
-            return;
-
-        var folders = await window.StorageProvider.OpenFolderPickerAsync(
-            new FolderPickerOpenOptions
-            {
-                Title = "Select Unity Game Folder",
-                AllowMultiple = false
-            });
-
-        if (folders.Count == 0)
-            return;
-
-        string path = folders[0].Path.LocalPath;
-
-        GamePath = path;
-
-        bool valid = CheckMelonLoader(path);
-        IsMelonLoaderValid = valid;
-
-        if (!valid)
-            return;
-
-        settingsService.SaveGameProfile(new GameProfile { GamePath = path });
+        if (folders.Count > 0)
+            await ChooseGameFolderAsync(folders[0].Path.LocalPath);
     }
 
-    private bool CanInstallMelonLoader() => GamePath != "No game selected" && !IsMelonLoaderValid && !IsInstallingMelonLoader;
+    private Task ChooseGameFolderAsync(string path) => RunProfileOperation("StatusProfileSetupFailed", async () =>
+    {
+        var alreadySetUp = !SetupRequired;
+        var valid = CheckMelonLoader(path);
+        if (alreadySetUp && valid)
+        {
+            await FinishGameSetupAsync(path);
+            return;
+        }
+
+        SetupError = null;
+        SetupRequired = true;
+        SetupGamePath = path;
+        IsMelonLoaderValid = valid;
+    });
+
+    private async Task FinishGameSetupAsync(string path)
+    {
+        var snapshot = await Task.Run(() => profileStorage.Initialize(path));
+        if (!string.Equals(GamePath, path, ProfileFileTransaction.PathComparison))
+        {
+            GameProcess = null;
+            GamePath = path;
+        }
+
+        SetupGamePath = path;
+        SetupError = null;
+        SetupRequired = false;
+        IsMelonLoaderValid = true;
+        ApplyProfileSnapshot(snapshot);
+        SearchGameProcessIfNull();
+        _ = RefreshMods();
+    }
+
+    private bool CanCancelGameSetup() => !IsProfileBusy && !IsInstallingMelonLoader;
+
+    [RelayCommand(CanExecute = nameof(CanCancelGameSetup))]
+    private void CancelGameSetup()
+    {
+        if (ActiveProfile == null)
+            return;
+
+        SetupError = null;
+        SetupGamePath = GamePath;
+        IsMelonLoaderValid = CheckMelonLoader(GamePath);
+        SetupRequired = false;
+    }
+
+    private bool CanInstallMelonLoader() => SetupGamePath != "No game selected"
+        && !IsMelonLoaderValid && !IsInstallingMelonLoader && !IsProfileBusy;
 
     [RelayCommand(CanExecute = nameof(CanInstallMelonLoader))]
     private async Task InstallMelonLoader()
     {
         IsInstallingMelonLoader = true;
         InstallProgressText = "Starting...";
+        SetupError = null;
 
         try
         {
-            var progress = new System.Progress<string>(text => InstallProgressText = text);
-
-            await melonLoaderInstaller.InstallAsync(GamePath, progress);
-
-            IsMelonLoaderValid = CheckMelonLoader(GamePath);
-
-            if (IsMelonLoaderValid)
-            {
-                settingsService.SaveGameProfile(new GameProfile { GamePath = GamePath });
-            }
+            var progress = new Progress<string>(text => InstallProgressText = text);
+            await melonLoaderInstaller.InstallAsync(SetupGamePath, progress);
+            IsMelonLoaderValid = CheckMelonLoader(SetupGamePath);
         }
-        catch (System.Exception ex)
+        catch (Exception ex)
         {
-            MelonLoaderStatusText = $"Auto-install failed: {ex.Message}"; // Hopesfully this never happens... ijdsfjipfdsipjhfdfdf
+            MelonLoaderStatusText = $"Auto-install failed: {ex.Message}";
         }
         finally
         {
@@ -134,12 +195,18 @@ public partial class MainWindowViewModel
         }
     }
 
-    [RelayCommand(CanExecute = nameof(IsMelonLoaderValid))]
-    private void CloseSetup()
-    {
-        SetupRequired = false;
+    private bool CanCloseSetup() => IsMelonLoaderValid && !IsProfileBusy && !IsInstallingMelonLoader;
 
-        LoadInstalledMods();
-        _ = RefreshMods();
-    }
+    [RelayCommand(CanExecute = nameof(CanCloseSetup))]
+    private Task CloseSetup() => RunProfileOperation("StatusProfileSetupFailed", async () =>
+    {
+        try
+        {
+            await FinishGameSetupAsync(SetupGamePath);
+        }
+        catch (Exception ex)
+        {
+            SetupError = LocalizationService.Instance.Format("StatusProfileSetupFailed", ex.Message);
+        }
+    });
 }

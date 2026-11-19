@@ -1,4 +1,4 @@
-﻿using Avalonia.Data.Converters;
+using Avalonia.Data.Converters;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -32,9 +32,6 @@ public partial class MainWindowViewModel
     private bool confirmBeforeRemove = true;
 
     [ObservableProperty]
-    private bool autoDeployDependencies;
-
-    [ObservableProperty]
     private bool autoCheckForAppUpdates = true;  
 
     [ObservableProperty]
@@ -54,7 +51,6 @@ public partial class MainWindowViewModel
             Language = SelectedLanguage,
             Theme = SelectedTheme,
             ConfirmBeforeRemove = ConfirmBeforeRemove,
-            AutoDeployDependencies = AutoDeployDependencies,
             AutoCheckForModUpdates = AutoCheckForModUpdates,
             AutoCheckForAppUpdates = AutoCheckForAppUpdates,
             ModSort = SortIndex,
@@ -77,8 +73,6 @@ public partial class MainWindowViewModel
     partial void OnAutoCheckForAppUpdatesChanged(bool value) => PersistSettings();
 
     partial void OnConfirmBeforeRemoveChanged(bool value) => PersistSettings();
-
-    partial void OnAutoDeployDependenciesChanged(bool value) => PersistSettings();
 
     partial void OnIsCompactViewChanged(bool value) => PersistSettings();
 

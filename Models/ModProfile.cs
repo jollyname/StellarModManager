@@ -1,15 +1,15 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using System.Collections.Generic;
+using System;
 using System.Text.Json.Serialization;
 
 namespace StellarModManager.Models;
 
 public partial class ModProfile : ObservableObject
 {
+    public Guid Id { get; set; }
+
     [ObservableProperty]
     private string name = "";
-
-    public List<string> DeployedModIds { get; set; } = new();
 
     [JsonIgnore]
     [ObservableProperty]

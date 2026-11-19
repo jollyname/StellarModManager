@@ -1,4 +1,4 @@
-﻿<Window xmlns="https://github.com/avaloniaui"
+<Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:StellarModManager.ViewModels"
         xmlns:views="using:StellarModManager.Views"
@@ -497,7 +497,6 @@
             </SplitView>
 
             <views:ConfirmRemoveModView IsVisible="{Binding IsConfirmRemoveOpen}"/>
-            <views:ConfirmDeployModView IsVisible="{Binding IsConfirmDeployOpen}"/>
             <views:UpdatePanelView IsVisible="{Binding IsUpdatePanelOpen}"/>
 
         </Grid>

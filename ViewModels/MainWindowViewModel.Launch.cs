@@ -23,10 +23,7 @@ public partial class MainWindowViewModel
                 field.EnableRaisingEvents = false;
                 field.Exited -= OnExitGameProcess;
 
-                if (!field.HasExited) field.Kill(); // kill the existing process since we're replacing it for some reason
-
-                field.Close();
-                field.Dispose(); // seemingly not called by Close
+                field.Dispose();
             }
 
             if (value is not null)
@@ -44,9 +41,13 @@ public partial class MainWindowViewModel
     private bool isGameRunning;
 
 
-    private void OnExitGameProcess(object? _, EventArgs args)
+    private void OnExitGameProcess(object? sender, EventArgs args)
     {
-        Dispatcher.UIThread.Post(() => GameProcess = null);
+        Dispatcher.UIThread.Post(() =>
+        {
+            if (sender == GameProcess)
+                GameProcess = null;
+        });
     }
 
 
@@ -54,7 +55,7 @@ public partial class MainWindowViewModel
     private async Task ToggleGame()
     {
         if (IsGameRunning) StopGame();
-        else await LaunchGame();
+        else await RunProfileOperation("StatusLaunchFailed", LaunchGame);
     }
 
 
@@ -68,14 +69,9 @@ public partial class MainWindowViewModel
             return;
         }
 
-        try
-        {
-            GameProcess = await GameLaunchService.Launch(game);
-        }
-        catch (Exception ex)
-        {
-            ReportError("StatusLaunchFailed", ex.Message);
-        }
+        var path = GamePath;
+        ApplyProfileSnapshot(await Task.Run(() => profileStorage.Initialize(path)));
+        GameProcess = await GameLaunchService.Launch(game);
     }
 
     private void StopGame()

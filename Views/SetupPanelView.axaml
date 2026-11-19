@@ -60,9 +60,13 @@
                         IsVisible="{Binding MelonLoaderStatusText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
                     <StackPanel Spacing="2" VerticalAlignment="Center">
                         <TextBlock Text="{Binding MelonLoaderStatusText}" FontWeight="SemiBold" TextWrapping="Wrap"/>
-                        <TextBlock Classes="secondary" Text="{Binding GamePath}" TextWrapping="Wrap"/>
+                        <TextBlock Classes="secondary" Text="{Binding SetupGamePath}" TextWrapping="Wrap"/>
                     </StackPanel>
                 </Border>
+
+                <TextBlock Foreground="{DynamicResource Theme.DangerBrush}" TextWrapping="Wrap"
+                           IsVisible="{Binding SetupError, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                           Text="{Binding SetupError}"/>
 
                 <StackPanel Spacing="8" IsVisible="{Binding !IsMelonLoaderValid}">
                     <Button Classes="subtle" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
@@ -76,6 +80,11 @@
                 <Button Classes="accent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
                         Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Continue]}"
                         Command="{Binding CloseSetupCommand}"/>
+
+                <Button Classes="subtle" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                        Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Cancel]}"
+                        IsVisible="{Binding ActiveProfile, Converter={x:Static ObjectConverters.IsNotNull}}"
+                        Command="{Binding CancelGameSetupCommand}"/>
 
             </StackPanel>
         </ScrollViewer>

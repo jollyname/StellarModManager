@@ -474,4 +474,10 @@
         <Setter Property="Background" Value="#99000000"/>
     </Style>
 
+    <Style Selector="TextBlock.externalBadge">
+        <Setter Property="Foreground" Value="#FFB263"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
 </Styles>

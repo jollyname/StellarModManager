@@ -14,49 +14,62 @@ public sealed class DependencyResult
     public List<string> Missing { get; } = new();
 }
 
-public sealed class DeployPlan
-{
-    // Installed but not deployed
-    public List<InstalledModInfo> ToDeploy { get; } = new();
-
-    // Needed ids that aren't installed at all
-    public List<string> Missing { get; } = new();
-}
-
 public static class DependencyResolver
 {
-    public static DependencyResult Resolve(ModInfo root, IEnumerable<OnlineModInfo> available, Func<string, bool> isInstalled)
+    public static DependencyResult Resolve(IEnumerable<ModInfo> roots, IEnumerable<OnlineModInfo> available,
+        Func<string, bool> isInstalled)
     {
         var result = new DependencyResult();
-        var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { root.Id };
-        var list = available.ToList();
+        var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var list = available.ToDictionary(mod => mod.Id, StringComparer.OrdinalIgnoreCase);
 
-        Visit(root);
+        foreach (var root in roots)
+            Visit(root, include: true);
+
         return result;
+
+        void Visit(ModInfo mod, bool include)
+        {
+            if (!seen.Add(mod.Id))
+                return;
+
+            foreach (var raw in NeedsOf(mod))
+            {
+                string id = (raw ?? "").Trim();
+                if (id.Length == 0 || seen.Contains(id))
+                    continue;
+
+                if (list.TryGetValue(id, out var found))
+                    Visit(found, include: !isInstalled(id));
+                else if (!isInstalled(id) && seen.Add(id))
+                    result.Missing.Add(id);
+            }
+
+            if (include && mod is OnlineModInfo online)
+                result.ToInstall.Add(online);
+        }
+    }
+
+    public static List<string> FindMissing(InstalledModInfo root, IEnumerable<InstalledModInfo> installed)
+    {
+        var list = installed.ToDictionary(mod => mod.Id, StringComparer.OrdinalIgnoreCase);
+        var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { root.Id };
+        var missing = new List<string>();
+        Visit(root);
+        return missing;
 
         void Visit(ModInfo mod)
         {
-            foreach (string raw in mod.Needs ?? new())
+            foreach (var raw in NeedsOf(mod))
             {
-                string id = (raw ?? "").Trim();
-
-                // Skip blanks, and anything already visited
+                var id = (raw ?? "").Trim();
                 if (id.Length == 0 || !seen.Add(id))
                     continue;
 
-                var found = list.FirstOrDefault(_mod => _mod.Id.Equals(id, StringComparison.OrdinalIgnoreCase));
-
-                if (found == null)
-                {
-                    if (!isInstalled(id))
-                        result.Missing.Add(id);
-                    continue;
-                }
-
-                Visit(found); // its own needs come first
-
-                if (!isInstalled(id))
-                    result.ToInstall.Add(found);
+                if (list.TryGetValue(id, out var found))
+                    Visit(found);
+                else
+                    missing.Add(id);
             }
         }
     }
@@ -76,40 +89,5 @@ public static class DependencyResolver
             .Where(_mod => !_mod.Id.Equals(target.Id, StringComparison.OrdinalIgnoreCase))
             .Where(_mod => NeedsOf(_mod).Any(need => (need ?? "").Trim().Equals(target.Id, StringComparison.OrdinalIgnoreCase)))
             .ToList();
-    }
-
-    public static DeployPlan ResolveDeploy(ModInfo root, IEnumerable<InstalledModInfo> installed)
-    {
-        var plan = new DeployPlan();
-        var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { root.Id };
-        var list = installed.ToList();
-
-        Visit(root);
-        return plan;
-
-        void Visit(ModInfo mod)
-        {
-            foreach (string raw in NeedsOf(mod))
-            {
-                string id = (raw ?? "").Trim();
-
-                // Skip blanks, and anything already visited
-                if (id.Length == 0 || !seen.Add(id))
-                    continue;
-
-                var found = list.FirstOrDefault(_mod => _mod.Id.Equals(id, StringComparison.OrdinalIgnoreCase));
-
-                if (found == null)
-                {
-                    plan.Missing.Add(id);
-                    continue;
-                }
-
-                Visit(found); // its own needs come first
-
-                if (!found.IsDeployed)
-                    plan.ToDeploy.Add(found);
-            }
-        }
     }
 }

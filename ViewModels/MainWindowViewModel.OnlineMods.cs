@@ -25,62 +25,91 @@ public partial class MainWindowViewModel
     [ObservableProperty]
     private string searchText = "";
 
-    // Install a mod and its dependencies
     [RelayCommand]
-    private async Task InstallMod(OnlineModInfo mod)
+    private Task InstallMod(OnlineModInfo mod) => RunProfileOperation("StatusInstallFailed", async () =>
     {
-        var deps = DependencyResolver.Resolve(mod, OnlineMods, id => InstalledMods.Any(m => m.Id.Equals(id, StringComparison.OrdinalIgnoreCase)));
-
-        if (deps.Missing.Count > 0)
+        if (ActiveProfile is not { } profile)
         {
-            ReportError("StatusDependencyNotInList", mod.Name, string.Join(", ", deps.Missing));
+            ReportError("StatusSelectGameFirst");
             return;
         }
 
-        try
-        {
-            foreach (var dep in deps.ToInstall)
-                await InstallOneAsync(dep);
+        var profileId = profile.Id;
+        var game = GamePath;
+        var plan = ResolveInstall(mod);
+        if (!CheckInstallDependencies(mod, plan))
+            return;
 
-            await InstallOneAsync(mod);
-
-            if (deps.ToInstall.Count == 0)
-                ReportSuccess("StatusInstalled", mod.Name);
-            else
-                ReportSuccess("StatusInstalledWithDependencies", mod.Name, string.Join(", ", deps.ToInstall.Select(d => d.Name)));
-        }
-        catch (Exception ex)
-        {
-            ReportError("StatusInstallFailed", ex.Message);
-        }
-
-        LoadInstalledMods();
-    }
-
-    // Install one mod, no dependency check or anything
-    private async Task InstallOneAsync(OnlineModInfo mod)
-    {
         mod.IsInstalling = true;
         mod.DownloadProgress = 0;
-
         try
         {
-            string downloads = Path.Combine(AppContext.BaseDirectory, "Downloads");
-            Directory.CreateDirectory(downloads);
-
-            string zipFile = Path.Combine(downloads, $"{mod.Id}.zip");
-            var progress = new Progress<double>(pct => mod.DownloadProgress = pct);
-
-            await repositoryService.DownloadModAsync(mod.DownloadUrl, zipFile, progress);
-
-            string libraryPath = Path.Combine(AppContext.BaseDirectory, "Library", mod.Id);
-            await InstallToLibraryAsync(zipFile, libraryPath);
-
-            File.Delete(zipFile);
+            var snapshot = await WithStagedModsAsync(plan.ToInstall, item =>
+                new Progress<double>(pct => item.DownloadProgress = pct),
+                staged => profileStorage.Install(profileId, game, staged));
+            ApplyProfileSnapshot(snapshot);
+            var dependencies = plan.ToInstall.Where(item => item != mod).Select(item => item.Name).ToList();
+            if (dependencies.Count == 0)
+                ReportSuccess("StatusInstalled", mod.Name);
+            else
+                ReportSuccess("StatusInstalledWithDependencies", mod.Name, string.Join(", ", dependencies));
         }
         finally
         {
             mod.IsInstalling = false;
+        }
+    });
+
+    private DependencyResult ResolveInstall(OnlineModInfo mod) =>
+        DependencyResolver.Resolve([mod], OnlineMods,
+            id => InstalledMods.Any(item => !item.IsExternal && item.Id.Equals(id, StringComparison.OrdinalIgnoreCase)));
+
+    private bool CheckInstallDependencies(OnlineModInfo mod, DependencyResult plan)
+    {
+        if (plan.Missing.Count == 0)
+            return true;
+
+        ReportError("StatusDependencyNotInList", mod.Name, string.Join(", ", plan.Missing));
+        return false;
+    }
+
+    private async Task<ProfileSnapshot> WithStagedModsAsync(IReadOnlyList<OnlineModInfo> mods,
+        Func<OnlineModInfo, IProgress<double>?> progress, Func<IReadOnlyList<StagedMod>, ProfileSnapshot> apply)
+    {
+        var staging = Directory.CreateTempSubdirectory("StellarModManager-");
+        try
+        {
+            var staged = new List<StagedMod>();
+            foreach (var mod in mods)
+            {
+                var id = mod.Id;
+                var url = mod.DownloadUrl;
+                var packagePath = Path.Combine(staging.FullName, Guid.NewGuid().ToString("N"));
+                var zip = packagePath + ".zip";
+                await repositoryService.DownloadModAsync(url, zip, progress(mod));
+                var package = await Task.Run(() => installerService.Extract(zip, packagePath, id));
+                if (package.Package.Mod.Needs is not { Count: > 0 })
+                    package.Package.Mod.Needs = mod.Needs?.ToList() ?? [];
+
+                try
+                {
+                    await Task.Run(() => releaseFingerprints.Record(url, package));
+                }
+                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException){}
+                staged.Add(package);
+                File.Delete(zip);
+            }
+
+            return await Task.Run(() => apply(staged));
+        }
+        finally
+        {
+            try
+            {
+                staging.Delete(recursive: true);
+            }
+            catch (IOException){}
+            catch (UnauthorizedAccessException){}
         }
     }
 
@@ -130,6 +159,7 @@ public partial class MainWindowViewModel
                 existing.RebuildTags();
                 existing.Version = mod.Version;
                 existing.Description = mod.Description;
+                existing.Needs = mod.Needs;
                 existing.DownloadUrl = mod.DownloadUrl;
                 existing.RepoOwner = mod.RepoOwner;
                 existing.RepoName = mod.RepoName;
@@ -167,6 +197,7 @@ public partial class MainWindowViewModel
 
 
         RefreshUpdateStatuses();
+        QueueExternalScan();
         ApplyOnlineView();
 
         await Task.WhenAll(OnlineMods.Select(repositoryService.LoadChangelogAsync));

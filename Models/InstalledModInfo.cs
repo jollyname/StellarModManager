@@ -1,25 +1,16 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
+using StellarModManager.Services;
 using System.Text.Json.Serialization;
 
 namespace StellarModManager.Models;
 
 public partial class InstalledModInfo : ModInfo
 {
-    //Base properties in ModInfo class
-
-    // UI only
     [JsonIgnore]
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(NeedsDeploy), nameof(IsDeployedAndCurrent))]
-    private bool isDeployed;
+    internal ExternalDll? ExternalFile { get; init; }
 
     [JsonIgnore]
-    [ObservableProperty]
-    private bool isDeploying;
-
-    [JsonIgnore]
-    [ObservableProperty]
-    private double deployProgress;
+    public bool IsExternal => ExternalFile != null;
 
     [JsonIgnore]
     [ObservableProperty]
@@ -35,7 +26,6 @@ public partial class InstalledModInfo : ModInfo
 
     [JsonIgnore]
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(NeedsDeploy), nameof(IsDeployedAndCurrent))]
     private bool isUpdateAvailable;
 
     // Shown in the "!" tooltip, empty means no missing dependencies
@@ -47,12 +37,6 @@ public partial class InstalledModInfo : ModInfo
     [JsonIgnore]
     public bool HasDependencyWarning => !string.IsNullOrEmpty(DependencyWarning);
 
-    // Deploying to the game is the next step once the mod is up to date
-    [JsonIgnore]
-    public bool NeedsDeploy => !IsDeployed && !IsUpdateAvailable;
-
-    [JsonIgnore]
-    public bool IsDeployedAndCurrent => IsDeployed && !IsUpdateAvailable;
 
     [JsonIgnore]
     [ObservableProperty]

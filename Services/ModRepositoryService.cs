@@ -175,23 +175,27 @@ public class ModRepositoryService
         }
     }
 
-    public async Task DownloadModAsync(string url, string destination, IProgress<double>? progress = null)
+    public Task DownloadModAsync(string url, string destination, IProgress<double>? progress = null) =>
+        DownloadModAsync(url, destination, progress, CancellationToken.None);
+
+    internal async Task DownloadModAsync(string url, string destination, IProgress<double>? progress,
+        CancellationToken cancellationToken)
     {
-        using var response = await httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
+        using var response = await httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
         response.EnsureSuccessStatusCode();
 
         long? totalBytes = response.Content.Headers.ContentLength;
 
-        await using var contentStream = await response.Content.ReadAsStreamAsync();
+        await using var contentStream = await response.Content.ReadAsStreamAsync(cancellationToken);
         await using var fileStream = File.Create(destination);
 
         var buffer = new byte[81920];
         long totalRead = 0;
         int bytesRead;
 
-        while ((bytesRead = await contentStream.ReadAsync(buffer)) > 0)
+        while ((bytesRead = await contentStream.ReadAsync(buffer, cancellationToken)) > 0)
         {
-            await fileStream.WriteAsync(buffer.AsMemory(0, bytesRead));
+            await fileStream.WriteAsync(buffer.AsMemory(0, bytesRead), cancellationToken);
             totalRead += bytesRead;
 
             if (totalBytes.HasValue && totalBytes.Value > 0)
