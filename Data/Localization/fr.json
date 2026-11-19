@@ -105,5 +105,17 @@
   "StopButton": "Arrêter",
   "StatusStopFailed": "Impossible de fermer le jeu : {0}",
   "StatusGameNotFound": "Exécutable du jeu introuvable dans le dossier sélectionné.",
-  "StatusLaunchFailed": "Impossible de lancer le jeu : {0}"
+  "StatusLaunchFailed": "Impossible de lancer le jeu : {0}",
+  "ProfileRename": "Renommer",
+  "ProfileDelete": "Supprimer",
+  "ProfileConfirm": "Confirmer",
+  "ProfileNewPlaceholder": "Nouveau profil...",
+  "ProfileCreate": "Créer un profil",
+  "ProfileImport": "Importer",
+  "ProfileExport": "Exporter",
+  "StatusProfileImported": "Profil « {0} » importé.",
+  "StatusProfileImportFailed": "Échec de l'importation : {0}",
+  "StatusProfileExported": "Profil « {0} » exporté.",
+  "StatusProfileExportFailed": "Échec de l'exportation : {0}",
+  "StatusProfileNameTaken": "Un profil avec ce nom existe déjà."
 }

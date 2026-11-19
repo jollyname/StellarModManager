@@ -204,6 +204,7 @@ public partial class MainWindowViewModel
 
             await Task.Run(() => deploymentService.DeployMod(libraryPath, GamePath, progress));
             mod.IsDeployed = true;
+            NotifyProfileDeployed(mod.Id);
             RefreshDependencyStatuses();
         }
         finally
@@ -256,6 +257,7 @@ public partial class MainWindowViewModel
                 }
             });
 
+            RemoveModFromProfiles(mod.Id);
             InstalledMods.Remove(mod);
             RefreshUpdateStatuses();
             ReportSuccess("StatusRemoved", mod.Name);

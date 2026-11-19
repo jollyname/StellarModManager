@@ -93,6 +93,8 @@ public partial class MainWindowViewModel : ViewModelBase
         checkProcessTimer.Start();
         checkProcessTimer.Tick += (_, _) => SearchGameProcessIfNull();
         SearchGameProcessIfNull();
+
+        LoadProfiles();
     }
 
     // Successes fade out on their own; errors stay until dismissed

@@ -105,5 +105,17 @@
   "StopButton": "Detener",
   "StatusStopFailed": "No se pudo cerrar el juego: {0}",
   "StatusGameNotFound": "No se encontró el ejecutable del juego en la carpeta seleccionada.",
-  "StatusLaunchFailed": "No se pudo iniciar el juego: {0}"
+  "StatusLaunchFailed": "No se pudo iniciar el juego: {0}",
+  "ProfileRename": "Renombrar",
+  "ProfileDelete": "Eliminar",
+  "ProfileConfirm": "Confirmar",
+  "ProfileNewPlaceholder": "Nuevo perfil...",
+  "ProfileCreate": "Crear perfil",
+  "ProfileImport": "Importar",
+  "ProfileExport": "Exportar",
+  "StatusProfileImported": "Perfil '{0}' importado.",
+  "StatusProfileImportFailed": "Error al importar: {0}",
+  "StatusProfileExported": "Perfil '{0}' exportado.",
+  "StatusProfileExportFailed": "Error al exportar: {0}",
+  "StatusProfileNameTaken": "Ya existe un perfil con ese nombre."
 }

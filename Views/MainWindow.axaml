@@ -1,8 +1,9 @@
-<Window xmlns="https://github.com/avaloniaui"
+﻿<Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:StellarModManager.ViewModels"
         xmlns:views="using:StellarModManager.Views"
         xmlns:loc="using:StellarModManager.Services"
+        xmlns:models="using:StellarModManager.Models"
         xmlns:svg="clr-namespace:Avalonia.Svg.Skia;assembly=Svg.Controls.Skia.Avalonia"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -173,6 +174,147 @@
                                     </Border>
                                 </Grid>
                             </Button>
+                        
+                            <!-- Profiles -->
+                            <StackPanel IsVisible="{Binding IsPaneOpen}" Margin="0,2,0,0" Spacing="2">
+                                <Button Classes="ghost" Height="30" Padding="12,0" CornerRadius="4"
+                                        HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                                        Command="{Binding ToggleProfilesDropdownCommand}">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                            <svg:Svg Css="{DynamicResource Theme.IconCss}"
+                                                     Path="/Assets/Icons/library.svg"
+                                                     Width="14" Height="14" Stretch="Uniform"/>
+                                            <TextBlock Text="{Binding ActiveProfileName}" FontSize="12"
+                                                       Foreground="{DynamicResource Theme.TextSecondaryBrush}"
+                                                       VerticalAlignment="Center"
+                                                       TextTrimming="CharacterEllipsis"/>
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="1" Text="▾" FontSize="10" Margin="4,0,2,0"
+                                                   Foreground="{DynamicResource Theme.TextMutedBrush}"
+                                                   VerticalAlignment="Center"/>
+                                    </Grid>
+                                </Button>
+
+                                <Border IsVisible="{Binding IsProfilesDropdownOpen}"
+                                        Background="{DynamicResource Theme.SurfaceBrush}"
+                                        BorderBrush="{DynamicResource Theme.BorderBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="4"
+                                        Padding="4">
+                                    <StackPanel Spacing="1">
+                                        <ItemsControl ItemsSource="{Binding ModProfiles}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate x:DataType="models:ModProfile">
+                                                    <Panel Height="28">
+                                                        <Grid ColumnDefinitions="*,Auto,Auto"
+                                                              IsVisible="{Binding !IsEditing}">
+                                                            <Button Grid.Column="0" Classes="ghost" Height="26"
+                                                                    Padding="8,0" CornerRadius="3"
+                                                                    HorizontalAlignment="Stretch"
+                                                                    HorizontalContentAlignment="Stretch"
+                                                                    Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).SwitchProfileCommand}"
+                                                                    CommandParameter="{Binding}">
+                                                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                                                    <svg:Svg Css="{DynamicResource Theme.IconCss}"
+                                                                             Path="/Assets/Icons/check.svg"
+                                                                             Width="10" Height="10"
+                                                                             IsVisible="{Binding IsActive}"/>
+                                                                    <Border Width="10" IsVisible="{Binding !IsActive}"/>
+                                                                    <TextBlock Text="{Binding Name}" FontSize="12"
+                                                                               VerticalAlignment="Center"
+                                                                               TextTrimming="CharacterEllipsis"/>
+                                                                </StackPanel>
+                                                            </Button>
+                                                            <Button Grid.Column="1" Classes="ghost icon"
+                                                                    Width="24" Height="24" CornerRadius="3"
+                                                                    Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).StartRenameCommand}"
+                                                                    CommandParameter="{Binding}"
+                                                                    ToolTip.Tip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ProfileRename]}">
+                                                                <TextBlock FontSize="11" VerticalAlignment="Center">✎</TextBlock>
+                                                            </Button>
+                                                            <Button Grid.Column="2" Classes="ghost icon"
+                                                                    Width="24" Height="24" CornerRadius="3"
+                                                                    Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).DeleteProfileCommand}"
+                                                                    CommandParameter="{Binding}"
+                                                                    ToolTip.Tip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ProfileDelete]}">
+                                                                <svg:Svg Css="{DynamicResource Theme.IconCss}"
+                                                                         Path="/Assets/Icons/close.svg"
+                                                                         Width="10" Height="10" Stretch="Uniform"/>
+                                                            </Button>
+                                                        </Grid>
+                                                        <Grid ColumnDefinitions="*,Auto,Auto"
+                                                              IsVisible="{Binding IsEditing}">
+                                                            <TextBox Grid.Column="0" Text="{Binding EditName}"
+                                                                     Height="26" FontSize="12"
+                                                                     Padding="6,0" VerticalContentAlignment="Center"
+                                                                     CornerRadius="3"
+                                                                     KeyDown="OnRenameKeyDown"/>
+                                                            <Button Grid.Column="1" Classes="ghost icon"
+                                                                    Width="24" Height="24" CornerRadius="3"
+                                                                    Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).CommitRenameCommand}"
+                                                                    CommandParameter="{Binding}"
+                                                                    ToolTip.Tip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ProfileConfirm]}">
+                                                                <svg:Svg Css="{DynamicResource Theme.IconCss}"
+                                                                         Path="/Assets/Icons/check.svg"
+                                                                         Width="10" Height="10" Stretch="Uniform"/>
+                                                            </Button>
+                                                            <Button Grid.Column="2" Classes="ghost icon"
+                                                                    Width="24" Height="24" CornerRadius="3"
+                                                                    Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).CancelRenameCommand}"
+                                                                    CommandParameter="{Binding}"
+                                                                    ToolTip.Tip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Cancel]}">
+                                                                <svg:Svg Css="{DynamicResource Theme.IconCss}"
+                                                                         Path="/Assets/Icons/close.svg"
+                                                                         Width="10" Height="10" Stretch="Uniform"/>
+                                                            </Button>
+                                                        </Grid>
+                                                    </Panel>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+
+                                        <Rectangle Height="1" Fill="{DynamicResource Theme.BorderBrush}" Margin="0,4"/>
+
+                                        <Grid ColumnDefinitions="*,Auto" Height="28">
+                                            <TextBox Grid.Column="0" Text="{Binding NewProfileName}"
+                                                     Height="26" FontSize="12"
+                                                     Padding="6,0" VerticalContentAlignment="Center"
+                                                     CornerRadius="3"
+                                                     PlaceholderText="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ProfileNewPlaceholder]}"
+                                                     KeyDown="OnNewProfileKeyDown"/>
+                                            <Button Grid.Column="1" Classes="ghost icon"
+                                                    Width="26" Height="26" CornerRadius="3"
+                                                    Command="{Binding CreateProfileCommand}"
+                                                    ToolTip.Tip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ProfileCreate]}">
+                                                <TextBlock FontSize="14" VerticalAlignment="Center"
+                                                           HorizontalAlignment="Center">+</TextBlock>
+                                            </Button>
+                                        </Grid>
+
+                                        <Rectangle Height="1" Fill="{DynamicResource Theme.BorderBrush}" Margin="0,4"/>
+
+                                        <Grid ColumnDefinitions="*,*" Height="28" Margin="0,0,0,2">
+                                            <Button Grid.Column="0" Classes="ghost" Height="26" Margin="0,0,2,0"
+                                                    Padding="6,0" CornerRadius="3"
+                                                    HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                                                    Command="{Binding ImportProfileCommand}"
+                                                    ToolTip.Tip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ProfileImport]}">
+                                                <TextBlock FontSize="11" VerticalAlignment="Center"
+                                                           Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ProfileImport]}"/>
+                                            </Button>
+                                            <Button Grid.Column="1" Classes="ghost" Height="26" Margin="2,0,0,0"
+                                                    Padding="6,0" CornerRadius="3"
+                                                    HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                                                    Command="{Binding ExportProfileCommand}"
+                                                    ToolTip.Tip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ProfileExport]}">
+                                                <TextBlock FontSize="11" VerticalAlignment="Center"
+                                                           Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ProfileExport]}"/>
+                                            </Button>
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
                         </StackPanel>
 
                         <!-- Game folder -->

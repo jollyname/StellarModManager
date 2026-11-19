@@ -3,3 +3,6 @@ obj/
 Output/
 App/
 .vs/
+.vscode/
+*.user
+*.suo

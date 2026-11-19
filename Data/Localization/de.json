@@ -105,5 +105,17 @@
   "StopButton": "Stopp",
   "StatusStopFailed": "Spiel konnte nicht beendet werden: {0}",
   "StatusGameNotFound": "Die Spieldatei wurde im gewählten Ordner nicht gefunden.",
-  "StatusLaunchFailed": "Spiel konnte nicht gestartet werden: {0}"
+  "StatusLaunchFailed": "Spiel konnte nicht gestartet werden: {0}",
+  "ProfileRename": "Umbenennen",
+  "ProfileDelete": "Löschen",
+  "ProfileConfirm": "Bestätigen",
+  "ProfileNewPlaceholder": "Neues Profil...",
+  "ProfileCreate": "Profil erstellen",
+  "ProfileImport": "Importieren",
+  "ProfileExport": "Exportieren",
+  "StatusProfileImported": "Profil '{0}' importiert.",
+  "StatusProfileImportFailed": "Import fehlgeschlagen: {0}",
+  "StatusProfileExported": "Profil '{0}' exportiert.",
+  "StatusProfileExportFailed": "Export fehlgeschlagen: {0}",
+  "StatusProfileNameTaken": "Ein Profil mit diesem Namen existiert bereits."
 }

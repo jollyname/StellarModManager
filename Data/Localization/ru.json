@@ -105,5 +105,17 @@
   "StopButton": "Стоп",
   "StatusStopFailed": "Не удалось закрыть игру: {0}",
   "StatusGameNotFound": "Исполняемый файл игры не найден в выбранной папке.",
-  "StatusLaunchFailed": "Не удалось запустить игру: {0}"
+  "StatusLaunchFailed": "Не удалось запустить игру: {0}",
+  "ProfileRename": "Переименовать",
+  "ProfileDelete": "Удалить",
+  "ProfileConfirm": "Подтвердить",
+  "ProfileNewPlaceholder": "Новый профиль...",
+  "ProfileCreate": "Создать профиль",
+  "ProfileImport": "Импорт",
+  "ProfileExport": "Экспорт",
+  "StatusProfileImported": "Профиль «{0}» импортирован.",
+  "StatusProfileImportFailed": "Ошибка импорта: {0}",
+  "StatusProfileExported": "Профиль «{0}» экспортирован.",
+  "StatusProfileExportFailed": "Ошибка экспорта: {0}",
+  "StatusProfileNameTaken": "Профиль с таким именем уже существует."
 }

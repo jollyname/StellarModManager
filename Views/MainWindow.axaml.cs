@@ -1,6 +1,9 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
+using StellarModManager.Models;
 using Avalonia.Interactivity;
+using StellarModManager.ViewModels;
 
 namespace StellarModManager.Views;
 
@@ -26,4 +29,19 @@ public partial class MainWindow : Window
         WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
 
     private void OnCloseClick(object? sender, RoutedEventArgs e) => Close();
+
+    private void OnNewProfileKeyDown(object? sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Enter && DataContext is MainWindowViewModel vm)
+            vm.CreateProfileCommand.Execute(null);
+    }
+
+    private void OnRenameKeyDown(object? sender, KeyEventArgs e)
+    {
+        if (sender is TextBox tb && tb.DataContext is ModProfile profile && DataContext is MainWindowViewModel vm)
+        {
+            if (e.Key == Key.Enter) vm.CommitRenameCommand.Execute(profile);
+            if (e.Key == Key.Escape) vm.CancelRenameCommand.Execute(profile);
+        }
+    }
 }

@@ -105,5 +105,17 @@
   "StopButton": "Stop",
   "StatusStopFailed": "Could not close the game: {0}",
   "StatusGameNotFound": "Game executable not found in the selected folder.",
-  "StatusLaunchFailed": "Could not launch the game: {0}"
+  "StatusLaunchFailed": "Could not launch the game: {0}",
+  "ProfileRename": "Rename",
+  "ProfileDelete": "Delete",
+  "ProfileConfirm": "Confirm",
+  "ProfileNewPlaceholder": "New profile...",
+  "ProfileCreate": "Create profile",
+  "ProfileImport": "Import",
+  "ProfileExport": "Export",
+  "StatusProfileImported": "Profile '{0}' imported.",
+  "StatusProfileImportFailed": "Import failed: {0}",
+  "StatusProfileExported": "Profile '{0}' exported.",
+  "StatusProfileExportFailed": "Export failed: {0}",
+  "StatusProfileNameTaken": "A profile with that name already exists."
 }
