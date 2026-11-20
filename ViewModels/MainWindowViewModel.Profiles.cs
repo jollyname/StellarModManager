@@ -3,9 +3,10 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using StellarModManager.Services;
 using StellarModManager.Models;
+using StellarModManager.Services;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -16,6 +17,12 @@ namespace StellarModManager.ViewModels;
 
 public partial class MainWindowViewModel
 {
+    private sealed record ProfileFile(string Name, List<string> DeployedModIds);
+
+    private readonly ModPackageCache packages = new(AppContext.BaseDirectory);
+    private ModProfileStore? profileStore;
+    private ModProfile? profilePendingDeletion;
+
     public ObservableCollection<ModProfile> ModProfiles { get; } = new();
 
     [ObservableProperty]
@@ -30,267 +37,302 @@ public partial class MainWindowViewModel
     [ObservableProperty]
     private string newProfileName = "";
 
-    private void LoadProfiles()
+    [ObservableProperty]
+    private bool isModOperationInProgress;
+
+    private void OpenGameProfiles(string gamePath, string? legacyGamePath)
     {
-        var (profiles, activeName) = settingsService.LoadModProfiles();
+        try
+        {
+            var store = new ModProfileStore(AppContext.BaseDirectory, gamePath, packages);
+            var state = store.Open(legacyGamePath);
+            profileStore = store;
+            ShowProfileState(state);
+        }
+        catch (Exception ex)
+        {
+            ClearGameProfiles();
+            ReportError("StatusProfileOpenFailed", ex.Message);
+        }
+    }
+
+    private void ClearGameProfiles()
+    {
+        profileStore = null;
+        ActiveProfile = null;
         ModProfiles.Clear();
+        ShowInstalledMods(new());
+    }
 
-        bool noProfiles = profiles.Count == 0;
-
-        if (noProfiles)
+    private void ShowProfileState(GameModProfiles state)
+    {
+        ModProfiles.Clear();
+        foreach (var profile in state.Profiles)
         {
-            profiles.Add(new ModProfile
-            {
-                Name = "Default",
-                DeployedModIds = InstalledMods.Where(m => m.IsDeployed).Select(m => m.Id).ToList()
-            });
+            profile.IsActive = profile.Id == state.ActiveProfileId;
+            ModProfiles.Add(profile);
         }
 
-        foreach (var p in profiles)
-            ModProfiles.Add(p);
-
-        ActiveProfile = ModProfiles.FirstOrDefault(p => p.Name == activeName) ?? ModProfiles.First();
-        SyncActiveFlag();
-
-        if (noProfiles)
-            SaveProfiles();
+        ActiveProfile = ModProfiles.Single(p => p.IsActive);
+        ShowInstalledMods(state.InstalledMods);
     }
 
-    private void SyncActiveFlag()
+    private bool TryBeginModOperation(bool requireProfile = true)
     {
-        foreach (var p in ModProfiles)
-            p.IsActive = p == ActiveProfile;
-    }
-
-    private void SaveProfiles()
-    {
-        settingsService.SaveModProfiles(ModProfiles.ToList(), ActiveProfile?.Name ?? "");
-    }
-
-    private RelayCommand? _toggleProfilesDropdownCommand;
-    public RelayCommand ToggleProfilesDropdownCommand => _toggleProfilesDropdownCommand ??= new RelayCommand(ToggleProfilesDropdown);
-    private void ToggleProfilesDropdown()
-    {
-        IsProfilesDropdownOpen = !IsProfilesDropdownOpen;
-    }
-
-    private AsyncRelayCommand<ModProfile>? _switchProfileCommand;
-    public AsyncRelayCommand<ModProfile> SwitchProfileCommand => _switchProfileCommand ??= new AsyncRelayCommand<ModProfile>(SwitchProfile);
-    private async Task SwitchProfile(ModProfile? profile)
-    {
-        if (profile == null || profile == ActiveProfile) return;
-
-        if (ActiveProfile != null)
+        if (IsModOperationInProgress || IsInstallingMelonLoader || IsConfirmRemoveOpen || IsConfirmDependenciesOpen)
         {
-            ActiveProfile.DeployedModIds = InstalledMods
-                .Where(m => m.IsDeployed)
-                .Select(m => m.Id)
-                .ToList();
+            ReportError("StatusModOperationBusy");
+            return false;
         }
 
-        ActiveProfile = profile;
-        SyncActiveFlag();
-        SaveProfiles();
-
-        if (GamePath == "No game selected") return;
-
-        foreach (var mod in InstalledMods.ToList())
+        if (requireProfile && (profileStore == null || ActiveProfile == null))
         {
-            bool shouldDeploy = profile.DeployedModIds.Contains(mod.Id);
+            ReportError("StatusSelectGameFirst");
+            return false;
+        }
 
-            if (mod.IsDeployed && !shouldDeploy)
+        IsModOperationInProgress = true;
+        return true;
+    }
+
+    [RelayCommand]
+    private void ToggleProfilesDropdown() => IsProfilesDropdownOpen = !IsProfilesDropdownOpen;
+
+    [RelayCommand]
+    private Task SwitchProfile(ModProfile? profile)
+    {
+        if (profile == null || profile.Id == ActiveProfile?.Id)
+            return Task.CompletedTask;
+        return ApplyProfileSwitch(profile.Id);
+    }
+
+    [RelayCommand]
+    private async Task CreateProfile()
+    {
+        var name = NewProfileName.Trim();
+        if (name.Length == 0)
+            return;
+        if (ModProfiles.Any(p => p.Name == name))
+        {
+            ReportError("StatusProfileNameTaken");
+            return;
+        }
+
+        if (await ApplyProfileSwitch(Guid.Empty, clone: new ModProfile { Name = name }))
+            NewProfileName = "";
+    }
+
+    [RelayCommand]
+    private async Task DeleteProfile(ModProfile? profile)
+    {
+        if (profile == null || ModProfiles.Count <= 1 || IsModOperationInProgress ||
+            IsConfirmRemoveOpen || IsConfirmDependenciesOpen)
+            return;
+
+        if (profile.Id == ActiveProfile?.Id || profile.SnapshotId.HasValue)
+        {
+            profilePendingDeletion = profile;
+            ShowRemoveConfirmation("ProfileDeleteTitle", "ProfileDelete", "ProfileDeleteMessage", profile.Name);
+            return;
+        }
+        await DeleteProfileAsync(profile);
+    }
+
+    private Task DeleteProfileAsync(ModProfile profile)
+    {
+        if (ModProfiles.Count <= 1)
+            return Task.CompletedTask;
+        if (profile.Id == ActiveProfile?.Id)
+            return ApplyProfileSwitch(ModProfiles.First(p => p.Id != profile.Id).Id, deleteActive: true);
+
+        return EditProfiles(state => state.Profiles.RemoveAll(p => p.Id == profile.Id), "StatusProfileDeleteFailed");
+    }
+
+    private async Task<bool> ApplyProfileSwitch(Guid target, ModProfile? clone = null, bool deleteActive = false)
+    {
+        if (IsGameRunning)
+        {
+            ReportError("StatusProfileGameRunning");
+            return false;
+        }
+
+        if (!TryBeginModOperation())
+            return false;
+        try
+        {
+            var store = profileStore!;
+            var active = ActiveProfile!.Id;
+            var gamePath = GamePath;
+            var (state, missing) = await Task.Run(() => store.Switch(active, target, clone, deleteActive, CheckGameStopped));
+            ShowProfileState(state);
+            if (missing.Count > 0)
+                ReportError("StatusProfileMissingPackages", string.Join(", ", missing));
+            else
+                ReportSuccess("StatusProfileSwitched", ActiveProfileName);
+            return true;
+
+            void CheckGameStopped()
             {
-                string libPath = Path.Combine(AppContext.BaseDirectory, "Library", mod.Id);
-                await Task.Run(() => deploymentService.RemoveDeployedFiles(libPath, GamePath));
-                mod.IsDeployed = false;
+                var executable = new FileInfo(Path.Combine(gamePath, GameLocatorService.ExecutableName));
+                using var running = executable.Exists ? GameLaunchService.DetectExisting(executable) : null;
+                if (running != null)
+                    throw new InvalidOperationException(LocalizationService.Instance["StatusProfileGameRunning"]);
             }
-            else if (!mod.IsDeployed && shouldDeploy)
-            {
-                await DeployOneAsync(mod);
-            }
         }
-
-        RefreshDependencyStatuses();
-    }
-
-    private RelayCommand? _createProfileCommand;
-    public RelayCommand CreateProfileCommand => _createProfileCommand ??= new RelayCommand(CreateProfile);
-    private void CreateProfile()
-    {
-        string trimmed = NewProfileName.Trim();
-        if (string.IsNullOrEmpty(trimmed)) return;
-        if (ModProfiles.Any(p => p.Name == trimmed)) return;
-
-        var profile = new ModProfile
+        catch (Exception ex)
         {
-            Name = trimmed,
-            DeployedModIds = InstalledMods.Where(m => m.IsDeployed).Select(m => m.Id).ToList()
-        };
-
-        ModProfiles.Add(profile);
-        NewProfileName = "";
-        SaveProfiles();
-        _ = SwitchProfile(profile);
+            ReportError("StatusProfileSwitchFailed", ex.Message);
+            return false;
+        }
+        finally
+        {
+            IsModOperationInProgress = false;
+        }
     }
 
-    private RelayCommand<ModProfile>? _deleteProfileCommand;
-    public RelayCommand<ModProfile> DeleteProfileCommand => _deleteProfileCommand ??= new RelayCommand<ModProfile>(DeleteProfile);
-    private void DeleteProfile(ModProfile? profile)
-    {
-        if (profile == null || ModProfiles.Count <= 1) return;
-
-        bool wasActive = profile == ActiveProfile;
-        ModProfiles.Remove(profile);
-
-        if (wasActive)
-            _ = SwitchProfile(ModProfiles.First());
-        else
-            SaveProfiles();
-    }
-
-    private RelayCommand<ModProfile>? _startRenameCommand;
-    public RelayCommand<ModProfile> StartRenameCommand => _startRenameCommand ??= new RelayCommand<ModProfile>(StartRename);
+    [RelayCommand]
     private void StartRename(ModProfile? profile)
     {
-        if (profile == null) return;
+        if (profile == null || IsModOperationInProgress)
+            return;
         profile.EditName = profile.Name;
         profile.IsEditing = true;
     }
 
-    private RelayCommand<ModProfile>? _commitRenameCommand;
-    public RelayCommand<ModProfile> CommitRenameCommand => _commitRenameCommand ??= new RelayCommand<ModProfile>(CommitRename);
-    private void CommitRename(ModProfile? profile)
+    [RelayCommand]
+    private async Task CommitRename(ModProfile? profile)
     {
-        if (profile == null) return;
-        string trimmed = profile.EditName.Trim();
-
-        if (string.IsNullOrEmpty(trimmed) || ModProfiles.Any(p => p != profile && p.Name == trimmed))
-        {
-            profile.IsEditing = false;
+        if (profile == null)
             return;
+        var name = profile.EditName.Trim();
+        profile.IsEditing = false;
+        if (name.Length == 0 || name == profile.Name)
+            return;
+
+        await EditProfiles(state =>
+        {
+            EnsureUniqueProfileName(state, name, profile.Id);
+            state.Profiles.Single(p => p.Id == profile.Id).Name = name;
+        }, "StatusProfileRenameFailed");
+    }
+
+    [RelayCommand]
+    private static void CancelRename(ModProfile? profile)
+    {
+        if (profile != null)
+            profile.IsEditing = false;
+    }
+
+    private async Task EditProfiles(Action<GameModProfiles> edit, string errorKey)
+    {
+        if (!TryBeginModOperation())
+            return;
+        try
+        {
+            var store = profileStore!;
+            var active = ActiveProfile!.Id;
+            ShowProfileState(await Task.Run(() => store.Edit(active, edit)));
         }
-
-        profile.Name = trimmed;
-        profile.IsEditing = false;
-
-        if (profile == ActiveProfile)
-            OnPropertyChanged(nameof(ActiveProfileName));
-
-        SaveProfiles();
+        catch (Exception ex)
+        {
+            ReportError(errorKey, ex.Message);
+        }
+        finally
+        {
+            IsModOperationInProgress = false;
+        }
     }
 
-    private RelayCommand<ModProfile>? _cancelRenameCommand;
-    public RelayCommand<ModProfile> CancelRenameCommand => _cancelRenameCommand ??= new RelayCommand<ModProfile>(CancelRename);
-    private void CancelRename(ModProfile? profile)
+    private static void EnsureUniqueProfileName(GameModProfiles state, string name, Guid? except = null)
     {
-        if (profile == null) return;
-        profile.IsEditing = false;
+        if (state.Profiles.Any(p => p.Name == name && p.Id != except))
+            throw new InvalidOperationException(LocalizationService.Instance["StatusProfileNameTaken"]);
     }
 
-    private Window? GetMainWindow()
-    {
-        if (App.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-            return desktop.MainWindow;
-        return null;
-    }
+    private static Window? GetMainWindow() =>
+        (App.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
 
-    private AsyncRelayCommand? _exportProfileCommand;
-    public AsyncRelayCommand ExportProfileCommand => _exportProfileCommand ??= new AsyncRelayCommand(ExportProfile);
+    [RelayCommand]
     private async Task ExportProfile()
     {
-        if (ActiveProfile == null) return;
-
-        var window = GetMainWindow();
-        if (window == null) return;
-
-        var file = await window.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
-        {
-            Title = LocalizationService.Instance["ProfileExport"],
-            SuggestedFileName = ActiveProfile.Name,
-            DefaultExtension = "json",
-            FileTypeChoices = new[] { new FilePickerFileType("JSON") { Patterns = new[] { "*.json" } } }
-        });
-
-        if (file == null) return;
+        if (ActiveProfile == null || GetMainWindow() is not Window window || !TryBeginModOperation())
+            return;
 
         try
         {
-            var json = JsonSerializer.Serialize(ActiveProfile, new JsonSerializerOptions { WriteIndented = true });
+            var profile = new ProfileFile(ActiveProfileName, InstalledMods.Select(m => m.Id).ToList());
+            var file = await window.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+            {
+                Title = LocalizationService.Instance["ProfileExport"],
+                SuggestedFileName = profile.Name,
+                DefaultExtension = "json",
+                FileTypeChoices = new[] { new FilePickerFileType("JSON") { Patterns = new[] { "*.json" } } }
+            });
+
+            if (file == null)
+                return;
             await using var stream = await file.OpenWriteAsync();
-            await using var writer = new StreamWriter(stream);
-            await writer.WriteAsync(json);
-            ReportSuccess("StatusProfileExported", ActiveProfile.Name);
+            if (stream.CanSeek)
+                stream.SetLength(0);
+            await JsonSerializer.SerializeAsync(stream, profile, new JsonSerializerOptions { WriteIndented = true });
+            ReportSuccess("StatusProfileExported", profile.Name);
         }
         catch (Exception ex)
         {
             ReportError("StatusProfileExportFailed", ex.Message);
         }
+        finally
+        {
+            IsModOperationInProgress = false;
+        }
     }
 
-    private AsyncRelayCommand? _importProfileCommand;
-    public AsyncRelayCommand ImportProfileCommand => _importProfileCommand ??= new AsyncRelayCommand(ImportProfile);
+    [RelayCommand]
     private async Task ImportProfile()
     {
-        var window = GetMainWindow();
-        if (window == null) return;
-
-        var files = await window.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
-        {
-            Title = LocalizationService.Instance["ProfileImport"],
-            AllowMultiple = false,
-            FileTypeFilter = new[] { new FilePickerFileType("JSON") { Patterns = new[] { "*.json" } } }
-        });
-
-        if (files.Count == 0) return;
+        if (GetMainWindow() is not Window window || !TryBeginModOperation())
+            return;
 
         try
         {
-            await using var stream = await files[0].OpenReadAsync();
-            var profile = await JsonSerializer.DeserializeAsync<ModProfile>(stream);
-
-            if (profile == null) throw new Exception("Invalid profile file.");
-
-            if (ModProfiles.Any(p => p.Name == profile.Name))
+            var files = await window.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
             {
-                ReportError("StatusProfileNameTaken");
-                return;
-            }
+                Title = LocalizationService.Instance["ProfileImport"],
+                AllowMultiple = false,
+                FileTypeFilter = new[] { new FilePickerFileType("JSON") { Patterns = new[] { "*.json" } } }
+            });
 
-            profile.IsActive = false;
-            profile.IsEditing = false;
-            ModProfiles.Add(profile);
-            SaveProfiles();
+            if (files.Count == 0)
+                return;
+
+            await using var stream = await files[0].OpenReadAsync();
+            var imported = await JsonSerializer.DeserializeAsync<ProfileFile>(stream);
+            if (string.IsNullOrWhiteSpace(imported?.Name))
+                throw new InvalidDataException(LocalizationService.Instance["StatusProfileInvalid"]);
+
+            var profile = new ModProfile
+            {
+                Name = imported.Name.Trim(),
+                DeployedModIds = (imported.DeployedModIds ?? new())
+                    .Where(id => !string.IsNullOrWhiteSpace(id)).Select(id => id.Trim()).ToList()
+            };
+            var store = profileStore!;
+            var active = ActiveProfile!.Id;
+            var state = await Task.Run(() => store.Edit(active, current =>
+            {
+                EnsureUniqueProfileName(current, profile.Name);
+                current.Profiles.Add(profile);
+            }));
+            ShowProfileState(state);
             ReportSuccess("StatusProfileImported", profile.Name);
         }
         catch (Exception ex)
         {
             ReportError("StatusProfileImportFailed", ex.Message);
         }
-    }
-
-    internal void NotifyProfileDeployed(string modId)
-    {
-        if (ActiveProfile != null && !ActiveProfile.DeployedModIds.Contains(modId))
+        finally
         {
-            ActiveProfile.DeployedModIds.Add(modId);
-            SaveProfiles();
+            IsModOperationInProgress = false;
         }
-    }
-
-    internal void NotifyProfileUndeployed(string modId)
-    {
-        if (ActiveProfile != null)
-        {
-            ActiveProfile.DeployedModIds.Remove(modId);
-            SaveProfiles();
-        }
-    }
-
-    internal void RemoveModFromProfiles(string modId)
-    {
-        foreach (var p in ModProfiles)
-            p.DeployedModIds.Remove(modId);
-
-        SaveProfiles();
     }
 }

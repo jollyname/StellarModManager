@@ -10,11 +10,10 @@
     <Grid RowDefinitions="Auto,*,Auto">
 
         <!-- Column headers -->
-        <Grid Grid.Row="0" IsVisible="{Binding !IsCompactView}" ColumnDefinitions="60,*,80,80,150" Height="32" Margin="12,0">
+        <Grid Grid.Row="0" IsVisible="{Binding !IsCompactView}" ColumnDefinitions="60,*,80,80" Height="32" Margin="12,0">
             <TextBlock Grid.Column="1" Classes="columnHeader" Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ColumnName]}"/>
             <TextBlock Grid.Column="2" Classes="columnHeader" Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ColumnVersion]}"/>
             <TextBlock Grid.Column="3" Classes="columnHeader" Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ColumnLatest]}"/>
-            <TextBlock Grid.Column="4" Classes="columnHeader" Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ColumnState]}"/>
         </Grid>
         <Rectangle Grid.Row="0" Classes="separator" VerticalAlignment="Bottom" IsVisible="{Binding !IsCompactView}"/>
 
@@ -30,7 +29,7 @@
                 <DataTemplate x:DataType="models:InstalledModInfo">
                     <Grid>
                         <Border Classes="pill"/>
-                        <Grid ColumnDefinitions="60,*,80,80,150" Margin="12,0">
+                        <Grid ColumnDefinitions="60,*,80,80" Margin="12,0">
                             <Border Classes="thumbnail" Width="48" Height="48" HorizontalAlignment="Left">
                                 <Image Source="{Binding Online.ThumbnailImage, FallbackValue={x:Null}}" Stretch="UniformToFill"/>
                             </Border>
@@ -79,12 +78,6 @@
                             <TextBlock Grid.Column="3" Classes="cell" Text="{Binding Version}"
                                        IsVisible="{Binding !IsUpdateAvailable}"/>
 
-                            <Panel Grid.Column="4" VerticalAlignment="Center">
-                                <TextBlock Classes="cell success" IsVisible="{Binding IsDeployed}"
-                                           Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[StateDeployed]}"/>
-                                <TextBlock Classes="cell" IsVisible="{Binding !IsDeployed}"
-                                           Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[StateNotDeployed]}"/>
-                            </Panel>
                         </Grid>
                     </Grid>
                 </DataTemplate>
@@ -142,19 +135,11 @@
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
 
-                            <Grid ColumnDefinitions="*,Auto" Margin="0,8,0,0">
-                                <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
-                                    <TextBlock Classes="secondary" Text="{Binding Version}"/>
-                                    <TextBlock Classes="secondary" Text="→" IsVisible="{Binding IsUpdateAvailable}"/>
-                                    <TextBlock Classes="secondary accent" Text="{Binding LatestVersion}" IsVisible="{Binding IsUpdateAvailable}"/>
-                                </StackPanel>
-                                <Panel Grid.Column="1" Margin="8,0,0,0">
-                                    <TextBlock Classes="secondary success" IsVisible="{Binding IsDeployed}"
-                                               Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[StateDeployed]}"/>
-                                    <TextBlock Classes="secondary" IsVisible="{Binding !IsDeployed}"
-                                               Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[StateNotDeployed]}"/>
-                                </Panel>
-                            </Grid>
+                            <StackPanel Margin="0,8,0,0" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
+                                <TextBlock Classes="secondary" Text="{Binding Version}"/>
+                                <TextBlock Classes="secondary" Text="→" IsVisible="{Binding IsUpdateAvailable}"/>
+                                <TextBlock Classes="secondary accent" Text="{Binding LatestVersion}" IsVisible="{Binding IsUpdateAvailable}"/>
+                            </StackPanel>
                         </StackPanel>
                     </Grid>
                 </DataTemplate>

@@ -55,18 +55,7 @@ public partial class MainWindowViewModel
     }
 
     [RelayCommand]
-    private void SelectSuggestedFolder(GameInstallationInfo info)
-    {
-        var path = info.Directory.FullName;
-        GamePath = path;
-
-        bool valid = CheckMelonLoader(path);
-        IsMelonLoaderValid = valid;
-
-        if (!valid) return;
-
-        settingsService.SaveGameProfile(new GameProfile { GamePath = path });
-    }
+    private void SelectSuggestedFolder(GameInstallationInfo info) => UseGameFolder(info.Directory.FullName);
 
     [RelayCommand]
     private async Task SelectGameFolder()
@@ -77,30 +66,58 @@ public partial class MainWindowViewModel
             window = desktop.MainWindow;
         }
 
-        if (window == null)
+        if (window == null || IsModOperationInProgress)
             return;
 
-        var folders = await window.StorageProvider.OpenFolderPickerAsync(
-            new FolderPickerOpenOptions
-            {
-                Title = "Select Unity Game Folder",
-                AllowMultiple = false
-            });
-
-        if (folders.Count == 0)
+        if (!TryBeginModOperation(requireProfile: false))
             return;
+        try
+        {
+            var folders = await window.StorageProvider.OpenFolderPickerAsync(
+                new FolderPickerOpenOptions
+                {
+                    Title = "Select Unity Game Folder",
+                    AllowMultiple = false
+                });
 
-        string path = folders[0].Path.LocalPath;
+            if (folders.Count > 0)
+                SetGameFolder(folders[0].Path.LocalPath);
+        }
+        finally
+        {
+            IsModOperationInProgress = false;
+        }
+    }
 
+    private void UseGameFolder(string path)
+    {
+        if (!TryBeginModOperation(requireProfile: false))
+            return;
+        try
+        {
+            SetGameFolder(path);
+        }
+        finally
+        {
+            IsModOperationInProgress = false;
+        }
+    }
+
+    private void SetGameFolder(string path)
+    {
         GamePath = path;
-
-        bool valid = CheckMelonLoader(path);
-        IsMelonLoaderValid = valid;
-
-        if (!valid)
-            return;
-
-        settingsService.SaveGameProfile(new GameProfile { GamePath = path });
+        IsMelonLoaderValid = CheckMelonLoader(path);
+        if (IsMelonLoaderValid)
+        {
+            OpenGameProfiles(path, settingsService.LoadGameProfile()?.GamePath);
+            settingsService.SaveGameProfile(new GameProfile { GamePath = path });
+            SearchGameProcessIfNull();
+        }
+        else
+        {
+            ClearGameProfiles();
+            SetupRequired = true;
+        }
     }
 
     private bool CanInstallMelonLoader() => GamePath != "No game selected" && !IsMelonLoaderValid && !IsInstallingMelonLoader;
@@ -108,6 +125,8 @@ public partial class MainWindowViewModel
     [RelayCommand(CanExecute = nameof(CanInstallMelonLoader))]
     private async Task InstallMelonLoader()
     {
+        if (!TryBeginModOperation(requireProfile: false))
+            return;
         IsInstallingMelonLoader = true;
         InstallProgressText = "Starting...";
 
@@ -121,6 +140,7 @@ public partial class MainWindowViewModel
 
             if (IsMelonLoaderValid)
             {
+                OpenGameProfiles(GamePath, settingsService.LoadGameProfile()?.GamePath);
                 settingsService.SaveGameProfile(new GameProfile { GamePath = GamePath });
             }
         }
@@ -131,15 +151,16 @@ public partial class MainWindowViewModel
         finally
         {
             IsInstallingMelonLoader = false;
+            IsModOperationInProgress = false;
         }
     }
 
     [RelayCommand(CanExecute = nameof(IsMelonLoaderValid))]
     private void CloseSetup()
     {
+        if (IsModOperationInProgress)
+            return;
         SetupRequired = false;
-
-        LoadInstalledMods();
         _ = RefreshMods();
     }
 }

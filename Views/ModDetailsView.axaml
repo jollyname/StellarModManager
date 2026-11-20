@@ -105,19 +105,12 @@
                             </StackPanel>
                         </Button>
 
-                        <Button Classes="subtle" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-                                IsVisible="{Binding SelectedInstalledMod.NeedsDeploy, FallbackValue=False}"
-                                IsEnabled="{Binding !SelectedInstalledMod.IsDeploying, FallbackValue=False}"
-                                Command="{Binding DeployModCommand}"
-                                CommandParameter="{Binding SelectedInstalledMod}"
-                                Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[InstallToGame]}"/>
-
                         <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center"
-                                    IsVisible="{Binding SelectedInstalledMod.IsDeployedAndCurrent, FallbackValue=False}">
+                                    IsVisible="{Binding SelectedInstalledMod.IsCurrent, FallbackValue=False}">
                             <PathIcon Data="{StaticResource Icon.Check}" Width="14" Height="14"
                                       Foreground="{DynamicResource Theme.SuccessBrush}"/>
                             <TextBlock Classes="success" VerticalAlignment="Center"
-                                       Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[StateDeployed]}"/>
+                                       Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[StateInstalled]}"/>
                         </StackPanel>
                     </Panel>
 
@@ -159,10 +152,6 @@
                 <StackPanel Spacing="6" IsVisible="{Binding SelectedInstalledMod.IsUpdating, FallbackValue=False}">
                     <TextBlock Classes="secondary" Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Updating]}"/>
                     <ProgressBar Classes="modProgress" Minimum="0" Maximum="100" Value="{Binding SelectedInstalledMod.UpdateProgress, FallbackValue=0}"/>
-                </StackPanel>
-                <StackPanel Spacing="6" IsVisible="{Binding SelectedInstalledMod.IsDeploying, FallbackValue=False}">
-                    <TextBlock Classes="secondary" Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[CopyingToGame]}"/>
-                    <ProgressBar Classes="modProgress" Minimum="0" Maximum="100" Value="{Binding SelectedInstalledMod.DeployProgress, FallbackValue=0}"/>
                 </StackPanel>
                 <TextBlock Classes="secondary" IsVisible="{Binding SelectedInstalledMod.IsRemoving, FallbackValue=False}"
                            Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Removing]}"/>

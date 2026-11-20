@@ -8,7 +8,7 @@
         <Border Classes="dialog" Width="400">
             <StackPanel Spacing="16">
                 <TextBlock
-                    Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ConfirmRemoveTitle]}"
+                    Text="{Binding ConfirmRemoveTitle}"
                     FontSize="20"
                     FontWeight="SemiBold"/>
                 <TextBlock
@@ -19,7 +19,7 @@
                     <Button
                         Grid.Column="0"
                         Classes="danger"
-                        Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ConfirmRemoveButton]}"
+                        Content="{Binding ConfirmRemoveButton}"
                         Command="{Binding ConfirmRemoveCommand}"
                         Margin="0,0,4,0"
                         HorizontalAlignment="Stretch"
