@@ -73,7 +73,7 @@ public partial class MainWindowViewModel : ViewModelBase
                 IsMelonLoaderValid = true;
                 SetupRequired = false;
 
-                LoadInstalledMods();
+                OpenGameProfiles(profile.GamePath, profile.GamePath);
                 _ = RefreshMods();
             }
             else
@@ -94,7 +94,6 @@ public partial class MainWindowViewModel : ViewModelBase
         checkProcessTimer.Tick += (_, _) => SearchGameProcessIfNull();
         SearchGameProcessIfNull();
 
-        LoadProfiles();
     }
 
     // Successes fade out on their own; errors stay until dismissed

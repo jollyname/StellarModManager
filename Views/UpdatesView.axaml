@@ -37,7 +37,7 @@
                             </StackPanel>
 
                             <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" Margin="0,0,24,0">
-                                <TextBlock Classes="cell" Text="{Binding Version}"/>
+                                <TextBlock Classes="cell" Text="{Binding DisplayVersion}"/>
                                 <TextBlock Classes="cell" Text="→"/>
                                 <TextBlock Classes="cell accent" Text="{Binding LatestVersion}"/>
                             </StackPanel>
@@ -74,7 +74,7 @@
                             <TextBlock Classes="secondary" Text="{Binding Author}" TextTrimming="CharacterEllipsis"/>
 
                             <StackPanel Orientation="Horizontal" Spacing="4" Margin="0,8,0,0">
-                                <TextBlock Classes="secondary" Text="{Binding Version}"/>
+                                <TextBlock Classes="secondary" Text="{Binding DisplayVersion}"/>
                                 <TextBlock Classes="secondary" Text="→"/>
                                 <TextBlock Classes="secondary accent" Text="{Binding LatestVersion}"/>
                             </StackPanel>

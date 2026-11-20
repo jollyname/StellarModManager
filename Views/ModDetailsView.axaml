@@ -19,7 +19,7 @@
             <StackPanel Spacing="16" Margin="24">
 
                 <!-- Gallery -->
-                <StackPanel Spacing="10">
+                <StackPanel Spacing="10" IsVisible="{Binding !SelectedInstalledMod.IsExternal, FallbackValue=True}">
                     <Border Classes="thumbnail" Height="190" CornerRadius="6">
                         <Panel>
                             <Image Source="{Binding SelectedMod.ThumbnailImage, FallbackValue={x:Null}}" Stretch="UniformToFill"/>
@@ -73,7 +73,7 @@
                                TextWrapping="Wrap" Foreground="{DynamicResource Theme.TextPrimaryBrush}"/>
                     <WrapPanel>
                         <TextBlock Classes="secondary" Text="{Binding DetailsMod.Author, FallbackValue={x:Null}}"/>
-                        <TextBlock Classes="secondary" Text="{Binding DetailsMod.Version, StringFormat={} · v{0}, FallbackValue={x:Null}}"/>
+                        <TextBlock Classes="secondary" Text="{Binding DetailsMod.DisplayVersion, StringFormat={} · {0}, FallbackValue={x:Null}}"/>
                         <TextBlock Classes="secondary accent" Text="{Binding SelectedInstalledMod.LatestVersion, StringFormat={} → {0}, FallbackValue={x:Null}}"
                                    IsVisible="{Binding SelectedInstalledMod.IsUpdateAvailable, FallbackValue=False}"/>
                         <TextBlock Classes="secondary" Text="{Binding SelectedMod.DownloadsText, StringFormat={} · {0}, FallbackValue={x:Null}}"
@@ -81,7 +81,15 @@
                     </WrapPanel>
                 </StackPanel>
 
+                <StackPanel Spacing="4" IsVisible="{Binding SelectedInstalledMod.IsExternal, FallbackValue=False}">
+                    <TextBlock Classes="secondary"
+                               Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ExternalMod]}"/>
+                    <TextBlock Classes="secondary" Text="{Binding SelectedInstalledMod.ExternalPath, FallbackValue={x:Null}}"
+                               TextWrapping="Wrap"/>
+                </StackPanel>
+
                 <TextBlock Text="{Binding DetailsMod.Description, FallbackValue={x:Null}}" TextWrapping="Wrap" FontSize="14"
+                           IsVisible="{Binding !SelectedInstalledMod.IsExternal, FallbackValue=True}"
                            Foreground="{DynamicResource Theme.TextSecondaryBrush}"/>
 
                 <!-- Main action -->
@@ -105,19 +113,12 @@
                             </StackPanel>
                         </Button>
 
-                        <Button Classes="subtle" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-                                IsVisible="{Binding SelectedInstalledMod.NeedsDeploy, FallbackValue=False}"
-                                IsEnabled="{Binding !SelectedInstalledMod.IsDeploying, FallbackValue=False}"
-                                Command="{Binding DeployModCommand}"
-                                CommandParameter="{Binding SelectedInstalledMod}"
-                                Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[InstallToGame]}"/>
-
                         <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center"
-                                    IsVisible="{Binding SelectedInstalledMod.IsDeployedAndCurrent, FallbackValue=False}">
+                                    IsVisible="{Binding SelectedInstalledMod.IsCurrent, FallbackValue=False}">
                             <PathIcon Data="{StaticResource Icon.Check}" Width="14" Height="14"
                                       Foreground="{DynamicResource Theme.SuccessBrush}"/>
                             <TextBlock Classes="success" VerticalAlignment="Center"
-                                       Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[StateDeployed]}"/>
+                                       Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[StateInstalled]}"/>
                         </StackPanel>
                     </Panel>
 
@@ -159,10 +160,6 @@
                 <StackPanel Spacing="6" IsVisible="{Binding SelectedInstalledMod.IsUpdating, FallbackValue=False}">
                     <TextBlock Classes="secondary" Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Updating]}"/>
                     <ProgressBar Classes="modProgress" Minimum="0" Maximum="100" Value="{Binding SelectedInstalledMod.UpdateProgress, FallbackValue=0}"/>
-                </StackPanel>
-                <StackPanel Spacing="6" IsVisible="{Binding SelectedInstalledMod.IsDeploying, FallbackValue=False}">
-                    <TextBlock Classes="secondary" Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[CopyingToGame]}"/>
-                    <ProgressBar Classes="modProgress" Minimum="0" Maximum="100" Value="{Binding SelectedInstalledMod.DeployProgress, FallbackValue=0}"/>
                 </StackPanel>
                 <TextBlock Classes="secondary" IsVisible="{Binding SelectedInstalledMod.IsRemoving, FallbackValue=False}"
                            Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Removing]}"/>

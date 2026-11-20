@@ -36,7 +36,7 @@ public partial class MainWindowViewModel
 
     public bool CanInstallSelected => SelectedMod != null && SelectedInstalledMod == null;
 
-    public bool IsSelectedInstalled => SelectedInstalledMod != null;
+    public bool IsSelectedInstalled => SelectedInstalledMod is { IsExternal: false };
 
     partial void OnBrowseSelectionChanged(OnlineModInfo? value) => ShowDetails();
 
@@ -59,7 +59,7 @@ public partial class MainWindowViewModel
         {
             case AppPage.Browse:
                 SelectedMod = BrowseSelection;
-                SelectedInstalledMod = BrowseSelection == null ? null : InstalledMods.FirstOrDefault(m => m.Id == BrowseSelection.Id);
+                SelectedInstalledMod = BrowseSelection == null ? null : InstalledMods.FirstOrDefault(m => SameId(m.Id, BrowseSelection.Id));
                 break;
             case AppPage.Library:
                 SelectedInstalledMod = LibrarySelection;

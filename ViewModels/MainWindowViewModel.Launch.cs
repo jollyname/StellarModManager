@@ -53,8 +53,17 @@ public partial class MainWindowViewModel
     [RelayCommand]
     private async Task ToggleGame()
     {
-        if (IsGameRunning) StopGame();
-        else await LaunchGame();
+        if (!TryBeginModOperation(requireProfile: !IsGameRunning))
+            return;
+        try
+        {
+            if (IsGameRunning) StopGame();
+            else await LaunchGame();
+        }
+        finally
+        {
+            IsModOperationInProgress = false;
+        }
     }
 
 
@@ -70,6 +79,7 @@ public partial class MainWindowViewModel
 
         try
         {
+            using var fileLock = profileStore!.LockForLaunch(ActiveProfile!.Id);
             GameProcess = await GameLaunchService.Launch(game);
         }
         catch (Exception ex)

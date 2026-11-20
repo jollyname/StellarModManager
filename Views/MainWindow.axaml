@@ -150,8 +150,7 @@
                                                Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[NavLibrary]}"/>
                                     <TextBlock Grid.Column="2" Margin="0,0,14,0" VerticalAlignment="Center" FontSize="12"
                                                Foreground="{DynamicResource Theme.TextMutedBrush}"
-                                               Text="{Binding InstalledMods.Count}"
-                                               IsVisible="{Binding !!InstalledMods.Count}"/>
+                                               Text="{Binding LibraryMods.Count}"/>
                                 </Grid>
                             </Button>
 
@@ -176,7 +175,7 @@
                             </Button>
                         
                             <!-- Profiles -->
-                            <StackPanel IsVisible="{Binding IsPaneOpen}" Margin="0,2,0,0" Spacing="2">
+                            <StackPanel IsVisible="{Binding IsPaneOpen}" IsEnabled="{Binding !IsModOperationInProgress}" Margin="0,2,0,0" Spacing="2">
                                 <Button Classes="ghost" Height="30" Padding="12,0" CornerRadius="4"
                                         HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
                                         Command="{Binding ToggleProfilesDropdownCommand}">
@@ -387,6 +386,12 @@
                                 <!-- List / compact view switch -->
                                 <Border Grid.Column="1" Classes="segmented" IsVisible="{Binding !IsSettingsPage}">
                                     <StackPanel Orientation="Horizontal" Spacing="2">
+                                        <Button Classes="ghost" IsVisible="{Binding IsLibraryPage}"
+                                                Command="{Binding RefreshLibraryCommand}"
+                                                ToolTip.Tip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[Refresh]}">
+                                            <svg:Svg Css="{DynamicResource Theme.IconCss}"
+                                                     Path="/Assets/Icons/refresh.svg" Width="18" Height="18"/>
+                                        </Button>
                                         <Button Classes="ghost" Classes.selected="{Binding !IsCompactView}"
                                                 Command="{Binding ShowListViewCommand}"
                                                 ToolTip.Tip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=[ViewList]}">
@@ -497,7 +502,7 @@
             </SplitView>
 
             <views:ConfirmRemoveModView IsVisible="{Binding IsConfirmRemoveOpen}"/>
-            <views:ConfirmDeployModView IsVisible="{Binding IsConfirmDeployOpen}"/>
+            <views:ConfirmDeployModView IsVisible="{Binding IsConfirmDependenciesOpen}"/>
             <views:UpdatePanelView IsVisible="{Binding IsUpdatePanelOpen}"/>
 
         </Grid>

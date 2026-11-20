@@ -5,7 +5,6 @@ using StellarModManager.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -17,72 +16,12 @@ public partial class MainWindowViewModel
     // OnlineMods filtered by SearchText and sorted by SortIndex
     public ObservableCollection<OnlineModInfo> VisibleOnlineMods { get; } = new();
     private readonly ModRepositoryService repositoryService = new();
-    private readonly ModInstallerService installerService = new();
 
     [ObservableProperty]
     private int sortIndex;
 
     [ObservableProperty]
     private string searchText = "";
-
-    // Install a mod and its dependencies
-    [RelayCommand]
-    private async Task InstallMod(OnlineModInfo mod)
-    {
-        var deps = DependencyResolver.Resolve(mod, OnlineMods, id => InstalledMods.Any(m => m.Id.Equals(id, StringComparison.OrdinalIgnoreCase)));
-
-        if (deps.Missing.Count > 0)
-        {
-            ReportError("StatusDependencyNotInList", mod.Name, string.Join(", ", deps.Missing));
-            return;
-        }
-
-        try
-        {
-            foreach (var dep in deps.ToInstall)
-                await InstallOneAsync(dep);
-
-            await InstallOneAsync(mod);
-
-            if (deps.ToInstall.Count == 0)
-                ReportSuccess("StatusInstalled", mod.Name);
-            else
-                ReportSuccess("StatusInstalledWithDependencies", mod.Name, string.Join(", ", deps.ToInstall.Select(d => d.Name)));
-        }
-        catch (Exception ex)
-        {
-            ReportError("StatusInstallFailed", ex.Message);
-        }
-
-        LoadInstalledMods();
-    }
-
-    // Install one mod, no dependency check or anything
-    private async Task InstallOneAsync(OnlineModInfo mod)
-    {
-        mod.IsInstalling = true;
-        mod.DownloadProgress = 0;
-
-        try
-        {
-            string downloads = Path.Combine(AppContext.BaseDirectory, "Downloads");
-            Directory.CreateDirectory(downloads);
-
-            string zipFile = Path.Combine(downloads, $"{mod.Id}.zip");
-            var progress = new Progress<double>(pct => mod.DownloadProgress = pct);
-
-            await repositoryService.DownloadModAsync(mod.DownloadUrl, zipFile, progress);
-
-            string libraryPath = Path.Combine(AppContext.BaseDirectory, "Library", mod.Id);
-            await InstallToLibraryAsync(zipFile, libraryPath);
-
-            File.Delete(zipFile);
-        }
-        finally
-        {
-            mod.IsInstalling = false;
-        }
-    }
 
     [RelayCommand]
     private async Task RefreshMods()
