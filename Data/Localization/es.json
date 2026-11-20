@@ -55,6 +55,7 @@
   "ColumnUpdated": "Actualizado",
   "ColumnState": "Estado",
   "StateInstalled": "Instalado",
+  "ExternalMod": "Externo",
   "StateUpdate": "Actualizar",
   "DownloadsFormat": "{0:N0} descargas",
   "NoSelection": "Selecciona un mod para ver sus detalles.",

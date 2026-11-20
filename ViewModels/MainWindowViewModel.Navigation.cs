@@ -26,7 +26,12 @@ public partial class MainWindowViewModel
     public bool IsSettingsPage => CurrentPage == AppPage.Settings;
 
     [RelayCommand]
-    private void Navigate(AppPage page) => CurrentPage = page;
+    private void Navigate(AppPage page)
+    {
+        if (page == AppPage.Library)
+            RefreshLibrary();
+        CurrentPage = page;
+    }
 
     [RelayCommand]
     private void TogglePane() => IsPaneOpen = !IsPaneOpen;

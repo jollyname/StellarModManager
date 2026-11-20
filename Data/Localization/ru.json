@@ -55,6 +55,7 @@
   "ColumnUpdated": "Обновлён",
   "ColumnState": "Состояние",
   "StateInstalled": "Установлен",
+  "ExternalMod": "Внешний",
   "StateUpdate": "Обновить",
   "DownloadsFormat": "Загрузок: {0:N0}",
   "NoSelection": "Выберите мод, чтобы увидеть подробности.",

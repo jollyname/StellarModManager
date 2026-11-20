@@ -6,6 +6,12 @@ namespace StellarModManager.Models;
 public partial class InstalledModInfo : ModInfo
 {
     [JsonIgnore]
+    public string? ExternalPath { get; init; }
+
+    [JsonIgnore]
+    public bool IsExternal => ExternalPath != null;
+
+    [JsonIgnore]
     [ObservableProperty]
     private bool isRemoving;
 
@@ -32,7 +38,7 @@ public partial class InstalledModInfo : ModInfo
     public bool HasDependencyWarning => !string.IsNullOrEmpty(DependencyWarning);
 
     [JsonIgnore]
-    public bool IsCurrent => !IsUpdateAvailable;
+    public bool IsCurrent => !IsExternal && !IsUpdateAvailable;
 
     [JsonIgnore]
     [ObservableProperty]

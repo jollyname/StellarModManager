@@ -14,7 +14,9 @@ namespace StellarModManager.ViewModels;
 public partial class MainWindowViewModel
 {
     public ObservableCollection<InstalledModInfo> InstalledMods { get; } = new();
+    public ObservableCollection<InstalledModInfo> LibraryMods { get; } = new();
     public ObservableCollection<InstalledModInfo> AvailableModUpdates { get; } = new();
+    private HashSet<string> managedModPaths = new(ProfileFiles.PathComparer);
 
     private InstalledModInfo? modPendingRemoval;
     private OnlineModInfo? modPendingInstall;
@@ -28,13 +30,34 @@ public partial class MainWindowViewModel
 
     private void ShowInstalledMods(List<ProfileMod> mods)
     {
-        var libraryId = LibrarySelection?.Id;
         var updatesId = UpdatesSelection?.Id;
+        managedModPaths = mods.SelectMany(mod => mod.Files).ToHashSet(ProfileFiles.PathComparer);
         InstalledMods.Clear();
         foreach (var installed in mods)
             InstalledMods.Add(installed.Mod);
-        LibrarySelection = InstalledMods.FirstOrDefault(m => SameId(m.Id, libraryId));
+        ShowLibraryMods();
         RefreshUpdateStatuses(updatesId);
+    }
+
+    [RelayCommand]
+    private void RefreshLibrary()
+    {
+        if (!IsModOperationInProgress)
+            ShowLibraryMods();
+    }
+
+    private void ShowLibraryMods()
+    {
+        var selection = LibrarySelection;
+        var external = profileStore == null ? new() : ExternalModScanner.Scan(GamePath, managedModPaths);
+        LibraryMods.Clear();
+        foreach (var mod in InstalledMods.Concat(external))
+            LibraryMods.Add(mod);
+
+        LibrarySelection = selection == null ? null : LibraryMods.FirstOrDefault(mod =>
+            mod.IsExternal == selection.IsExternal && (mod.IsExternal
+                ? ProfileFiles.PathComparer.Equals(mod.Id, selection.Id)
+                : SameId(mod.Id, selection.Id)));
     }
 
     private static bool SameId(string id, string? other) =>
@@ -198,7 +221,7 @@ public partial class MainWindowViewModel
     [RelayCommand]
     private async Task RequestRemoveMod(InstalledModInfo mod)
     {
-        if (IsModOperationInProgress || IsConfirmRemoveOpen || IsConfirmDependenciesOpen)
+        if (mod.IsExternal || IsModOperationInProgress || IsConfirmRemoveOpen || IsConfirmDependenciesOpen)
             return;
 
         var dependents = DependencyResolver.FindDependents(mod, InstalledMods);

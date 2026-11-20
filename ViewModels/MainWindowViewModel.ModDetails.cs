@@ -36,7 +36,7 @@ public partial class MainWindowViewModel
 
     public bool CanInstallSelected => SelectedMod != null && SelectedInstalledMod == null;
 
-    public bool IsSelectedInstalled => SelectedInstalledMod != null;
+    public bool IsSelectedInstalled => SelectedInstalledMod is { IsExternal: false };
 
     partial void OnBrowseSelectionChanged(OnlineModInfo? value) => ShowDetails();
 

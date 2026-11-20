@@ -6,6 +6,8 @@ namespace StellarModManager.Models
 {
     public class ModInfo : ObservableObject
     {
+        private string version = "";
+
         [JsonPropertyName("id")]
         public string Id { get; set; } = "";
 
@@ -16,7 +18,18 @@ namespace StellarModManager.Models
         public string Author { get; set; } = "";
 
         [JsonPropertyName("version")]
-        public string Version { get; set; } = "";
+        public string Version
+        {
+            get => version;
+            set
+            {
+                if (SetProperty(ref version, value))
+                    OnPropertyChanged(nameof(DisplayVersion));
+            }
+        }
+
+        [JsonIgnore]
+        public string DisplayVersion => string.IsNullOrWhiteSpace(Version) ? "Unknown" : Version;
 
         [JsonPropertyName("description")]
         public string Description { get; set; } = "";
