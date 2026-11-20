@@ -18,10 +18,10 @@ public partial class MainWindowViewModel
     private readonly ModRepositoryService repositoryService = new();
 
     [ObservableProperty]
-    private int sortIndex;
+    public partial int SortIndex { get; set; }
 
     [ObservableProperty]
-    private string searchText = "";
+    public partial string SearchText { get; set; } = "";
 
     [RelayCommand]
     private async Task RefreshMods()

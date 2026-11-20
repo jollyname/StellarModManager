@@ -21,12 +21,12 @@ public partial class MainWindowViewModel
     private InstalledModInfo? modPendingRemoval;
     private OnlineModInfo? modPendingInstall;
 
-    [ObservableProperty] private bool isConfirmRemoveOpen;
-    [ObservableProperty] private string confirmRemoveTitle = "";
-    [ObservableProperty] private string confirmRemoveButton = "";
-    [ObservableProperty] private string confirmRemoveMessage = "";
-    [ObservableProperty] private bool isConfirmDependenciesOpen;
-    [ObservableProperty] private string confirmDependenciesMessage = "";
+    [ObservableProperty] public partial bool IsConfirmRemoveOpen { get; set; }
+    [ObservableProperty] public partial string ConfirmRemoveTitle { get; set; } = "";
+    [ObservableProperty] public partial string ConfirmRemoveButton { get; set; } = "";
+    [ObservableProperty] public partial string ConfirmRemoveMessage { get; set; } = "";
+    [ObservableProperty] public partial bool IsConfirmDependenciesOpen { get; set; }
+    [ObservableProperty] public partial string ConfirmDependenciesMessage { get; set; } = "";
 
     private void ShowInstalledMods(List<ProfileMod> mods)
     {

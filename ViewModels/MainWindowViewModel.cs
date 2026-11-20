@@ -3,25 +3,23 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using StellarModManager.Services;
 using System;
-using System.Diagnostics;
-using System.IO;
 
 namespace StellarModManager.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
     [ObservableProperty]
-    private string gamePath = "No game selected";
+    public partial string GamePath { get; set; } = "No game selected";
 
     [ObservableProperty]
-    private string melonLoaderStatusText = "";
+    public partial string MelonLoaderStatusText { get; set; } = "";
 
     // Result of the last mod operation, shown in an info bar
     [ObservableProperty]
-    private string? statusMessage;
+    public partial string? StatusMessage { get; set; }
 
     [ObservableProperty]
-    private bool isStatusError;
+    public partial bool IsStatusError { get; set; }
 
     private readonly DispatcherTimer statusTimer = new() { Interval = TimeSpan.FromSeconds(5) };
     private readonly DispatcherTimer checkProcessTimer = new() { Interval = TimeSpan.FromSeconds(10) }; // not sure what the ideal value here would be
@@ -34,20 +32,20 @@ public partial class MainWindowViewModel : ViewModelBase
         LoadAvailableLanguages();
 
         var appSettings = settingsService.LoadAppSettings();
-        selectedTheme = appSettings.Theme;
-        selectedLanguage = appSettings.Language;
-        confirmBeforeRemove = appSettings.ConfirmBeforeRemove;
+        SelectedTheme = appSettings.Theme;
+        SelectedLanguage = appSettings.Language;
+        ConfirmBeforeRemove = appSettings.ConfirmBeforeRemove;
         AutoDeployDependencies = appSettings.AutoDeployDependencies;
         autoCheckForModUpdates = appSettings.AutoCheckForModUpdates;
-        autoCheckForAppUpdates = appSettings.AutoCheckForAppUpdates;
-        sortIndex = appSettings.ModSort;
-        isCompactView = appSettings.CompactModList;
+        AutoCheckForAppUpdates = appSettings.AutoCheckForAppUpdates;
+        SortIndex = appSettings.ModSort;
+        IsCompactView = appSettings.CompactModList;
 
-        themeService.ApplyTheme(themeService.LoadTheme(selectedTheme));
+        themeService.ApplyTheme(themeService.LoadTheme(SelectedTheme));
 
-        if (!LocalizationService.Instance.TrySetLanguage(selectedLanguage, out string usedLanguage))
+        if (!LocalizationService.Instance.TrySetLanguage(SelectedLanguage, out string usedLanguage))
         {
-            selectedLanguage = appSettings.Language = usedLanguage;
+            SelectedLanguage = appSettings.Language = usedLanguage;
             settingsService.SaveAppSettings(appSettings);
         }
 

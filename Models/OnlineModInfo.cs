@@ -34,9 +34,8 @@ public partial class OnlineModInfo : ModInfo
     [JsonIgnore] // lazy fix hehe
     public string ThumbnailUrl { get; set; } = "";
 
-    [JsonIgnore]
     [ObservableProperty]
-    private Bitmap? thumbnailImage;
+    public partial Bitmap? ThumbnailImage { get; set; }
 
     [JsonIgnore]
     public List<string> ImageUrls { get; set; } = new();
@@ -105,15 +104,13 @@ public partial class OnlineModInfo : ModInfo
     [JsonIgnore]
     public Task? ChangelogTask { get; set; }
 
-    [JsonIgnore]
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(DownloadsText))]
-    private long downloads;
+    public partial long Downloads { get; set; }
 
-    [JsonIgnore]
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(UpdatedText))]
-    private DateTime? lastUpdated;
+    public partial DateTime? LastUpdated { get; set; }
 
     [JsonIgnore]
     public string DownloadsText => string.Format(LocalizationService.Instance["DownloadsFormat"], Downloads);
@@ -134,25 +131,21 @@ public partial class OnlineModInfo : ModInfo
         };
     }
 
-    [JsonIgnore]
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ShowInstalledState), nameof(ShowUpdateState), nameof(ShowNoState))]
-    private bool isInstalling;
+    public partial bool IsInstalling { get; set; }
 
-    [JsonIgnore]
     [ObservableProperty]
-    private double downloadProgress;
+    public partial double DownloadProgress { get; set; }
 
-    [JsonIgnore]
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ShowInstalledState), nameof(ShowUpdateState), nameof(ShowNoState))]
-    private bool isInstalled;
+    public partial bool IsInstalled { get; set; }
 
     // Set when the installed copy is older than this version
-    [JsonIgnore]
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ShowInstalledState), nameof(ShowUpdateState))]
-    private bool hasUpdate;
+    public partial bool HasUpdate { get; set; }
 
     // State column: exactly one of these (or IsInstalling) is shown
     [JsonIgnore]

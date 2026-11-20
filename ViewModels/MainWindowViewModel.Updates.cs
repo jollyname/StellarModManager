@@ -14,27 +14,27 @@ public partial class MainWindowViewModel
     private readonly AppUpdatingService appUpdatingService = new();
 
     [ObservableProperty]
-    private bool isUpdateAvailable;
+    public partial bool IsUpdateAvailable { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(AvailableUpdateText))]
-    private UpdateInfo? availableUpdate;
+    public partial UpdateInfo? AvailableUpdate { get; set; }
 
     public string AvailableUpdateText => AvailableUpdate is null
         ? ""
         : LocalizationService.Instance.Format("NewVersionFormat", AvailableUpdate.Version);
 
     [ObservableProperty]
-    private bool isUpdatePanelOpen;
+    public partial bool IsUpdatePanelOpen { get; set; }
 
     [ObservableProperty]
-    private bool isUpdateBannerVisible;
+    public partial bool IsUpdateBannerVisible { get; set; }
 
     [ObservableProperty]
-    private bool isDownloadingUpdate;
+    public partial bool IsDownloadingUpdate { get; set; }
 
     [ObservableProperty]
-    private double downloadProgress;
+    public partial double DownloadProgress { get; set; }
 
     public async Task CheckForAppUpdates()
     {

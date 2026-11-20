@@ -27,18 +27,19 @@ public partial class MainWindowViewModel
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ActiveProfileName))]
-    private ModProfile? activeProfile;
+    public partial ModProfile? ActiveProfile { get; set; }
 
     public string ActiveProfileName => ActiveProfile?.Name ?? "Profile";
 
     [ObservableProperty]
-    private bool isProfilesDropdownOpen;
+    public partial bool IsProfilesDropdownOpen { get; set; }
 
     [ObservableProperty]
-    private string newProfileName = "";
+    public partial string NewProfileName { get; set; } = "";
 
     [ObservableProperty]
-    private bool isModOperationInProgress;
+    public partial bool IsModOperationInProgress { get; set; }
+    
 
     private void OpenGameProfiles(string gamePath, string? legacyGamePath)
     {

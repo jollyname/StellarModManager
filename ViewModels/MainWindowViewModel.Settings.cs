@@ -23,26 +23,26 @@ public partial class MainWindowViewModel
     public ObservableCollection<string> AvailableLanguages { get; } = new();
 
     [ObservableProperty]
-    private string selectedTheme = "Purple";
+    public partial string SelectedTheme { get; set; } = "Purple";
 
     [ObservableProperty]
-    private string selectedLanguage = "en";
+    public partial string SelectedLanguage { get; set; } = "en";
 
     [ObservableProperty]
-    private bool confirmBeforeRemove = true;
+    public partial bool ConfirmBeforeRemove { get; set; } = true;
 
     [ObservableProperty]
-    private bool autoDeployDependencies;
+    public partial bool AutoDeployDependencies { get; set; }
 
     [ObservableProperty]
-    private bool autoCheckForAppUpdates = true;  
+    public partial bool AutoCheckForAppUpdates { get; set; } = true;
 
     [ObservableProperty]
     private bool autoCheckForModUpdates = true;
 
     // Mod lists show a three-column card grid instead of the table
     [ObservableProperty]
-    private bool isCompactView;
+    public partial bool IsCompactView { get; set; }
 
     private readonly DispatcherTimer updateCheckTimer;
 

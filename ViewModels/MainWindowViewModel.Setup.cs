@@ -15,16 +15,16 @@ public partial class MainWindowViewModel
     public IReadOnlyList<GameInstallationInfo> DetectedGameInstalls { get; } = GameLocatorService.Locate();
 
     [ObservableProperty]
-    private bool setupRequired = true;
+    public partial bool SetupRequired { get; set; } = true;
 
     [ObservableProperty]
-    private bool isMelonLoaderValid;
+    public partial bool IsMelonLoaderValid { get; set; }
 
     [ObservableProperty]
-    private bool isInstallingMelonLoader;
+    public partial bool IsInstallingMelonLoader { get; set; }
 
     [ObservableProperty]
-    private string installProgressText = "";
+    public partial string InstallProgressText { get; set; } = "";
 
     private readonly MelonLoaderInstaller melonLoaderInstaller = new();
 

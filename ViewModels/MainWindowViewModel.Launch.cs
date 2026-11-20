@@ -41,7 +41,7 @@ public partial class MainWindowViewModel
     }
 
     [ObservableProperty]
-    private bool isGameRunning;
+    public partial bool IsGameRunning { get; private set; }
 
 
     private void OnExitGameProcess(object? _, EventArgs args)
