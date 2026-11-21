@@ -11,8 +11,8 @@ internal sealed class ProfileFileTransaction(string gamePath, string journalPath
     internal sealed class Journal
     {
         public Guid Id { get; set; } = Guid.NewGuid();
-        public List<FileChange> Changes { get; set; } = new();
-        public List<string> NewDirectories { get; set; } = new();
+        public List<FileChange> Changes { get; set; } = [];
+        public List<string> NewDirectories { get; set; } = [];
     }
 
     internal sealed record FileChange(string RelativePath, bool IsDirectory, bool HadOriginal, bool HasReplacement);
@@ -21,8 +21,7 @@ internal sealed class ProfileFileTransaction(string gamePath, string journalPath
     internal string WorkFolder => WorkPath(gamePath, _journal.Id);
     internal Guid Id => _journal.Id;
 
-    private static string WorkPath(string gamePath, Guid id) =>
-        Path.Combine(gamePath, $".stellar-profile-{id:N}");
+    private static string WorkPath(string gamePath, Guid id) => Path.Combine(gamePath, $".stellar-profile-{id:N}");
 
     private static string Staged(string work, int index) => Path.Combine(work, $"incoming-{index}");
     private static string Backup(string work, int index) => Path.Combine(work, $"original-{index}");

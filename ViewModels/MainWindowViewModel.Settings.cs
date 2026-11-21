@@ -19,8 +19,8 @@ public partial class MainWindowViewModel
 
     public string AppVersion { get; } = Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
 
-    public ObservableCollection<string> AvailableThemes { get; } = new();
-    public ObservableCollection<string> AvailableLanguages { get; } = new();
+    public ObservableCollection<string> AvailableThemes { get; } = [];
+    public ObservableCollection<string> AvailableLanguages { get; } = [];
 
     [ObservableProperty]
     public partial string SelectedTheme { get; set; } = "Purple";

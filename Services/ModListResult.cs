@@ -8,7 +8,7 @@ public sealed class ModListResult
 {
     private readonly object _gate = new();
 
-    public List<OnlineModInfo> Mods { get; } = new();
+    public List<OnlineModInfo> Mods { get; } = [];
 
     public HashSet<string> FailedRepositories { get; } = new(StringComparer.OrdinalIgnoreCase);
 

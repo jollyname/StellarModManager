@@ -13,9 +13,9 @@ namespace StellarModManager.ViewModels;
 
 public partial class MainWindowViewModel
 {
-    public ObservableCollection<InstalledModInfo> InstalledMods { get; } = new();
-    public ObservableCollection<InstalledModInfo> LibraryMods { get; } = new();
-    public ObservableCollection<InstalledModInfo> AvailableModUpdates { get; } = new();
+    public ObservableCollection<InstalledModInfo> InstalledMods { get; } = [];
+    public ObservableCollection<InstalledModInfo> LibraryMods { get; } = [];
+    public ObservableCollection<InstalledModInfo> AvailableModUpdates { get; } = [];
     private HashSet<string> _managedModPaths = new(ProfileFiles.PathComparer);
 
     private InstalledModInfo? _modPendingRemoval;
@@ -49,7 +49,7 @@ public partial class MainWindowViewModel
     private void ShowLibraryMods()
     {
         var selection = LibrarySelection;
-        var external = _profileStore == null ? new() : ExternalModScanner.Scan(GamePath, _managedModPaths);
+        var external = _profileStore == null ? [] : ExternalModScanner.Scan(GamePath, _managedModPaths);
         LibraryMods.Clear();
         foreach (var mod in InstalledMods.Concat(external))
             LibraryMods.Add(mod);
@@ -280,7 +280,7 @@ public partial class MainWindowViewModel
         {
             var store = _profileStore!;
             var active = ActiveProfile!.Id;
-            ShowProfileState(await Task.Run(() => store.ChangeInstalledMods(active, Array.Empty<ModPackage>(), mod.Id)));
+            ShowProfileState(await Task.Run(() => store.ChangeInstalledMods(active, [], mod.Id)));
             ReportSuccess("StatusRemoved", mod.Name);
         }
         catch (Exception ex)

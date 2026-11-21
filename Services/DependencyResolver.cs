@@ -49,7 +49,7 @@ public static class DependencyResolver
         if (mod.Needs is { Count: > 0 })
             return mod.Needs;
 
-        return (mod as InstalledModInfo)?.Online?.Needs ?? new List<string>();
+        return (mod as InstalledModInfo)?.Online?.Needs ?? [];
     }
 
     // Installed mods that have needs

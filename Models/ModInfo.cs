@@ -36,11 +36,11 @@ public class ModInfo : ObservableObject
     public string Thumbnail { get; set; } = "";
 
     [JsonPropertyName("images")]
-    public List<string> Images { get; set; } = new();
+    public List<string> Images { get; set; } = [];
 
     // ids of other mods this one needs
     [JsonPropertyName("needs")]
-    public List<string> Needs { get; set; } = new();
+    public List<string> Needs { get; set; } = [];
 
     // "ai-free", "ai-assisted", or "vibecoded"
     [JsonPropertyName("ai")]
@@ -52,5 +52,5 @@ public class ModInfo : ObservableObject
 
     // TODO!!!
     [JsonPropertyName("tags")]
-    public List<string> Tags { get; set; } = new();
+    public List<string> Tags { get; set; } = [];
 }

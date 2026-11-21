@@ -24,13 +24,7 @@ public class ModInstallerService
 
         ZipFile.ExtractToDirectory(zipPath, libraryPath);
 
-        string? modJson = Directory.GetFiles(libraryPath, "mod.json", SearchOption.AllDirectories).FirstOrDefault();
-
-        if (modJson == null)
-        {
-            throw new Exception("Invalid mod package: mod.json missing");
-        }
-
+        string? modJson = Directory.GetFiles(libraryPath, "mod.json", SearchOption.AllDirectories).FirstOrDefault() ?? throw new Exception("Invalid mod package: mod.json missing");
         string modRoot = Path.GetDirectoryName(modJson)!;
 
         if (modRoot != libraryPath)

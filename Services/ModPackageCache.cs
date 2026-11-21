@@ -23,19 +23,20 @@ internal sealed class ModPackageCache(string appDirectory)
     {
         var root = Path.Combine(_cache, DirectoryKey(id.ToUpperInvariant()));
         var candidates = version != null
-            ? new[] { Path.Combine(root, DirectoryKey(version)) }
-            : Directory.Exists(root) ? Directory.GetDirectories(root) : Array.Empty<string>();
+            ? [Path.Combine(root, DirectoryKey(version))]
+            : Directory.Exists(root) ? Directory.GetDirectories(root) : [];
 
         if (id.Length > 0 && id is not "." and not ".." && id.IndexOfAny(Path.GetInvalidFileNameChars()) < 0 &&
             !id.Contains('/') && !id.Contains('\\') && !Path.IsPathRooted(id))
         {
-            candidates = candidates.Append(Path.Combine(_library, id)).ToArray();
+            candidates = candidates
+                .Append(Path.Combine(_library, id))
+                .ToArray();
         }
 
         return candidates.Select(TryReadPackage)
             .OfType<ModPackage>()
-            .Where(p => string.Equals(p.Mod.Id, id, StringComparison.OrdinalIgnoreCase) &&
-                        (version == null || p.Mod.Version == version))
+            .Where(p => string.Equals(p.Mod.Id, id, StringComparison.OrdinalIgnoreCase) && (version == null || p.Mod.Version == version))
             .OrderByDescending(p => Version.TryParse(p.Mod.Version, out var parsed) ? parsed : null)
             .FirstOrDefault();
     }
@@ -71,7 +72,7 @@ internal sealed class ModPackageCache(string appDirectory)
         var id = mod.Id;
         var version = mod.Version;
         var name = mod.Name;
-        var needs = mod.Needs?.ToList() ?? new();
+        var needs = mod.Needs?.ToList() ?? [];
         var existing = Find(id, version);
         if (existing != null)
             return existing;

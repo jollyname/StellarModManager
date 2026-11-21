@@ -35,8 +35,10 @@ internal static class ExternalModScanner
         catch (IOException) { }
         catch (UnauthorizedAccessException) { }
 
-        return result.OrderBy(mod => mod.Name, StringComparer.CurrentCultureIgnoreCase)
-            .ThenBy(mod => mod.ExternalPath, ProfileFiles.PathComparer).ToList();
+        return result
+            .OrderBy(mod => mod.Name, StringComparer.CurrentCultureIgnoreCase)
+            .ThenBy(mod => mod.ExternalPath, ProfileFiles.PathComparer)
+            .ToList();
     }
 
     private static void ReadAssembly(string file, string relativePath, List<InstalledModInfo> result)

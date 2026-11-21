@@ -11,7 +11,7 @@ internal sealed class ModProfileStore
     private sealed class LegacyProfiles
     {
         public string ActiveProfile { get; set; } = "Default";
-        public List<ModProfile> Profiles { get; set; } = new();
+        public List<ModProfile> Profiles { get; set; } = [];
     }
 
     private readonly string _appDirectory;
@@ -28,9 +28,7 @@ internal sealed class ModProfileStore
         _gamePath = Path.TrimEndingDirectorySeparator(Path.GetFullPath(gamePath));
         _packages = packages;
         _profilesRoot = Path.Combine(appDirectory, "Data", "Profiles");
-        var key = ProfileFiles.PathComparer == StringComparer.OrdinalIgnoreCase
-            ? _gamePath.ToUpperInvariant()
-            : _gamePath;
+        var key = ProfileFiles.PathComparer == StringComparer.OrdinalIgnoreCase ? _gamePath.ToUpperInvariant() : _gamePath;
         _storePath = Path.Combine(_profilesRoot, ModPackageCache.DirectoryKey(key));
         _statePath = Path.Combine(_storePath, "state.json");
         _journalPath = Path.Combine(_storePath, "pending.json");
@@ -61,7 +59,7 @@ internal sealed class ModProfileStore
             legacy.Profiles.Add(new ModProfile { Name = "Default" });
 
         var active = legacy.Profiles.FirstOrDefault(p => p.Name == legacy.ActiveProfile) ?? legacy.Profiles[0];
-        active.DeployedModIds = new();
+        active.DeployedModIds = [];
         var state = new GameModProfiles
         {
             Profiles = legacy.Profiles,

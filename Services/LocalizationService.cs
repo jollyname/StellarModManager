@@ -12,9 +12,9 @@ public class LocalizationService : INotifyPropertyChanged
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    private readonly Dictionary<string, string> _fallbackTranslations = new();
-    private readonly Dictionary<string, string> _languageDisplayNames = new();
-    private Dictionary<string, string> _currentTranslations = new();
+    private readonly Dictionary<string, string> _fallbackTranslations = [];
+    private readonly Dictionary<string, string> _languageDisplayNames = [];
+    private Dictionary<string, string> _currentTranslations = [];
 
     private const string FallbackLanguage = "en";
     public string CurrentLanguage { get; private set; } = FallbackLanguage;
@@ -106,17 +106,17 @@ public class LocalizationService : INotifyPropertyChanged
         var path = Path.Combine(AppContext.BaseDirectory, "Data/Localization", $"{languageCode}.json");
 
         if (!File.Exists(path))
-            return new();
+            return [];
 
         try
         {
             var json = File.ReadAllText(path);
 
-            return JsonSerializer.Deserialize<Dictionary<string, string>>(json) ?? new();
+            return JsonSerializer.Deserialize<Dictionary<string, string>>(json) ?? [];
         }
         catch
         {
-            return new();
+            return [];
         }
     }
 }

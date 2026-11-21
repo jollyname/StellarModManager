@@ -67,7 +67,7 @@ public class ThemeService
         if (_themeCache != null)
             return _themeCache;
 
-        _themeCache = new Dictionary<string, ThemeDefinition>(StringComparer.OrdinalIgnoreCase);
+        _themeCache = new(StringComparer.OrdinalIgnoreCase);
 
         if (!Directory.Exists(_themesFolder))
             return _themeCache;

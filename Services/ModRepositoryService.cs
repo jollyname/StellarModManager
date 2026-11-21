@@ -111,7 +111,10 @@ public class ModRepositoryService
                 mod.ThumbnailUrl = ToUrl(mod.Thumbnail);
             }
 
-            mod.ImageUrls = mod.Images.Where(path => !string.IsNullOrWhiteSpace(path)).Select(ToUrl).ToList();
+            mod.ImageUrls = mod.Images
+                .Where(path => !string.IsNullOrWhiteSpace(path))
+                .Select(ToUrl)
+                .ToList();
 
             return mod;
         }
@@ -131,10 +134,7 @@ public class ModRepositoryService
             string atom = await _httpClient.GetStringAsync($"https://github.com/{owner}/{repo}/commits/main.atom");
             string? commit = GithubFiles.CommitFromAtom(atom);
 
-            if (commit == null)
-                throw new InvalidOperationException($"No commit for {owner}/{repo}");
-
-            return commit;
+            return commit ?? throw new InvalidOperationException($"No commit for {owner}/{repo}");
         }
         finally
         {

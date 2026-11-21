@@ -38,10 +38,10 @@ public partial class OnlineModInfo : ModInfo
     public partial Bitmap? ThumbnailImage { get; set; }
 
     [JsonIgnore]
-    public List<string> ImageUrls { get; set; } = new();
+    public List<string> ImageUrls { get; set; } = [];
 
     [JsonIgnore]
-    public ObservableCollection<Bitmap> GalleryImages { get; } = new(); 
+    public ObservableCollection<Bitmap> GalleryImages { get; } = []; 
 
     [JsonIgnore]
     public bool GalleryLoaded { get; set; }
@@ -60,7 +60,7 @@ public partial class OnlineModInfo : ModInfo
         { "ai-free", "ai-assisted", "vibecoded", "active", "inactive" };
 
     [JsonIgnore]
-    public List<ModTag> _Tags { get; private set; } = new(); // TODO: please rename sensibly
+    public List<ModTag> _Tags { get; private set; } = []; // TODO: please rename sensibly
 
     public void RebuildTags()
     {
@@ -97,7 +97,7 @@ public partial class OnlineModInfo : ModInfo
     }
 
     [JsonIgnore]
-    public ObservableCollection<ChangelogEntry> Changelog { get; } = new();
+    public ObservableCollection<ChangelogEntry> Changelog { get; } = [];
 
     [JsonIgnore]
     public Task? ChangelogTask { get; set; }

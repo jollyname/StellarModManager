@@ -23,7 +23,7 @@ public partial class MainWindowViewModel
     private ModProfileStore? _profileStore;
     private ModProfile? _profilePendingDeletion;
 
-    public ObservableCollection<ModProfile> ModProfiles { get; } = new();
+    public ObservableCollection<ModProfile> ModProfiles { get; } = [];
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ActiveProfileName))]
@@ -266,7 +266,7 @@ public partial class MainWindowViewModel
                 Title = LocalizationService.Instance["ProfileExport"],
                 SuggestedFileName = profile.Name,
                 DefaultExtension = "json",
-                FileTypeChoices = new[] { new FilePickerFileType("JSON") { Patterns = new[] { "*.json" } } }
+                FileTypeChoices = [new FilePickerFileType("JSON") { Patterns = ["*.json"] }]
             });
 
             if (file == null)
@@ -299,7 +299,7 @@ public partial class MainWindowViewModel
             {
                 Title = LocalizationService.Instance["ProfileImport"],
                 AllowMultiple = false,
-                FileTypeFilter = new[] { new FilePickerFileType("JSON") { Patterns = new[] { "*.json" } } }
+                FileTypeFilter = [new FilePickerFileType("JSON") { Patterns = ["*.json"] }]
             });
 
             if (files.Count == 0)
@@ -313,7 +313,7 @@ public partial class MainWindowViewModel
             var profile = new ModProfile
             {
                 Name = imported.Name.Trim(),
-                DeployedModIds = (imported.DeployedModIds ?? new())
+                DeployedModIds = (imported.DeployedModIds ?? [])
                     .Where(id => !string.IsNullOrWhiteSpace(id)).Select(id => id.Trim()).ToList()
             };
             var store = _profileStore!;
