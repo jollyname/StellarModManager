@@ -60,7 +60,7 @@ public class GridWrapPanel : Panel, INavigableContainer
     IInputElement? INavigableContainer.GetControl(NavigationDirection direction, IInputElement? from, bool wrap)
     {
         bool horiz = Orientation == Orientation.Horizontal;
-        int index = from is not null ? base.Children.IndexOf((Control)from) : -1;
+        int index = from is not null ? Children.IndexOf((Control)from) : -1;
 
         switch (direction)
         {

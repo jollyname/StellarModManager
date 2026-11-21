@@ -53,12 +53,11 @@ public partial class OnlineModInfo : ModInfo
 
     [JsonIgnore]
     public string? RepoUrl => string.IsNullOrEmpty(RepoOwner) || string.IsNullOrEmpty(RepoName)
-        ? null
-        : $"https://github.com/{RepoOwner}/{RepoName}";
+        ? null : $"https://github.com/{RepoOwner}/{RepoName}";
 
     // I just put AI tags in here so they can't be used as regular tags
     private static readonly HashSet<string> ReservedTags = new(StringComparer.OrdinalIgnoreCase)
-    { "ai-free", "ai-assisted", "vibecoded", "active", "inactive" };
+        { "ai-free", "ai-assisted", "vibecoded", "active", "inactive" };
 
     [JsonIgnore]
     public List<ModTag> _Tags { get; private set; } = new(); // TODO: please rename sensibly
@@ -66,7 +65,6 @@ public partial class OnlineModInfo : ModInfo
     public void RebuildTags()
     {
         var list = new List<ModTag>();
-
         var loc = LocalizationService.Instance;
 
         // AI badge
