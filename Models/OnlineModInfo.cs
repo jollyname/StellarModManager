@@ -3,14 +3,14 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using StellarModManager.Services;
 using System;
 using System.Collections.Generic; // Lists
-using System.Collections.ObjectModel; // image collection
+using System.Collections.ObjectModel; // Image collection
 using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace StellarModManager.Models;
 
-// Reuse for regular tags and ai tag
+// Reuse for regular tags, development tags and ai tag
 public record ModTag(string Text, bool IsAssisted = false, bool IsVibecoded = false, bool IsActive = false, bool IsInactive = false);
 
 public partial class OnlineModInfo : ModInfo
@@ -55,12 +55,12 @@ public partial class OnlineModInfo : ModInfo
     public string? RepoUrl => string.IsNullOrEmpty(RepoOwner) || string.IsNullOrEmpty(RepoName)
         ? null : $"https://github.com/{RepoOwner}/{RepoName}";
 
-    // I just put AI tags in here so they can't be used as regular tags
+    // I just put AI and development tags in here so they can't be used as regular tags
     private static readonly HashSet<string> ReservedTags = new(StringComparer.OrdinalIgnoreCase)
         { "ai-free", "ai-assisted", "vibecoded", "active", "inactive" };
 
     [JsonIgnore]
-    public List<ModTag> _Tags { get; private set; } = []; // TODO: please rename sensibly
+    public List<ModTag> ModTags { get; private set; } = [];
 
     public void RebuildTags()
     {
@@ -92,8 +92,8 @@ public partial class OnlineModInfo : ModInfo
             .Take(6)
             .Select(tag => new ModTag(tag)));
 
-        _Tags = list;
-        OnPropertyChanged(nameof(_Tags));
+        ModTags = list;
+        OnPropertyChanged(nameof(ModTags));
     }
 
     [JsonIgnore]

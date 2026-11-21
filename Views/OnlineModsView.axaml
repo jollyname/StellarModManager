@@ -91,9 +91,9 @@
                                     <TextBlock Classes="secondary" Text="{Binding Author}" MaxWidth="160" Margin="0,0,8,0"
                                                TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 
-                                    <ItemsControl Grid.Column="1" ItemsSource="{Binding _Tags}"
+                                    <ItemsControl Grid.Column="1" ItemsSource="{Binding ModTags}"
                                                   Height="20" ClipToBounds="True" VerticalAlignment="Center"
-                                                  IsVisible="{Binding _Tags.Count}">
+                                                  IsVisible="{Binding ModTags.Count}">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
                                                 <WrapPanel ItemHeight="20"/>
@@ -162,7 +162,7 @@
                             <TextBlock Classes="secondary" Text="{Binding Author}" TextTrimming="CharacterEllipsis"/>
 
                             <!-- AI tag -->
-                            <ItemsControl ItemsSource="{Binding _Tags}" Margin="0,6,0,0" IsVisible="{Binding _Tags.Count}">
+                            <ItemsControl ItemsSource="{Binding ModTags}" Margin="0,6,0,0" IsVisible="{Binding ModTags.Count}">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate>
                                 </ItemsControl.ItemsPanel>

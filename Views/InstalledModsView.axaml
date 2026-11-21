@@ -52,9 +52,9 @@
                                     <TextBlock Classes="secondary" Text="{Binding Author}" MaxWidth="160" Margin="0,0,8,0"
                                                TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 
-                                    <ItemsControl Grid.Column="1" ItemsSource="{Binding Online._Tags}"
+                                    <ItemsControl Grid.Column="1" ItemsSource="{Binding Online.ModTags}"
                                                   Height="20" ClipToBounds="True" VerticalAlignment="Center"
-                                                  IsVisible="{Binding Online._Tags.Count}">
+                                                  IsVisible="{Binding Online.ModTags.Count}">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
                                                 <WrapPanel ItemHeight="20"/>
@@ -123,8 +123,8 @@
                             </Grid>
                             <TextBlock Classes="secondary" Text="{Binding Author}" TextTrimming="CharacterEllipsis"/>
 
-                            <ItemsControl ItemsSource="{Binding Online._Tags}" Margin="0,6,0,0"
-                                          IsVisible="{Binding Online._Tags.Count}">
+                            <ItemsControl ItemsSource="{Binding Online.ModTags}" Margin="0,6,0,0"
+                                          IsVisible="{Binding Online.ModTags.Count}">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate>
                                 </ItemsControl.ItemsPanel>
