@@ -64,7 +64,7 @@ internal sealed class ModProfileStore
         {
             Profiles = legacy.Profiles,
             ActiveProfileId = active.Id,
-            InstalledMods = useLegacy ? ReadLegacyInstalledMods() : new()
+            InstalledMods = useLegacy ? ReadLegacyInstalledMods() : []
         };
         ProfileFiles.WriteJson(_statePath, state);
         return state;
@@ -203,7 +203,7 @@ internal sealed class ModProfileStore
                 }
 
                 outgoing.SnapshotId = generation;
-                target.DeployedModIds = new();
+                target.DeployedModIds = [];
                 state.ActiveProfileId = target.Id;
                 state.InstalledMods = incomingMods;
                 if (deleteActive)
@@ -261,7 +261,7 @@ internal sealed class ModProfileStore
     {
         Directory.CreateDirectory(Path.Combine(folder, ProfileFiles.Mods));
         var mods = new List<ProfileMod>();
-        var ids = (target.DeployedModIds ?? new()).Where(id => !string.IsNullOrWhiteSpace(id))
+        var ids = (target.DeployedModIds ?? []).Where(id => !string.IsNullOrWhiteSpace(id))
             .Select(id => id.Trim()).Distinct(StringComparer.OrdinalIgnoreCase);
         foreach (var id in ids)
         {

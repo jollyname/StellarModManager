@@ -62,7 +62,7 @@ public partial class MainWindowViewModel
         _profileStore = null;
         ActiveProfile = null;
         ModProfiles.Clear();
-        ShowInstalledMods(new());
+        ShowInstalledMods([]);
     }
 
     private void ShowProfileState(GameModProfiles state)

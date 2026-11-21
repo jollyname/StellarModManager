@@ -12,9 +12,9 @@ namespace StellarModManager.ViewModels;
 
 public partial class MainWindowViewModel
 {
-    public ObservableCollection<OnlineModInfo> OnlineMods { get; } = new();
+    public ObservableCollection<OnlineModInfo> OnlineMods { get; } = [];
     // OnlineMods filtered by SearchText and sorted by SortIndex
-    public ObservableCollection<OnlineModInfo> VisibleOnlineMods { get; } = new();
+    public ObservableCollection<OnlineModInfo> VisibleOnlineMods { get; } = [];
     private readonly ModRepositoryService _repositoryService = new();
 
     [ObservableProperty]

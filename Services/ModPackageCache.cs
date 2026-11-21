@@ -34,7 +34,8 @@ internal sealed class ModPackageCache(string appDirectory)
                 .ToArray();
         }
 
-        return candidates.Select(TryReadPackage)
+        return candidates
+            .Select(TryReadPackage)
             .OfType<ModPackage>()
             .Where(p => string.Equals(p.Mod.Id, id, StringComparison.OrdinalIgnoreCase) && (version == null || p.Mod.Version == version))
             .OrderByDescending(p => Version.TryParse(p.Mod.Version, out var parsed) ? parsed : null)

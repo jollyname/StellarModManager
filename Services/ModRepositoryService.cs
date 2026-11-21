@@ -15,7 +15,7 @@ using Avalonia.Platform;
 
 namespace StellarModManager.Services;
 
-public class ModRepositoryService
+public partial class ModRepositoryService
 {
     private readonly HttpClient _httpClient = new();
     private readonly SemaphoreSlim _commitSlots = new(4);
@@ -63,12 +63,15 @@ public class ModRepositoryService
         return result;
     }
 
-    private static readonly Regex GitHubName = new(@"^[A-Za-z0-9][A-Za-z0-9._-]*$");
-    private static readonly Regex RepoPath = new(@"^([A-Za-z0-9_-][A-Za-z0-9._-]*(/[A-Za-z0-9_-][A-Za-z0-9._-]*)*)?$");
+    [GeneratedRegex(@"^[A-Za-z0-9][A-Za-z0-9._-]*$")]
+    private static partial Regex GitHubName();
+    
+    [GeneratedRegex(@"^([A-Za-z0-9_-][A-Za-z0-9._-]*(/[A-Za-z0-9_-][A-Za-z0-9._-]*)*)?$")]
+    private static partial Regex RepoPath();
 
     private static bool IsSafe(ModRegistryEntry entry)
     {
-        return GitHubName.IsMatch(entry.Author) && GitHubName.IsMatch(entry.Repo) && RepoPath.IsMatch(entry.MetadataPath);
+        return GitHubName().IsMatch(entry.Author) && GitHubName().IsMatch(entry.Repo) && RepoPath().IsMatch(entry.MetadataPath);
     }
 
     private async Task<OnlineModInfo?> LoadModAsync(ModRegistryEntry entry, ModListResult result)
@@ -259,6 +262,6 @@ public class ModRepositoryService
     private class RepositoryResponse
     {
         [JsonPropertyName("mods")]
-        public List<ModRegistryEntry> Mods { get; set; } = new();
+        public List<ModRegistryEntry> Mods { get; set; } = [];
     }
 }

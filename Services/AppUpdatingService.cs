@@ -59,9 +59,9 @@ public class AppUpdatingService
         long totalRead = 0;
         int bytesRead;
 
-        while ((bytesRead = await httpStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+        while ((bytesRead = await httpStream.ReadAsync(buffer)) > 0)
         {
-            await fileStream.WriteAsync(buffer, 0, bytesRead);
+            await fileStream.WriteAsync(buffer.AsMemory(0, bytesRead));
             totalRead += bytesRead;
 
             if (totalBytes > 0)

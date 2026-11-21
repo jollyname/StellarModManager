@@ -85,7 +85,7 @@ public partial class OnlineModInfo : ModInfo
                 break;
         }
 
-        list.AddRange((Tags ?? new())
+        list.AddRange((Tags ?? [])
             .Select(tag => (tag ?? "").Trim())
             .Where(tag => tag.Length is > 0 and <= 24 && !ReservedTags.Contains(tag))
             .Distinct(StringComparer.OrdinalIgnoreCase)
