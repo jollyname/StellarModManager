@@ -19,34 +19,35 @@ public partial class MainWindowViewModel
 {
     private sealed record ProfileFile(string Name, List<string> DeployedModIds);
 
-    private readonly ModPackageCache packages = new(AppContext.BaseDirectory);
-    private ModProfileStore? profileStore;
-    private ModProfile? profilePendingDeletion;
+    private readonly ModPackageCache _packages = new(AppContext.BaseDirectory);
+    private ModProfileStore? _profileStore;
+    private ModProfile? _profilePendingDeletion;
 
-    public ObservableCollection<ModProfile> ModProfiles { get; } = new();
+    public ObservableCollection<ModProfile> ModProfiles { get; } = [];
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ActiveProfileName))]
-    private ModProfile? activeProfile;
+    public partial ModProfile? ActiveProfile { get; set; }
 
     public string ActiveProfileName => ActiveProfile?.Name ?? "Profile";
 
     [ObservableProperty]
-    private bool isProfilesDropdownOpen;
+    public partial bool IsProfilesDropdownOpen { get; set; }
 
     [ObservableProperty]
-    private string newProfileName = "";
+    public partial string NewProfileName { get; set; } = "";
 
     [ObservableProperty]
-    private bool isModOperationInProgress;
+    public partial bool IsModOperationInProgress { get; set; }
+
 
     private void OpenGameProfiles(string gamePath, string? legacyGamePath)
     {
         try
         {
-            var store = new ModProfileStore(AppContext.BaseDirectory, gamePath, packages);
+            var store = new ModProfileStore(AppContext.BaseDirectory, gamePath, _packages);
             var state = store.Open(legacyGamePath);
-            profileStore = store;
+            _profileStore = store;
             ShowProfileState(state);
         }
         catch (Exception ex)
@@ -58,10 +59,10 @@ public partial class MainWindowViewModel
 
     private void ClearGameProfiles()
     {
-        profileStore = null;
+        _profileStore = null;
         ActiveProfile = null;
         ModProfiles.Clear();
-        ShowInstalledMods(new());
+        ShowInstalledMods([]);
     }
 
     private void ShowProfileState(GameModProfiles state)
@@ -85,7 +86,7 @@ public partial class MainWindowViewModel
             return false;
         }
 
-        if (requireProfile && (profileStore == null || ActiveProfile == null))
+        if (requireProfile && (_profileStore == null || ActiveProfile == null))
         {
             ReportError("StatusSelectGameFirst");
             return false;
@@ -131,7 +132,7 @@ public partial class MainWindowViewModel
 
         if (profile.Id == ActiveProfile?.Id || profile.SnapshotId.HasValue)
         {
-            profilePendingDeletion = profile;
+            _profilePendingDeletion = profile;
             ShowRemoveConfirmation("ProfileDeleteTitle", "ProfileDelete", "ProfileDeleteMessage", profile.Name);
             return;
         }
@@ -160,7 +161,7 @@ public partial class MainWindowViewModel
             return false;
         try
         {
-            var store = profileStore!;
+            var store = _profileStore!;
             var active = ActiveProfile!.Id;
             var gamePath = GamePath;
             var (state, missing) = await Task.Run(() => store.Switch(active, target, clone, deleteActive, CheckGameStopped));
@@ -219,8 +220,7 @@ public partial class MainWindowViewModel
     [RelayCommand]
     private static void CancelRename(ModProfile? profile)
     {
-        if (profile != null)
-            profile.IsEditing = false;
+        profile?.IsEditing = false;
     }
 
     private async Task EditProfiles(Action<GameModProfiles> edit, string errorKey)
@@ -229,7 +229,7 @@ public partial class MainWindowViewModel
             return;
         try
         {
-            var store = profileStore!;
+            var store = _profileStore!;
             var active = ActiveProfile!.Id;
             ShowProfileState(await Task.Run(() => store.Edit(active, edit)));
         }
@@ -266,7 +266,7 @@ public partial class MainWindowViewModel
                 Title = LocalizationService.Instance["ProfileExport"],
                 SuggestedFileName = profile.Name,
                 DefaultExtension = "json",
-                FileTypeChoices = new[] { new FilePickerFileType("JSON") { Patterns = new[] { "*.json" } } }
+                FileTypeChoices = [new FilePickerFileType("JSON") { Patterns = ["*.json"] }]
             });
 
             if (file == null)
@@ -299,7 +299,7 @@ public partial class MainWindowViewModel
             {
                 Title = LocalizationService.Instance["ProfileImport"],
                 AllowMultiple = false,
-                FileTypeFilter = new[] { new FilePickerFileType("JSON") { Patterns = new[] { "*.json" } } }
+                FileTypeFilter = [new FilePickerFileType("JSON") { Patterns = ["*.json"] }]
             });
 
             if (files.Count == 0)
@@ -313,10 +313,10 @@ public partial class MainWindowViewModel
             var profile = new ModProfile
             {
                 Name = imported.Name.Trim(),
-                DeployedModIds = (imported.DeployedModIds ?? new())
+                DeployedModIds = (imported.DeployedModIds ?? [])
                     .Where(id => !string.IsNullOrWhiteSpace(id)).Select(id => id.Trim()).ToList()
             };
-            var store = profileStore!;
+            var store = _profileStore!;
             var active = ActiveProfile!.Id;
             var state = await Task.Run(() => store.Edit(active, current =>
             {

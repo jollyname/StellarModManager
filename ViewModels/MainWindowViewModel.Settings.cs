@@ -12,44 +12,44 @@ namespace StellarModManager.ViewModels;
 public partial class MainWindowViewModel
 {
     public static readonly IValueConverter LanguageNameConverter =
-    new FuncValueConverter<string, string>(code =>
-        code is null ? "" : LocalizationService.Instance.GetLanguageDisplayName(code));
+        new FuncValueConverter<string, string>(code =>
+            code is null ? "" : LocalizationService.Instance.GetLanguageDisplayName(code));
 
-    private readonly ThemeService themeService = new();
+    private readonly ThemeService _themeService = new();
 
     public string AppVersion { get; } = Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
 
-    public ObservableCollection<string> AvailableThemes { get; } = new();
-    public ObservableCollection<string> AvailableLanguages { get; } = new();
+    public ObservableCollection<string> AvailableThemes { get; } = [];
+    public ObservableCollection<string> AvailableLanguages { get; } = [];
 
     [ObservableProperty]
-    private string selectedTheme = "Purple";
+    public partial string SelectedTheme { get; set; } = "Purple";
 
     [ObservableProperty]
-    private string selectedLanguage = "en";
+    public partial string SelectedLanguage { get; set; } = "en";
 
     [ObservableProperty]
-    private bool confirmBeforeRemove = true;
+    public partial bool ConfirmBeforeRemove { get; set; } = true;
 
     [ObservableProperty]
-    private bool autoDeployDependencies;
+    public partial bool AutoDeployDependencies { get; set; }
 
     [ObservableProperty]
-    private bool autoCheckForAppUpdates = true;  
+    public partial bool AutoCheckForAppUpdates { get; set; } = true;
 
     [ObservableProperty]
-    private bool autoCheckForModUpdates = true;
+    public partial bool AutoCheckForModUpdates { get; set; } = true;
 
     // Mod lists show a three-column card grid instead of the table
     [ObservableProperty]
-    private bool isCompactView;
+    public partial bool IsCompactView { get; set; }
 
-    private readonly DispatcherTimer updateCheckTimer;
+    private readonly DispatcherTimer _updateCheckTimer;
 
     // Settings are saved as soon as they change
     private void PersistSettings()
     {
-        settingsService.SaveAppSettings(new AppSettings
+        _settingsService.SaveAppSettings(new AppSettings
         {
             Language = SelectedLanguage,
             Theme = SelectedTheme,
@@ -70,7 +70,7 @@ public partial class MainWindowViewModel
 
     partial void OnSelectedThemeChanged(string value)
     {
-        themeService.ApplyTheme(themeService.LoadTheme(value));
+        _themeService.ApplyTheme(_themeService.LoadTheme(value));
         PersistSettings();
     }
 
@@ -97,16 +97,16 @@ public partial class MainWindowViewModel
     private void ApplyAutoCheckTimerState()
     {
         if (AutoCheckForModUpdates && IsMelonLoaderValid)
-            updateCheckTimer.Start();
+            _updateCheckTimer.Start();
         else
-            updateCheckTimer.Stop();
+            _updateCheckTimer.Stop();
     }
 
     private void LoadAvailableThemes()
     {
         AvailableThemes.Clear();
 
-        foreach (var name in themeService.GetAvailableThemeNames())
+        foreach (var name in _themeService.GetAvailableThemeNames())
         {
             AvailableThemes.Add(name);
         }

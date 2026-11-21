@@ -22,13 +22,7 @@ public class MelonLoaderInstaller
     {
         progress?.Report("Locating game executable...");
 
-        string? exePath = FindGameExecutable(gamePath);
-
-        if (exePath == null)
-        {
-            throw new InvalidOperationException("Could not find the game's executable in the selected folder.");
-        }
-
+        string? exePath = FindGameExecutable(gamePath) ?? throw new InvalidOperationException("Could not find the game's executable in the selected folder.");
         GameArchitecture architecture = DetectArchitecture(exePath);
 
         if (architecture == GameArchitecture.Unknown)

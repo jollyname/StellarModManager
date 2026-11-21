@@ -34,15 +34,14 @@ public partial class OnlineModInfo : ModInfo
     [JsonIgnore] // lazy fix hehe
     public string ThumbnailUrl { get; set; } = "";
 
-    [JsonIgnore]
     [ObservableProperty]
-    private Bitmap? thumbnailImage;
+    public partial Bitmap? ThumbnailImage { get; set; }
 
     [JsonIgnore]
-    public List<string> ImageUrls { get; set; } = new();
+    public List<string> ImageUrls { get; set; } = [];
 
     [JsonIgnore]
-    public ObservableCollection<Bitmap> GalleryImages { get; } = new(); 
+    public ObservableCollection<Bitmap> GalleryImages { get; } = []; 
 
     [JsonIgnore]
     public bool GalleryLoaded { get; set; }
@@ -54,20 +53,18 @@ public partial class OnlineModInfo : ModInfo
 
     [JsonIgnore]
     public string? RepoUrl => string.IsNullOrEmpty(RepoOwner) || string.IsNullOrEmpty(RepoName)
-        ? null
-        : $"https://github.com/{RepoOwner}/{RepoName}";
+        ? null : $"https://github.com/{RepoOwner}/{RepoName}";
 
     // I just put AI tags in here so they can't be used as regular tags
     private static readonly HashSet<string> ReservedTags = new(StringComparer.OrdinalIgnoreCase)
-    { "ai-free", "ai-assisted", "vibecoded", "active", "inactive" };
+        { "ai-free", "ai-assisted", "vibecoded", "active", "inactive" };
 
     [JsonIgnore]
-    public List<ModTag> _Tags { get; private set; } = new();
+    public List<ModTag> _Tags { get; private set; } = []; // TODO: please rename sensibly
 
     public void RebuildTags()
     {
         var list = new List<ModTag>();
-
         var loc = LocalizationService.Instance;
 
         // AI badge
@@ -88,7 +85,7 @@ public partial class OnlineModInfo : ModInfo
                 break;
         }
 
-        list.AddRange((Tags ?? new())
+        list.AddRange((Tags ?? [])
             .Select(tag => (tag ?? "").Trim())
             .Where(tag => tag.Length is > 0 and <= 24 && !ReservedTags.Contains(tag))
             .Distinct(StringComparer.OrdinalIgnoreCase)
@@ -100,20 +97,18 @@ public partial class OnlineModInfo : ModInfo
     }
 
     [JsonIgnore]
-    public ObservableCollection<ChangelogEntry> Changelog { get; } = new();
+    public ObservableCollection<ChangelogEntry> Changelog { get; } = [];
 
     [JsonIgnore]
     public Task? ChangelogTask { get; set; }
 
-    [JsonIgnore]
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(DownloadsText))]
-    private long downloads;
+    public partial long Downloads { get; set; }
 
-    [JsonIgnore]
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(UpdatedText))]
-    private DateTime? lastUpdated;
+    public partial DateTime? LastUpdated { get; set; }
 
     [JsonIgnore]
     public string DownloadsText => string.Format(LocalizationService.Instance["DownloadsFormat"], Downloads);
@@ -134,25 +129,21 @@ public partial class OnlineModInfo : ModInfo
         };
     }
 
-    [JsonIgnore]
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ShowInstalledState), nameof(ShowUpdateState), nameof(ShowNoState))]
-    private bool isInstalling;
+    public partial bool IsInstalling { get; set; }
 
-    [JsonIgnore]
     [ObservableProperty]
-    private double downloadProgress;
+    public partial double DownloadProgress { get; set; }
 
-    [JsonIgnore]
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ShowInstalledState), nameof(ShowUpdateState), nameof(ShowNoState))]
-    private bool isInstalled;
+    public partial bool IsInstalled { get; set; }
 
     // Set when the installed copy is older than this version
-    [JsonIgnore]
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ShowInstalledState), nameof(ShowUpdateState))]
-    private bool hasUpdate;
+    public partial bool HasUpdate { get; set; }
 
     // State column: exactly one of these (or IsInstalling) is shown
     [JsonIgnore]

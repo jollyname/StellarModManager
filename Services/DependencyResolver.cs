@@ -49,15 +49,15 @@ public static class DependencyResolver
         if (mod.Needs is { Count: > 0 })
             return mod.Needs;
 
-        return (mod as InstalledModInfo)?.Online?.Needs ?? new List<string>();
+        return (mod as InstalledModInfo)?.Online?.Needs ?? [];
     }
 
     // Installed mods that have needs
     public static List<InstalledModInfo> FindDependents(InstalledModInfo target, IEnumerable<InstalledModInfo> installed)
     {
         return installed
-            .Where(_mod => !_mod.Id.Equals(target.Id, StringComparison.OrdinalIgnoreCase))
-            .Where(_mod => NeedsOf(_mod).Any(need => (need ?? "").Trim().Equals(target.Id, StringComparison.OrdinalIgnoreCase)))
+            .Where(mod => !mod.Id.Equals(target.Id, StringComparison.OrdinalIgnoreCase))
+            .Where(mod => NeedsOf(mod).Any(need => (need ?? "").Trim().Equals(target.Id, StringComparison.OrdinalIgnoreCase)))
             .ToList();
     }
 }

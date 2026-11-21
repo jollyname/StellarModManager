@@ -5,13 +5,12 @@ using System.Threading.Tasks;
 
 namespace StellarModManager.Services;
 
-
 public static partial class GameLaunchService
 {
     private static readonly TimeSpan LaunchThroughSteamTimeout = TimeSpan.FromSeconds(10);
 
 
-    public async static Task<Process?> Launch(FileInfo executable)
+    public static async Task<Process?> Launch(FileInfo executable)
     {
         return await LaunchThroughSteam(executable) ?? LaunchDirectly(executable);
     }

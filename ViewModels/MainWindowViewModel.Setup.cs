@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using StellarModManager.Models;
 using StellarModManager.Services;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -15,18 +16,18 @@ public partial class MainWindowViewModel
     public IReadOnlyList<GameInstallationInfo> DetectedGameInstalls { get; } = GameLocatorService.Locate();
 
     [ObservableProperty]
-    private bool setupRequired = true;
+    public partial bool SetupRequired { get; set; } = true;
 
     [ObservableProperty]
-    private bool isMelonLoaderValid;
+    public partial bool IsMelonLoaderValid { get; set; }
 
     [ObservableProperty]
-    private bool isInstallingMelonLoader;
+    public partial bool IsInstallingMelonLoader { get; set; }
 
     [ObservableProperty]
-    private string installProgressText = "";
+    public partial string InstallProgressText { get; set; } = "";
 
-    private readonly MelonLoaderInstaller melonLoaderInstaller = new();
+    private readonly MelonLoaderInstaller _melonLoaderInstaller = new();
 
     partial void OnGamePathChanged(string value) => InstallMelonLoaderCommand.NotifyCanExecuteChanged();
 
@@ -109,8 +110,8 @@ public partial class MainWindowViewModel
         IsMelonLoaderValid = CheckMelonLoader(path);
         if (IsMelonLoaderValid)
         {
-            OpenGameProfiles(path, settingsService.LoadGameProfile()?.GamePath);
-            settingsService.SaveGameProfile(new GameProfile { GamePath = path });
+            OpenGameProfiles(path, _settingsService.LoadGameProfile()?.GamePath);
+            _settingsService.SaveGameProfile(new GameProfile { GamePath = path });
             SearchGameProcessIfNull();
         }
         else
@@ -132,19 +133,19 @@ public partial class MainWindowViewModel
 
         try
         {
-            var progress = new System.Progress<string>(text => InstallProgressText = text);
+            var progress = new Progress<string>(text => InstallProgressText = text);
 
-            await melonLoaderInstaller.InstallAsync(GamePath, progress);
+            await _melonLoaderInstaller.InstallAsync(GamePath, progress);
 
             IsMelonLoaderValid = CheckMelonLoader(GamePath);
 
             if (IsMelonLoaderValid)
             {
-                OpenGameProfiles(GamePath, settingsService.LoadGameProfile()?.GamePath);
-                settingsService.SaveGameProfile(new GameProfile { GamePath = GamePath });
+                OpenGameProfiles(GamePath, _settingsService.LoadGameProfile()?.GamePath);
+                _settingsService.SaveGameProfile(new GameProfile { GamePath = GamePath });
             }
         }
-        catch (System.Exception ex)
+        catch (Exception ex)
         {
             MelonLoaderStatusText = $"Auto-install failed: {ex.Message}"; // Hopesfully this never happens... ijdsfjipfdsipjhfdfdf
         }

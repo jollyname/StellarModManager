@@ -10,7 +10,7 @@ public class SettingsService
     {
         Directory.CreateDirectory(Path.GetDirectoryName(AppPaths.GameProfilePath)!);
         string json = JsonSerializer.Serialize(profile);
-        File.WriteAllText(AppPaths.GameProfilePath, json);
+        File.WriteAllText(_gameProfilePath, json);
     }
 
     public GameProfile? LoadGameProfile()

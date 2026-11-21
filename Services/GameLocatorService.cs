@@ -8,7 +8,6 @@ using AvaloniaBitmap = Avalonia.Media.Imaging.Bitmap;
 
 namespace StellarModManager.Services;
 
-
 public enum GameInstallSource { Steam }
 public record GameInstallationInfo(DirectoryInfo Directory, AvaloniaBitmap? Icon, GameInstallSource Source);
 

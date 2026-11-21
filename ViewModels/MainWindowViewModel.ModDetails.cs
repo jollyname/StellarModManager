@@ -14,21 +14,21 @@ namespace StellarModManager.ViewModels;
 public partial class MainWindowViewModel
 {
     [ObservableProperty]
-    private OnlineModInfo? browseSelection;
+    public partial OnlineModInfo? BrowseSelection { get; set; }
 
     [ObservableProperty]
-    private InstalledModInfo? librarySelection;
+    public partial InstalledModInfo? LibrarySelection { get; set; }
 
     [ObservableProperty]
-    private InstalledModInfo? updatesSelection;
+    public partial InstalledModInfo? UpdatesSelection { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(DetailsMod), nameof(HasSelection), nameof(CanInstallSelected))]
-    private OnlineModInfo? selectedMod;
+    public partial OnlineModInfo? SelectedMod { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(DetailsMod), nameof(HasSelection), nameof(CanInstallSelected), nameof(IsSelectedInstalled))]
-    private InstalledModInfo? selectedInstalledMod;
+    public partial InstalledModInfo? SelectedInstalledMod { get; set; }
 
     public ModInfo? DetailsMod => (ModInfo?)SelectedInstalledMod ?? SelectedMod;
 
@@ -49,8 +49,8 @@ public partial class MainWindowViewModel
         if (value == null)
             return;
 
-        _ = repositoryService.LoadGalleryAsync(value);
-        _ = repositoryService.LoadChangelogAsync(value);
+        _ = _repositoryService.LoadGalleryAsync(value);
+        _ = _repositoryService.LoadChangelogAsync(value);
     }
 
     private void ShowDetails()

@@ -11,28 +11,23 @@ public partial class InstalledModInfo : ModInfo
     [JsonIgnore]
     public bool IsExternal => ExternalPath != null;
 
-    [JsonIgnore]
     [ObservableProperty]
-    private bool isRemoving;
+    public partial bool IsRemoving { get; set; }
 
-    [JsonIgnore]
     [ObservableProperty]
-    private bool isUpdating;
+    public partial bool IsUpdating { get; set; }
 
-    [JsonIgnore]
     [ObservableProperty]
-    private double updateProgress;
+    public partial double UpdateProgress { get; set; }
 
-    [JsonIgnore]
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsCurrent))]
-    private bool isUpdateAvailable;
+    public partial bool IsUpdateAvailable { get; set; }
 
     // Shown in the "!" tooltip, empty means no missing dependencies
-    [JsonIgnore]
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasDependencyWarning))]
-    private string dependencyWarning = "";
+    public partial string DependencyWarning { get; set; } = "";
 
     [JsonIgnore]
     public bool HasDependencyWarning => !string.IsNullOrEmpty(DependencyWarning);
@@ -40,15 +35,12 @@ public partial class InstalledModInfo : ModInfo
     [JsonIgnore]
     public bool IsCurrent => !IsExternal && !IsUpdateAvailable;
 
-    [JsonIgnore]
     [ObservableProperty]
-    private string? latestVersion;
+    public partial string? LatestVersion { get; set; }
 
-    [JsonIgnore]
     [ObservableProperty]
-    private string? updateNotes;
+    public partial string? UpdateNotes { get; set; }
 
-    [JsonIgnore]
     [ObservableProperty]
-    private OnlineModInfo? online;
+    public partial OnlineModInfo? Online { get; set; }
 }

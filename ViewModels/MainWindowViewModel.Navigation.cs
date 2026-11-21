@@ -15,10 +15,10 @@ public partial class MainWindowViewModel
 {
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsBrowsePage), nameof(IsLibraryPage), nameof(IsUpdatesPage), nameof(IsSettingsPage))]
-    private AppPage currentPage;
+    public partial AppPage CurrentPage { get; set; }
 
     [ObservableProperty]
-    private bool isPaneOpen = true;
+    public partial bool IsPaneOpen { get; set; } = true;
 
     public bool IsBrowsePage => CurrentPage == AppPage.Browse;
     public bool IsLibraryPage => CurrentPage == AppPage.Library;

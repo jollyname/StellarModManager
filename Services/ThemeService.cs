@@ -12,7 +12,7 @@ namespace StellarModManager.Services;
 
 public class ThemeService
 {
-    private readonly string themesFolder = Path.Combine(AppContext.BaseDirectory, "Data", "Themes");
+    private readonly string _themesFolder = Path.Combine(AppContext.BaseDirectory, "Data", "Themes");
     private Dictionary<string, ThemeDefinition>? _themeCache;
 
     public void ApplyTheme(ThemeDefinition theme)
@@ -67,12 +67,12 @@ public class ThemeService
         if (_themeCache != null)
             return _themeCache;
 
-        _themeCache = new Dictionary<string, ThemeDefinition>(StringComparer.OrdinalIgnoreCase);
+        _themeCache = new(StringComparer.OrdinalIgnoreCase);
 
-        if (!Directory.Exists(themesFolder))
+        if (!Directory.Exists(_themesFolder))
             return _themeCache;
 
-        foreach (var path in Directory.GetFiles(themesFolder, "*.json"))
+        foreach (var path in Directory.GetFiles(_themesFolder, "*.json"))
         {
             try
             {

@@ -12,16 +12,16 @@ namespace StellarModManager.ViewModels;
 
 public partial class MainWindowViewModel
 {
-    public ObservableCollection<OnlineModInfo> OnlineMods { get; } = new();
+    public ObservableCollection<OnlineModInfo> OnlineMods { get; } = [];
     // OnlineMods filtered by SearchText and sorted by SortIndex
-    public ObservableCollection<OnlineModInfo> VisibleOnlineMods { get; } = new();
-    private readonly ModRepositoryService repositoryService = new();
+    public ObservableCollection<OnlineModInfo> VisibleOnlineMods { get; } = [];
+    private readonly ModRepositoryService _repositoryService = new();
 
     [ObservableProperty]
-    private int sortIndex;
+    public partial int SortIndex { get; set; }
 
     [ObservableProperty]
-    private string searchText = "";
+    public partial string SearchText { get; set; } = "";
 
     [RelayCommand]
     private async Task RefreshMods()
@@ -30,7 +30,7 @@ public partial class MainWindowViewModel
 
         try
         {
-            loaded = await repositoryService.GetModsAsync(
+            loaded = await _repositoryService.GetModsAsync(
                 "https://jollyname.dev/mods.json"
             );
         }
@@ -102,13 +102,13 @@ public partial class MainWindowViewModel
         }
 
         foreach (var mod in OnlineMods)
-            _ = repositoryService.LoadThumbnailAsync(mod);
+            _ = _repositoryService.LoadThumbnailAsync(mod);
 
 
         RefreshUpdateStatuses();
         ApplyOnlineView();
 
-        await Task.WhenAll(OnlineMods.Select(repositoryService.LoadChangelogAsync));
+        await Task.WhenAll(OnlineMods.Select(_repositoryService.LoadChangelogAsync));
         ApplyOnlineView();
     }
 
