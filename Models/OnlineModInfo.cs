@@ -61,7 +61,7 @@ public partial class OnlineModInfo : ModInfo
     { "ai-free", "ai-assisted", "vibecoded", "active", "inactive" };
 
     [JsonIgnore]
-    public List<ModTag> _Tags { get; private set; } = new();
+    public List<ModTag> _Tags { get; private set; } = new(); // TODO: please rename sensibly
 
     public void RebuildTags()
     {

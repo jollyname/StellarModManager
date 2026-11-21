@@ -79,7 +79,7 @@ public partial class MainWindowViewModel
 
         try
         {
-            using var fileLock = profileStore!.LockForLaunch(ActiveProfile!.Id);
+            using var fileLock = _profileStore!.LockForLaunch(ActiveProfile!.Id);
             GameProcess = await GameLaunchService.Launch(game);
         }
         catch (Exception ex)

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Text.Json;
-using System.Threading.Channels;
 
 namespace StellarModManager.Services;
 
@@ -13,9 +12,9 @@ public class LocalizationService : INotifyPropertyChanged
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    private Dictionary<string, string> currentTranslations = new();
-    private Dictionary<string, string> fallbackTranslations = new();
-    private Dictionary<string, string> languageDisplayNames = new();
+    private readonly Dictionary<string, string> _fallbackTranslations = new();
+    private readonly Dictionary<string, string> _languageDisplayNames = new();
+    private Dictionary<string, string> _currentTranslations = new();
 
     private const string FallbackLanguage = "en";
     public string CurrentLanguage { get; private set; } = FallbackLanguage;
@@ -24,18 +23,18 @@ public class LocalizationService : INotifyPropertyChanged
 
     private LocalizationService()
     {
-        fallbackTranslations = LoadLanguage(FallbackLanguage);
-        currentTranslations = fallbackTranslations;
+        _fallbackTranslations = LoadLanguage(FallbackLanguage);
+        _currentTranslations = _fallbackTranslations;
     }
 
     public string this[string key]
     {
         get
         {
-            if (currentTranslations.TryGetValue(key, out var value))
+            if (_currentTranslations.TryGetValue(key, out var value))
                 return value;
 
-            if (fallbackTranslations.TryGetValue(key, out var fallback))
+            if (_fallbackTranslations.TryGetValue(key, out var fallback))
                 return fallback;
 
             return key;
@@ -57,12 +56,12 @@ public class LocalizationService : INotifyPropertyChanged
         if (languageExists)
         {
             CurrentLanguage = usedLanguage = desiredLanguage;
-            currentTranslations = language;
+            _currentTranslations = language;
         }
         else
         {
             CurrentLanguage = usedLanguage = FallbackLanguage;
-            currentTranslations = fallbackTranslations;
+            _currentTranslations = _fallbackTranslations;
         }
 
         bool changed = previousLanguage != CurrentLanguage;
@@ -91,7 +90,7 @@ public class LocalizationService : INotifyPropertyChanged
         {
             var code = Path.GetFileNameWithoutExtension(file);
             var translations = LoadLanguage(code);
-            languageDisplayNames[code] = translations.TryGetValue("LanguageName", out var name) ? name : code;
+            _languageDisplayNames[code] = translations.TryGetValue("LanguageName", out var name) ? name : code;
 
             yield return code;
         }
@@ -99,7 +98,7 @@ public class LocalizationService : INotifyPropertyChanged
 
     public string GetLanguageDisplayName(string code)
     {
-        return languageDisplayNames.TryGetValue(code, out var name) ? name : code;
+        return _languageDisplayNames.TryGetValue(code, out var name) ? name : code;
     }
 
     private static Dictionary<string, string> LoadLanguage(string languageCode)

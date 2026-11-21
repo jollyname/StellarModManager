@@ -14,47 +14,47 @@ internal sealed class ModProfileStore
         public List<ModProfile> Profiles { get; set; } = new();
     }
 
-    private readonly string appDirectory;
-    private readonly string gamePath;
-    private readonly string profilesRoot;
-    private readonly string storePath;
-    private readonly string statePath;
-    private readonly string journalPath;
-    private readonly ModPackageCache packages;
+    private readonly string _appDirectory;
+    private readonly string _gamePath;
+    private readonly string _profilesRoot;
+    private readonly string _storePath;
+    private readonly string _statePath;
+    private readonly string _journalPath;
+    private readonly ModPackageCache _packages;
 
     internal ModProfileStore(string appDirectory, string gamePath, ModPackageCache packages)
     {
-        this.appDirectory = appDirectory;
-        this.gamePath = Path.TrimEndingDirectorySeparator(Path.GetFullPath(gamePath));
-        this.packages = packages;
-        profilesRoot = Path.Combine(appDirectory, "Data", "Profiles");
+        _appDirectory = appDirectory;
+        _gamePath = Path.TrimEndingDirectorySeparator(Path.GetFullPath(gamePath));
+        _packages = packages;
+        _profilesRoot = Path.Combine(appDirectory, "Data", "Profiles");
         var key = ProfileFiles.PathComparer == StringComparer.OrdinalIgnoreCase
-            ? this.gamePath.ToUpperInvariant()
-            : this.gamePath;
-        storePath = Path.Combine(profilesRoot, ModPackageCache.DirectoryKey(key));
-        statePath = Path.Combine(storePath, "state.json");
-        journalPath = Path.Combine(storePath, "pending.json");
+            ? _gamePath.ToUpperInvariant()
+            : _gamePath;
+        _storePath = Path.Combine(_profilesRoot, ModPackageCache.DirectoryKey(key));
+        _statePath = Path.Combine(_storePath, "state.json");
+        _journalPath = Path.Combine(_storePath, "pending.json");
     }
 
     private FileStream Lock()
     {
-        Directory.CreateDirectory(storePath);
-        return new FileStream(Path.Combine(storePath, "state.lock"), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+        Directory.CreateDirectory(_storePath);
+        return new FileStream(Path.Combine(_storePath, "state.lock"), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
     }
 
     internal GameModProfiles Open(string? legacyGamePath)
     {
         using var fileLock = Lock();
-        if (File.Exists(statePath))
+        if (File.Exists(_statePath))
         {
             var existing = Load();
             PruneSnapshots(existing);
             return existing;
         }
 
-        var legacyPath = Path.Combine(appDirectory, "Data", "modprofiles.json");
+        var legacyPath = Path.Combine(_appDirectory, "Data", "modprofiles.json");
         bool useLegacy = (string.IsNullOrWhiteSpace(legacyGamePath) ||
-            ProfileFiles.PathComparer.Equals(gamePath, Path.TrimEndingDirectorySeparator(Path.GetFullPath(legacyGamePath)))) &&
+            ProfileFiles.PathComparer.Equals(_gamePath, Path.TrimEndingDirectorySeparator(Path.GetFullPath(legacyGamePath)))) &&
             ClaimLegacyData();
         var legacy = useLegacy && File.Exists(legacyPath) ? ProfileFiles.ReadJson<LegacyProfiles>(legacyPath) : new();
         if (legacy.Profiles.Count == 0)
@@ -68,26 +68,26 @@ internal sealed class ModProfileStore
             ActiveProfileId = active.Id,
             InstalledMods = useLegacy ? ReadLegacyInstalledMods() : new()
         };
-        ProfileFiles.WriteJson(statePath, state);
+        ProfileFiles.WriteJson(_statePath, state);
         return state;
     }
 
     private bool ClaimLegacyData()
     {
-        using var migrationLock = new FileStream(Path.Combine(profilesRoot, "legacy.lock"), FileMode.OpenOrCreate,
+        using var migrationLock = new FileStream(Path.Combine(_profilesRoot, "legacy.lock"), FileMode.OpenOrCreate,
             FileAccess.ReadWrite, FileShare.None);
-        var ownerFile = Path.Combine(profilesRoot, "legacy-installation.json");
+        var ownerFile = Path.Combine(_profilesRoot, "legacy-installation.json");
         if (File.Exists(ownerFile))
-            return ProfileFiles.PathComparer.Equals(ProfileFiles.ReadJson<string>(ownerFile), gamePath);
+            return ProfileFiles.PathComparer.Equals(ProfileFiles.ReadJson<string>(ownerFile), _gamePath);
 
-        ProfileFiles.WriteJson(ownerFile, gamePath);
+        ProfileFiles.WriteJson(ownerFile, _gamePath);
         return true;
     }
 
     private List<ProfileMod> ReadLegacyInstalledMods()
     {
         var installed = new List<ProfileMod>();
-        var library = Path.Combine(appDirectory, "Library");
+        var library = Path.Combine(_appDirectory, "Library");
         if (!Directory.Exists(library))
             return installed;
 
@@ -107,8 +107,8 @@ internal sealed class ModProfileStore
 
     private GameModProfiles Load(Guid? expectedProfile = null)
     {
-        var state = ProfileFiles.ReadJson<GameModProfiles>(statePath);
-        ProfileFileTransaction.Recover(gamePath, journalPath, state.LastOperationId);
+        var state = ProfileFiles.ReadJson<GameModProfiles>(_statePath);
+        ProfileFileTransaction.Recover(_gamePath, _journalPath, state.LastOperationId);
         if (expectedProfile.HasValue && expectedProfile != state.ActiveProfileId)
             throw new InvalidOperationException("The active profile changed in another window. Reload the game folder.");
         state.InstalledMods = LiveMods(state.InstalledMods);
@@ -133,7 +133,7 @@ internal sealed class ModProfileStore
     private List<ProfileMod> LiveMods(IEnumerable<ProfileMod> mods) =>
         mods.Select(mod => mod with
             {
-                Files = mod.Files.Where(path => File.Exists(ProfileFiles.Resolve(gamePath, path))).ToList()
+                Files = mod.Files.Where(path => File.Exists(ProfileFiles.Resolve(_gamePath, path))).ToList()
             })
             .Where(mod => mod.Files.Count > 0)
             .ToList();
@@ -143,7 +143,7 @@ internal sealed class ModProfileStore
         using var fileLock = Lock();
         var state = Load(expectedProfile);
         edit(state);
-        ProfileFiles.WriteJson(statePath, state);
+        ProfileFiles.WriteJson(_statePath, state);
         PruneSnapshots(state);
         return state;
     }
@@ -225,13 +225,13 @@ internal sealed class ModProfileStore
 
     private void Capture(string snapshot, List<ProfileMod> mods)
     {
-        var liveMods = ProfileFiles.Resolve(gamePath, ProfileFiles.Mods);
+        var liveMods = ProfileFiles.Resolve(_gamePath, ProfileFiles.Mods);
         if (Path.Exists(liveMods) && !Directory.Exists(liveMods))
             throw new IOException("A file is blocking the Mods folder.");
 
         ProfileFiles.CopyDirectory(liveMods, Path.Combine(snapshot, ProfileFiles.Mods));
         foreach (var path in OutsideFiles(mods))
-            CopyToSnapshot(snapshot, path, ProfileFiles.Resolve(gamePath, path));
+            CopyToSnapshot(snapshot, path, ProfileFiles.Resolve(_gamePath, path));
         ProfileFiles.WriteJson(Path.Combine(snapshot, "manifest.json"), mods);
     }
 
@@ -267,7 +267,7 @@ internal sealed class ModProfileStore
             .Select(id => id.Trim()).Distinct(StringComparer.OrdinalIgnoreCase);
         foreach (var id in ids)
         {
-            if (packages.Find(id) is not ModPackage package)
+            if (_packages.Find(id) is not ModPackage package)
             {
                 missing.Add(id);
                 continue;
@@ -344,7 +344,7 @@ internal sealed class ModProfileStore
 
     private void EnsureOwnedOrMissing(HashSet<string> owned, string path)
     {
-        if (!owned.Contains(path) && Path.Exists(ProfileFiles.Resolve(gamePath, path)))
+        if (!owned.Contains(path) && Path.Exists(ProfileFiles.Resolve(_gamePath, path)))
             throw new IOException($"An untracked file or folder is blocking {path}.");
     }
 
@@ -353,7 +353,7 @@ internal sealed class ModProfileStore
 
     private void Transact(GameModProfiles state, Action<ProfileFileTransaction> prepare)
     {
-        var transaction = new ProfileFileTransaction(gamePath, journalPath);
+        var transaction = new ProfileFileTransaction(_gamePath, _journalPath);
         var previousOperation = state.LastOperationId;
         try
         {
@@ -361,13 +361,13 @@ internal sealed class ModProfileStore
             prepare(transaction);
             transaction.Apply();
             state.LastOperationId = transaction.Id;
-            ProfileFiles.WriteJson(statePath, state);
+            ProfileFiles.WriteJson(_statePath, state);
         }
         catch (Exception failure)
         {
             try
             {
-                ProfileFileTransaction.Recover(gamePath, journalPath, previousOperation);
+                ProfileFileTransaction.Recover(_gamePath, _journalPath, previousOperation);
                 ProfileFiles.TryDeleteDirectory(transaction.WorkFolder);
             }
             catch (Exception recoveryFailure)
@@ -379,18 +379,18 @@ internal sealed class ModProfileStore
 
         try
         {
-            ProfileFileTransaction.Recover(gamePath, journalPath, state.LastOperationId);
+            ProfileFileTransaction.Recover(_gamePath, _journalPath, state.LastOperationId);
         }
         catch (IOException) { }
         catch (UnauthorizedAccessException) { }
     }
 
     private string SnapshotPath(Guid profile, Guid generation) =>
-        Path.Combine(storePath, "snapshots", profile.ToString("N"), generation.ToString("N"));
+        Path.Combine(_storePath, "snapshots", profile.ToString("N"), generation.ToString("N"));
 
     private void PruneSnapshots(GameModProfiles state)
     {
-        var root = Path.Combine(storePath, "snapshots");
+        var root = Path.Combine(_storePath, "snapshots");
         if (!Directory.Exists(root))
             return;
 

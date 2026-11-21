@@ -6,7 +6,7 @@ namespace StellarModManager.Services;
 
 public sealed class ModListResult
 {
-    private readonly object gate = new();
+    private readonly object _gate = new();
 
     public List<OnlineModInfo> Mods { get; } = new();
 
@@ -14,13 +14,13 @@ public sealed class ModListResult
 
     public void AddFailure(string author, string repo)
     {
-        lock (gate)
+        lock (_gate)
             FailedRepositories.Add(author + "/" + repo);
     }
 
     public bool Failed(string author, string repo)
     {
-        lock (gate)
+        lock (_gate)
             return FailedRepositories.Contains(author + "/" + repo);
     }
 }

@@ -56,8 +56,8 @@ public static class DependencyResolver
     public static List<InstalledModInfo> FindDependents(InstalledModInfo target, IEnumerable<InstalledModInfo> installed)
     {
         return installed
-            .Where(_mod => !_mod.Id.Equals(target.Id, StringComparison.OrdinalIgnoreCase))
-            .Where(_mod => NeedsOf(_mod).Any(need => (need ?? "").Trim().Equals(target.Id, StringComparison.OrdinalIgnoreCase)))
+            .Where(mod => !mod.Id.Equals(target.Id, StringComparison.OrdinalIgnoreCase))
+            .Where(mod => NeedsOf(mod).Any(need => (need ?? "").Trim().Equals(target.Id, StringComparison.OrdinalIgnoreCase)))
             .ToList();
     }
 }

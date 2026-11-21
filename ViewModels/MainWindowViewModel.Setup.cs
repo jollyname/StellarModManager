@@ -26,7 +26,7 @@ public partial class MainWindowViewModel
     [ObservableProperty]
     public partial string InstallProgressText { get; set; } = "";
 
-    private readonly MelonLoaderInstaller melonLoaderInstaller = new();
+    private readonly MelonLoaderInstaller _melonLoaderInstaller = new();
 
     partial void OnGamePathChanged(string value) => InstallMelonLoaderCommand.NotifyCanExecuteChanged();
 
@@ -109,8 +109,8 @@ public partial class MainWindowViewModel
         IsMelonLoaderValid = CheckMelonLoader(path);
         if (IsMelonLoaderValid)
         {
-            OpenGameProfiles(path, settingsService.LoadGameProfile()?.GamePath);
-            settingsService.SaveGameProfile(new GameProfile { GamePath = path });
+            OpenGameProfiles(path, _settingsService.LoadGameProfile()?.GamePath);
+            _settingsService.SaveGameProfile(new GameProfile { GamePath = path });
             SearchGameProcessIfNull();
         }
         else
@@ -134,14 +134,14 @@ public partial class MainWindowViewModel
         {
             var progress = new System.Progress<string>(text => InstallProgressText = text);
 
-            await melonLoaderInstaller.InstallAsync(GamePath, progress);
+            await _melonLoaderInstaller.InstallAsync(GamePath, progress);
 
             IsMelonLoaderValid = CheckMelonLoader(GamePath);
 
             if (IsMelonLoaderValid)
             {
-                OpenGameProfiles(GamePath, settingsService.LoadGameProfile()?.GamePath);
-                settingsService.SaveGameProfile(new GameProfile { GamePath = GamePath });
+                OpenGameProfiles(GamePath, _settingsService.LoadGameProfile()?.GamePath);
+                _settingsService.SaveGameProfile(new GameProfile { GamePath = GamePath });
             }
         }
         catch (System.Exception ex)

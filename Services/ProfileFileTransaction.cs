@@ -17,9 +17,9 @@ internal sealed class ProfileFileTransaction(string gamePath, string journalPath
 
     internal sealed record FileChange(string RelativePath, bool IsDirectory, bool HadOriginal, bool HasReplacement);
 
-    private readonly Journal journal = new();
-    internal string WorkFolder => WorkPath(gamePath, journal.Id);
-    internal Guid Id => journal.Id;
+    private readonly Journal _journal = new();
+    internal string WorkFolder => WorkPath(gamePath, _journal.Id);
+    internal Guid Id => _journal.Id;
 
     private static string WorkPath(string gamePath, Guid id) =>
         Path.Combine(gamePath, $".stellar-profile-{id:N}");
@@ -29,7 +29,7 @@ internal sealed class ProfileFileTransaction(string gamePath, string journalPath
 
     internal void BeginStaging()
     {
-        ProfileFiles.WriteJson(journalPath, journal);
+        ProfileFiles.WriteJson(journalPath, _journal);
         Directory.CreateDirectory(WorkFolder);
     }
 
@@ -43,7 +43,7 @@ internal sealed class ProfileFileTransaction(string gamePath, string journalPath
         if (replacement != null)
         {
             Directory.CreateDirectory(WorkFolder);
-            var staged = Staged(WorkFolder, journal.Changes.Count);
+            var staged = Staged(WorkFolder, _journal.Changes.Count);
             if (isDirectory)
                 ProfileFiles.CopyDirectory(replacement, staged);
             else
@@ -52,21 +52,21 @@ internal sealed class ProfileFileTransaction(string gamePath, string journalPath
             for (var parent = Path.GetDirectoryName(live)!; !Directory.Exists(parent); parent = Path.GetDirectoryName(parent)!)
             {
                 var relativeParent = Path.GetRelativePath(gamePath, parent);
-                if (!journal.NewDirectories.Contains(relativeParent, ProfileFiles.PathComparer))
-                    journal.NewDirectories.Add(relativeParent);
+                if (!_journal.NewDirectories.Contains(relativeParent, ProfileFiles.PathComparer))
+                    _journal.NewDirectories.Add(relativeParent);
             }
         }
 
-        journal.Changes.Add(new FileChange(relativePath, isDirectory, exists, replacement != null));
+        _journal.Changes.Add(new FileChange(relativePath, isDirectory, exists, replacement != null));
     }
 
     internal void Apply()
     {
         Directory.CreateDirectory(WorkFolder);
-        ProfileFiles.WriteJson(journalPath, journal);
-        for (int index = 0; index < journal.Changes.Count; index++)
+        ProfileFiles.WriteJson(journalPath, _journal);
+        for (int index = 0; index < _journal.Changes.Count; index++)
         {
-            var change = journal.Changes[index];
+            var change = _journal.Changes[index];
             var live = ProfileFiles.Resolve(gamePath, change.RelativePath);
             if (Path.Exists(live) != change.HadOriginal)
                 throw new IOException($"{change.RelativePath} changed while the operation was being prepared.");

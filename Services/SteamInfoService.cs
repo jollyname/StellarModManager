@@ -50,11 +50,11 @@ public static partial class SteamInfoService
         var potentialSteamPaths = GetSteamPathFromRegistry();
 
         string? fileContent = null;
-        foreach (var PotentialSteam in potentialSteamPaths)
+        foreach (var potentialSteam in potentialSteamPaths)
         {
-            if (!PotentialSteam.Exists) continue;
+            if (!potentialSteam.Exists) continue;
 
-            var filePath = Path.Combine(PotentialSteam.FullName, LibraryVdfPath);
+            var filePath = Path.Combine(potentialSteam.FullName, LibraryVdfPath);
 
             if (Path.Exists(filePath))
             {

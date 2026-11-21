@@ -11,7 +11,7 @@ namespace StellarModManager.ViewModels;
 
 public partial class MainWindowViewModel
 {
-    private readonly AppUpdatingService appUpdatingService = new();
+    private readonly AppUpdatingService _appUpdatingService = new();
 
     [ObservableProperty]
     public partial bool IsUpdateAvailable { get; set; }
@@ -85,7 +85,7 @@ public partial class MainWindowViewModel
         DownloadProgress = 0;
 
         var progress = new Progress<double>(percent => DownloadProgress = percent);
-        await appUpdatingService.DownloadAndInstallUpdateAsync(AvailableUpdate, progress);
+        await _appUpdatingService.DownloadAndInstallUpdateAsync(AvailableUpdate, progress);
 
         if (Avalonia.Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime lifetime)
         {

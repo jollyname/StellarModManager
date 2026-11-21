@@ -21,43 +21,43 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     public partial bool IsStatusError { get; set; }
 
-    private readonly DispatcherTimer statusTimer = new() { Interval = TimeSpan.FromSeconds(5) };
-    private readonly DispatcherTimer checkProcessTimer = new() { Interval = TimeSpan.FromSeconds(10) }; // not sure what the ideal value here would be
+    private readonly DispatcherTimer _statusTimer = new() { Interval = TimeSpan.FromSeconds(5) };
+    private readonly DispatcherTimer _checkProcessTimer = new() { Interval = TimeSpan.FromSeconds(10) }; // not sure what the ideal value here would be
 
-    private readonly SettingsService settingsService = new();
+    private readonly SettingsService _settingsService = new();
 
     public MainWindowViewModel()
     {
         LoadAvailableThemes();
         LoadAvailableLanguages();
 
-        var appSettings = settingsService.LoadAppSettings();
+        var appSettings = _settingsService.LoadAppSettings();
         SelectedTheme = appSettings.Theme;
         SelectedLanguage = appSettings.Language;
         ConfirmBeforeRemove = appSettings.ConfirmBeforeRemove;
         AutoDeployDependencies = appSettings.AutoDeployDependencies;
-        autoCheckForModUpdates = appSettings.AutoCheckForModUpdates;
+        _autoCheckForModUpdates = appSettings.AutoCheckForModUpdates;
         AutoCheckForAppUpdates = appSettings.AutoCheckForAppUpdates;
         SortIndex = appSettings.ModSort;
         IsCompactView = appSettings.CompactModList;
 
-        themeService.ApplyTheme(themeService.LoadTheme(SelectedTheme));
+        _themeService.ApplyTheme(_themeService.LoadTheme(SelectedTheme));
 
         if (!LocalizationService.Instance.TrySetLanguage(SelectedLanguage, out string usedLanguage))
         {
             SelectedLanguage = appSettings.Language = usedLanguage;
-            settingsService.SaveAppSettings(appSettings);
+            _settingsService.SaveAppSettings(appSettings);
         }
 
-        statusTimer.Tick += (_, _) => DismissStatus();
+        _statusTimer.Tick += (_, _) => DismissStatus();
 
         // Rebuild the dependency tooltips when the language changes
         LocalizationService.Instance.LanguageChanged += (_, _) => RefreshDependencyStatuses();
 
-        updateCheckTimer = new DispatcherTimer { Interval = TimeSpan.FromMinutes(30) };
-        updateCheckTimer.Tick += async (_, _) => await RefreshMods();
+        _updateCheckTimer = new DispatcherTimer { Interval = TimeSpan.FromMinutes(30) };
+        _updateCheckTimer.Tick += async (_, _) => await RefreshMods();
 
-        var profile = settingsService.LoadGameProfile();
+        var profile = _settingsService.LoadGameProfile();
 
         if (profile != null)
         {
@@ -88,8 +88,8 @@ public partial class MainWindowViewModel : ViewModelBase
         }
 
 
-        checkProcessTimer.Start();
-        checkProcessTimer.Tick += (_, _) => SearchGameProcessIfNull();
+        _checkProcessTimer.Start();
+        _checkProcessTimer.Tick += (_, _) => SearchGameProcessIfNull();
         SearchGameProcessIfNull();
 
     }
@@ -104,15 +104,15 @@ public partial class MainWindowViewModel : ViewModelBase
         StatusMessage = message;
         IsStatusError = isError;
 
-        statusTimer.Stop();
+        _statusTimer.Stop();
         if (!isError)
-            statusTimer.Start();
+            _statusTimer.Start();
     }
 
     [RelayCommand]
     private void DismissStatus()
     {
-        statusTimer.Stop();
+        _statusTimer.Stop();
         StatusMessage = null;
     }
 }

@@ -19,9 +19,9 @@ public partial class MainWindowViewModel
 {
     private sealed record ProfileFile(string Name, List<string> DeployedModIds);
 
-    private readonly ModPackageCache packages = new(AppContext.BaseDirectory);
-    private ModProfileStore? profileStore;
-    private ModProfile? profilePendingDeletion;
+    private readonly ModPackageCache _packages = new(AppContext.BaseDirectory);
+    private ModProfileStore? _profileStore;
+    private ModProfile? _profilePendingDeletion;
 
     public ObservableCollection<ModProfile> ModProfiles { get; } = new();
 
@@ -39,15 +39,15 @@ public partial class MainWindowViewModel
 
     [ObservableProperty]
     public partial bool IsModOperationInProgress { get; set; }
-    
+
 
     private void OpenGameProfiles(string gamePath, string? legacyGamePath)
     {
         try
         {
-            var store = new ModProfileStore(AppContext.BaseDirectory, gamePath, packages);
+            var store = new ModProfileStore(AppContext.BaseDirectory, gamePath, _packages);
             var state = store.Open(legacyGamePath);
-            profileStore = store;
+            _profileStore = store;
             ShowProfileState(state);
         }
         catch (Exception ex)
@@ -59,7 +59,7 @@ public partial class MainWindowViewModel
 
     private void ClearGameProfiles()
     {
-        profileStore = null;
+        _profileStore = null;
         ActiveProfile = null;
         ModProfiles.Clear();
         ShowInstalledMods(new());
@@ -86,7 +86,7 @@ public partial class MainWindowViewModel
             return false;
         }
 
-        if (requireProfile && (profileStore == null || ActiveProfile == null))
+        if (requireProfile && (_profileStore == null || ActiveProfile == null))
         {
             ReportError("StatusSelectGameFirst");
             return false;
@@ -132,7 +132,7 @@ public partial class MainWindowViewModel
 
         if (profile.Id == ActiveProfile?.Id || profile.SnapshotId.HasValue)
         {
-            profilePendingDeletion = profile;
+            _profilePendingDeletion = profile;
             ShowRemoveConfirmation("ProfileDeleteTitle", "ProfileDelete", "ProfileDeleteMessage", profile.Name);
             return;
         }
@@ -161,7 +161,7 @@ public partial class MainWindowViewModel
             return false;
         try
         {
-            var store = profileStore!;
+            var store = _profileStore!;
             var active = ActiveProfile!.Id;
             var gamePath = GamePath;
             var (state, missing) = await Task.Run(() => store.Switch(active, target, clone, deleteActive, CheckGameStopped));
@@ -230,7 +230,7 @@ public partial class MainWindowViewModel
             return;
         try
         {
-            var store = profileStore!;
+            var store = _profileStore!;
             var active = ActiveProfile!.Id;
             ShowProfileState(await Task.Run(() => store.Edit(active, edit)));
         }
@@ -317,7 +317,7 @@ public partial class MainWindowViewModel
                 DeployedModIds = (imported.DeployedModIds ?? new())
                     .Where(id => !string.IsNullOrWhiteSpace(id)).Select(id => id.Trim()).ToList()
             };
-            var store = profileStore!;
+            var store = _profileStore!;
             var active = ActiveProfile!.Id;
             var state = await Task.Run(() => store.Edit(active, current =>
             {

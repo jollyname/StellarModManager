@@ -15,7 +15,7 @@ public partial class MainWindowViewModel
     new FuncValueConverter<string, string>(code =>
         code is null ? "" : LocalizationService.Instance.GetLanguageDisplayName(code));
 
-    private readonly ThemeService themeService = new();
+    private readonly ThemeService _themeService = new();
 
     public string AppVersion { get; } = Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
 
@@ -38,18 +38,18 @@ public partial class MainWindowViewModel
     public partial bool AutoCheckForAppUpdates { get; set; } = true;
 
     [ObservableProperty]
-    private bool autoCheckForModUpdates = true;
+    private bool _autoCheckForModUpdates = true;
 
     // Mod lists show a three-column card grid instead of the table
     [ObservableProperty]
     public partial bool IsCompactView { get; set; }
 
-    private readonly DispatcherTimer updateCheckTimer;
+    private readonly DispatcherTimer _updateCheckTimer;
 
     // Settings are saved as soon as they change
     private void PersistSettings()
     {
-        settingsService.SaveAppSettings(new AppSettings
+        _settingsService.SaveAppSettings(new AppSettings
         {
             Language = SelectedLanguage,
             Theme = SelectedTheme,
@@ -70,7 +70,7 @@ public partial class MainWindowViewModel
 
     partial void OnSelectedThemeChanged(string value)
     {
-        themeService.ApplyTheme(themeService.LoadTheme(value));
+        _themeService.ApplyTheme(_themeService.LoadTheme(value));
         PersistSettings();
     }
 
@@ -97,16 +97,16 @@ public partial class MainWindowViewModel
     private void ApplyAutoCheckTimerState()
     {
         if (AutoCheckForModUpdates && IsMelonLoaderValid)
-            updateCheckTimer.Start();
+            _updateCheckTimer.Start();
         else
-            updateCheckTimer.Stop();
+            _updateCheckTimer.Stop();
     }
 
     private void LoadAvailableThemes()
     {
         AvailableThemes.Clear();
 
-        foreach (var name in themeService.GetAvailableThemeNames())
+        foreach (var name in _themeService.GetAvailableThemeNames())
         {
             AvailableThemes.Add(name);
         }

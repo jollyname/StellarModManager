@@ -49,8 +49,8 @@ public partial class MainWindowViewModel
         if (value == null)
             return;
 
-        _ = repositoryService.LoadGalleryAsync(value);
-        _ = repositoryService.LoadChangelogAsync(value);
+        _ = _repositoryService.LoadGalleryAsync(value);
+        _ = _repositoryService.LoadChangelogAsync(value);
     }
 
     private void ShowDetails()

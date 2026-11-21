@@ -17,12 +17,12 @@ namespace StellarModManager.Services;
 
 public class ModRepositoryService
 {
-    private readonly HttpClient httpClient = new();
-    private readonly SemaphoreSlim commitSlots = new(4);
+    private readonly HttpClient _httpClient = new();
+    private readonly SemaphoreSlim _commitSlots = new(4);
 
     public ModRepositoryService()
     {
-        httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("StellarModManager");
+        _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("StellarModManager");
     }
 
     private static readonly string[] DefaultThumbnailAssets =
@@ -49,7 +49,7 @@ public class ModRepositoryService
 
     public async Task<ModListResult> GetModsAsync(string url)
     {
-        string json = await httpClient.GetStringAsync(NoCache(url));
+        string json = await _httpClient.GetStringAsync(NoCache(url));
 
         RepositoryResponse? response = JsonSerializer.Deserialize<RepositoryResponse>(json);
         var result = new ModListResult();
@@ -81,7 +81,7 @@ public class ModRepositoryService
             string commit = await LatestCommitAsync(entry.Author, entry.Repo);
             string metadataUrl = GithubFiles.RawFile(entry.Author, entry.Repo, commit, entry.MetadataPath, "mod.json");
 
-            string modJson = await httpClient.GetStringAsync(metadataUrl);
+            string modJson = await _httpClient.GetStringAsync(metadataUrl);
 
             OnlineModInfo? mod = JsonSerializer.Deserialize<OnlineModInfo>(modJson);
 
@@ -125,10 +125,10 @@ public class ModRepositoryService
 
     private async Task<string> LatestCommitAsync(string owner, string repo)
     {
-        await commitSlots.WaitAsync();
+        await _commitSlots.WaitAsync();
         try
         {
-            string atom = await httpClient.GetStringAsync($"https://github.com/{owner}/{repo}/commits/main.atom");
+            string atom = await _httpClient.GetStringAsync($"https://github.com/{owner}/{repo}/commits/main.atom");
             string? commit = GithubFiles.CommitFromAtom(atom);
 
             if (commit == null)
@@ -138,7 +138,7 @@ public class ModRepositoryService
         }
         finally
         {
-            commitSlots.Release();
+            _commitSlots.Release();
         }
     }
 
@@ -155,7 +155,7 @@ public class ModRepositoryService
     {
         try
         {
-            var releases = await httpClient.GetFromJsonAsync<List<GitHubRelease>>(
+            var releases = await _httpClient.GetFromJsonAsync<List<GitHubRelease>>(
                 $"https://api.github.com/repos/{mod.RepoOwner}/{mod.RepoName}/releases?per_page=30") ?? new();
 
             mod.Downloads = releases.Sum(release => release.assets?.Sum(asset => asset.download_count) ?? 0);
@@ -177,7 +177,7 @@ public class ModRepositoryService
 
     public async Task DownloadModAsync(string url, string destination, IProgress<double>? progress = null)
     {
-        using var response = await httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
+        using var response = await _httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
         response.EnsureSuccessStatusCode();
 
         long? totalBytes = response.Content.Headers.ContentLength;
@@ -214,7 +214,7 @@ public class ModRepositoryService
 
         try
         {
-            byte[] bytes = await httpClient.GetByteArrayAsync(mod.ThumbnailUrl);
+            byte[] bytes = await _httpClient.GetByteArrayAsync(mod.ThumbnailUrl);
 
             using var contentStream = new MemoryStream(bytes);
             mod.ThumbnailImage = Bitmap.DecodeToWidth(contentStream, 192);
@@ -245,7 +245,7 @@ public class ModRepositoryService
         {
             try
             {
-                byte[] bytes = await httpClient.GetByteArrayAsync(url);
+                byte[] bytes = await _httpClient.GetByteArrayAsync(url);
                 using var contentStream = new MemoryStream(bytes);
                 mod.GalleryImages.Add(Bitmap.DecodeToWidth(contentStream, 1280));
             }

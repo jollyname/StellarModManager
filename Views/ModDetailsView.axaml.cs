@@ -7,7 +7,7 @@ namespace StellarModManager.Views;
 
 public partial class ModDetailsView : UserControl
 {
-    private MainWindowViewModel? viewModel;
+    private MainWindowViewModel? _viewModel;
 
     public ModDetailsView()
     {
@@ -19,13 +19,13 @@ public partial class ModDetailsView : UserControl
     {
         base.OnDataContextChanged(e);
 
-        if (viewModel != null)
-            viewModel.PropertyChanged -= OnViewModelPropertyChanged;
+        if (_viewModel != null)
+            _viewModel.PropertyChanged -= OnViewModelPropertyChanged;
 
-        viewModel = DataContext as MainWindowViewModel;
+        _viewModel = DataContext as MainWindowViewModel;
 
-        if (viewModel != null)
-            viewModel.PropertyChanged += OnViewModelPropertyChanged;
+        if (_viewModel != null)
+            _viewModel.PropertyChanged += OnViewModelPropertyChanged;
     }
 
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
