@@ -100,7 +100,6 @@ public partial class ModRepositoryService
             if (!string.IsNullOrWhiteSpace(entry.Ai))
             {
                 mod.Ai = entry.Ai; // Override from mods list wins
-                Console.WriteLine($"Override from entry: {entry.Repo}, ai tag is: {entry.Ai}");
             }
             mod.RebuildTags();
 
@@ -224,8 +223,7 @@ public partial class ModRepositoryService
         }
         catch (Exception ex)
         {
-            Console.WriteLine(
-                $"Thumbnail loading failed for {mod.Name}: {ex.Message}");
+            Console.WriteLine($"Thumbnail loading failed for {mod.Name}: {ex.Message}");
 
             mod.ThumbnailImage = LoadDefaultThumbnail(mod);
         }

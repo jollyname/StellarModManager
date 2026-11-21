@@ -61,7 +61,7 @@
   "NoSelection": "Sélectionnez un mod pour voir ses détails.",
   "UpdateAll": "Tout mettre à jour",
   "NoUpdates": "Tous vos mods sont à jour.",
-  "NoInstalledMods": "Votre bibliothèque est vide. Installez des mods depuis Parcourir.",
+  "NoInstalledMods": "Ce profile est vide. Installez des mods depuis Parcourir.",
   "NoModsFound": "Aucun mod trouvé.",
   "NewVersionFormat": "La version {0} est prête à être installée.",
   "Downloading": "Téléchargement…",

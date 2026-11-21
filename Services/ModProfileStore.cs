@@ -27,7 +27,7 @@ internal sealed class ModProfileStore
         _appDirectory = appDirectory;
         _gamePath = Path.TrimEndingDirectorySeparator(Path.GetFullPath(gamePath));
         _packages = packages;
-        _profilesRoot = Path.Combine(appDirectory, "Data", "Profiles");
+        _profilesRoot = AppPaths.ProfilesRoot;
         var key = ProfileFiles.PathComparer == StringComparer.OrdinalIgnoreCase ? _gamePath.ToUpperInvariant() : _gamePath;
         _storePath = Path.Combine(_profilesRoot, ModPackageCache.DirectoryKey(key));
         _statePath = Path.Combine(_storePath, "state.json");

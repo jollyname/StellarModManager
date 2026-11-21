@@ -61,7 +61,7 @@
   "NoSelection": "Select a mod to see its details.",
   "UpdateAll": "Update all",
   "NoUpdates": "All your mods are up to date.",
-  "NoInstalledMods": "Your library is empty. Install mods from Browse.",
+  "NoInstalledMods": "This profile is empty. Install mods from Browse.",
   "NoModsFound": "No mods found.",
   "NewVersionFormat": "Version {0} is ready to install.",
   "Downloading": "Downloading…",

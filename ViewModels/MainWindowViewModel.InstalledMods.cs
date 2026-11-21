@@ -54,6 +54,7 @@ public partial class MainWindowViewModel
         foreach (var mod in InstalledMods.Concat(external))
             LibraryMods.Add(mod);
 
+        // Hmm...
         LibrarySelection = selection == null ? null : LibraryMods.FirstOrDefault(mod =>
             mod.IsExternal == selection.IsExternal && (mod.IsExternal
                 ? ProfileFiles.PathComparer.Equals(mod.Id, selection.Id)
