@@ -13,8 +13,8 @@ internal sealed record ModPackage(string Folder, InstalledModInfo Mod);
 
 internal sealed class ModPackageCache(string appDirectory)
 {
-    private readonly string library = Path.Combine(appDirectory, "Library");
-    private readonly string cache = Path.Combine(AppPaths.UserDataDirectory, "Packages");
+    private readonly string library = Path.Combine(appDirectory, "Library"); // Legacy path
+    private readonly string cache = Path.Combine(AppPaths.UserDataDirectory, "Packages"); // New path
 
     internal static string DirectoryKey(string value) =>
         Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(value)));

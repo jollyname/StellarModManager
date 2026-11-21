@@ -27,7 +27,7 @@ internal sealed class ModProfileStore
         this.appDirectory = appDirectory;
         this.gamePath = Path.TrimEndingDirectorySeparator(Path.GetFullPath(gamePath));
         this.packages = packages;
-        profilesRoot = Path.Combine(appDirectory, "Data", "Profiles");
+        profilesRoot = AppPaths.ProfilesRoot;
         var key = ProfileFiles.PathComparer == StringComparer.OrdinalIgnoreCase
             ? this.gamePath.ToUpperInvariant()
             : this.gamePath;
@@ -53,6 +53,7 @@ internal sealed class ModProfileStore
         }
 
         var legacyPath = Path.Combine(appDirectory, "Data", "modprofiles.json");
+        var newPath = AppPaths.ModProfilesPath;
         bool useLegacy = (string.IsNullOrWhiteSpace(legacyGamePath) ||
             ProfileFiles.PathComparer.Equals(gamePath, Path.TrimEndingDirectorySeparator(Path.GetFullPath(legacyGamePath)))) &&
             ClaimLegacyData();

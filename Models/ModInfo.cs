@@ -52,7 +52,6 @@ namespace StellarModManager.Models
         [JsonPropertyName("development")]
         public string Development { get; set; } = "";
 
-        // TODO!!!
         [JsonPropertyName("tags")]
         public List<string> Tags { get; set; } = new();
     }

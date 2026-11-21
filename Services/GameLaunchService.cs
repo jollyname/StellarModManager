@@ -45,7 +45,6 @@ public static partial class GameLaunchService
 
         if (!OperatingSystem.IsWindows()) return null;
 
-
         if (executable.Directory is null)
         {
             Console.WriteLine($"Failed to launch through Steam (directory is null)");
