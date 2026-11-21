@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using StellarModManager.Models;
 using StellarModManager.Services;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -132,7 +133,7 @@ public partial class MainWindowViewModel
 
         try
         {
-            var progress = new System.Progress<string>(text => InstallProgressText = text);
+            var progress = new Progress<string>(text => InstallProgressText = text);
 
             await _melonLoaderInstaller.InstallAsync(GamePath, progress);
 
@@ -144,7 +145,7 @@ public partial class MainWindowViewModel
                 _settingsService.SaveGameProfile(new GameProfile { GamePath = GamePath });
             }
         }
-        catch (System.Exception ex)
+        catch (Exception ex)
         {
             MelonLoaderStatusText = $"Auto-install failed: {ex.Message}"; // Hopesfully this never happens... ijdsfjipfdsipjhfdfdf
         }

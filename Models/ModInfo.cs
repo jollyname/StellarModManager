@@ -2,58 +2,55 @@
 using System.Collections.Generic; // Lists
 using System.Text.Json.Serialization;
 
-namespace StellarModManager.Models
+namespace StellarModManager.Models;
+
+public class ModInfo : ObservableObject
 {
-    public class ModInfo : ObservableObject
+    [JsonPropertyName("id")]
+    public string Id { get; set; } = "";
+
+    [JsonPropertyName("name")]
+    public string Name { get; set; } = "";
+
+    [JsonPropertyName("author")]
+    public string Author { get; set; } = "";
+
+    [JsonPropertyName("version")]
+    public string Version
     {
-        private string version = "";
-
-        [JsonPropertyName("id")]
-        public string Id { get; set; } = "";
-
-        [JsonPropertyName("name")]
-        public string Name { get; set; } = "";
-
-        [JsonPropertyName("author")]
-        public string Author { get; set; } = "";
-
-        [JsonPropertyName("version")]
-        public string Version
+        get;
+        set
         {
-            get => version;
-            set
-            {
-                if (SetProperty(ref version, value))
-                    OnPropertyChanged(nameof(DisplayVersion));
-            }
+            if (SetProperty(ref field, value))
+                OnPropertyChanged(nameof(DisplayVersion));
         }
+    } = "";
 
-        [JsonIgnore]
-        public string DisplayVersion => string.IsNullOrWhiteSpace(Version) ? "Unknown" : Version;
+    [JsonIgnore]
+    public string DisplayVersion => string.IsNullOrWhiteSpace(Version) ? "Unknown" : Version;
 
-        [JsonPropertyName("description")]
-        public string Description { get; set; } = "";
+    [JsonPropertyName("description")]
+    public string Description { get; set; } = "";
 
-        [JsonPropertyName("thumbnail")]
-        public string Thumbnail { get; set; } = "";
+    [JsonPropertyName("thumbnail")]
+    public string Thumbnail { get; set; } = "";
 
-        [JsonPropertyName("images")]
-        public List<string> Images { get; set; } = new();
+    [JsonPropertyName("images")]
+    public List<string> Images { get; set; } = new();
 
-        // ids of other mods this one needs
-        [JsonPropertyName("needs")]
-        public List<string> Needs { get; set; } = new();
+    // ids of other mods this one needs
+    [JsonPropertyName("needs")]
+    public List<string> Needs { get; set; } = new();
 
-        // "ai-free", "ai-assisted", or "vibecoded"
-        [JsonPropertyName("ai")]
-        public string Ai { get; set; } = "";
+    // "ai-free", "ai-assisted", or "vibecoded"
+    [JsonPropertyName("ai")]
+    public string Ai { get; set; } = "";
 
-        // "active" or "inactive"
-        [JsonPropertyName("development")]
-        public string Development { get; set; } = "";
+    // "active" or "inactive"
+    [JsonPropertyName("development")]
+    public string Development { get; set; } = "";
 
-        // TODO!!!
-        [JsonPropertyName("tags")]
-        public List<string> Tags { get; set; } = new();
-    }
+    // TODO!!!
+    [JsonPropertyName("tags")]
+    public List<string> Tags { get; set; } = new();
 }

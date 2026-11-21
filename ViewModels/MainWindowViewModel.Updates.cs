@@ -21,8 +21,7 @@ public partial class MainWindowViewModel
     public partial UpdateInfo? AvailableUpdate { get; set; }
 
     public string AvailableUpdateText => AvailableUpdate is null
-        ? ""
-        : LocalizationService.Instance.Format("NewVersionFormat", AvailableUpdate.Version);
+        ? "" : LocalizationService.Instance.Format("NewVersionFormat", AvailableUpdate.Version);
 
     [ObservableProperty]
     public partial bool IsUpdatePanelOpen { get; set; }
@@ -38,7 +37,7 @@ public partial class MainWindowViewModel
 
     public async Task CheckForAppUpdates()
     {
-        var update = await appUpdatingService.CheckAsync();
+        var update = await _appUpdatingService.CheckAsync();
         if (update is null) return;
 
         AvailableUpdate = update;

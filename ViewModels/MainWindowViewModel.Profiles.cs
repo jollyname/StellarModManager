@@ -220,8 +220,7 @@ public partial class MainWindowViewModel
     [RelayCommand]
     private static void CancelRename(ModProfile? profile)
     {
-        if (profile != null)
-            profile.IsEditing = false;
+        profile?.IsEditing = false;
     }
 
     private async Task EditProfiles(Action<GameModProfiles> edit, string errorKey)

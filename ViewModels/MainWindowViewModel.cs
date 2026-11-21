@@ -36,7 +36,7 @@ public partial class MainWindowViewModel : ViewModelBase
         SelectedLanguage = appSettings.Language;
         ConfirmBeforeRemove = appSettings.ConfirmBeforeRemove;
         AutoDeployDependencies = appSettings.AutoDeployDependencies;
-        _autoCheckForModUpdates = appSettings.AutoCheckForModUpdates;
+        AutoCheckForModUpdates = appSettings.AutoCheckForModUpdates;
         AutoCheckForAppUpdates = appSettings.AutoCheckForAppUpdates;
         SortIndex = appSettings.ModSort;
         IsCompactView = appSettings.CompactModList;

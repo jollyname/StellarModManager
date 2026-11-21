@@ -12,8 +12,8 @@ namespace StellarModManager.ViewModels;
 public partial class MainWindowViewModel
 {
     public static readonly IValueConverter LanguageNameConverter =
-    new FuncValueConverter<string, string>(code =>
-        code is null ? "" : LocalizationService.Instance.GetLanguageDisplayName(code));
+        new FuncValueConverter<string, string>(code =>
+            code is null ? "" : LocalizationService.Instance.GetLanguageDisplayName(code));
 
     private readonly ThemeService _themeService = new();
 
@@ -38,7 +38,7 @@ public partial class MainWindowViewModel
     public partial bool AutoCheckForAppUpdates { get; set; } = true;
 
     [ObservableProperty]
-    private bool _autoCheckForModUpdates = true;
+    public partial bool AutoCheckForModUpdates { get; set; } = true;
 
     // Mod lists show a three-column card grid instead of the table
     [ObservableProperty]

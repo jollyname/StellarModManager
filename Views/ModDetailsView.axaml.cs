@@ -19,13 +19,10 @@ public partial class ModDetailsView : UserControl
     {
         base.OnDataContextChanged(e);
 
-        if (_viewModel != null)
-            _viewModel.PropertyChanged -= OnViewModelPropertyChanged;
+        _viewModel?.PropertyChanged -= OnViewModelPropertyChanged;
 
         _viewModel = DataContext as MainWindowViewModel;
-
-        if (_viewModel != null)
-            _viewModel.PropertyChanged += OnViewModelPropertyChanged;
+        _viewModel?.PropertyChanged += OnViewModelPropertyChanged;
     }
 
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
