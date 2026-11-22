@@ -118,6 +118,7 @@
   "StatusProfileSwitched": "Switched to {0}.",
   "StatusProfileGameRunning": "Close the game before switching profiles.",
   "StatusProfileMissingPackages": "Profile switched. These mods are missing from the cache ({0}).",
+  "StatusProfileImportedMissing": "Profile '{0}' imported. These mods aren't in the mod list, so they weren't downloaded ({1}).",
   "StatusProfileInvalid": "Invalid profile file.",
   "StatusModOperationBusy": "Finish the current operation first."
 }

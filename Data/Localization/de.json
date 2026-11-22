@@ -118,6 +118,7 @@
   "StatusProfileSwitched": "Zu {0} gewechselt.",
   "StatusProfileGameRunning": "Schließe das Spiel, bevor du das Profil wechselst.",
   "StatusProfileMissingPackages": "Profil gewechselt. Für diese Mods fehlen gespeicherte Pakete ({0}).",
+  "StatusProfileImportedMissing": "Profil '{0}' importiert. Diese Mods sind nicht in der Mod-Liste und wurden nicht heruntergeladen ({1}).",
   "StatusProfileInvalid": "Ungültige Profildatei.",
   "StatusModOperationBusy": "Warte, bis der laufende Vorgang abgeschlossen ist."
 }

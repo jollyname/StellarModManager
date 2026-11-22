@@ -118,6 +118,7 @@
   "StatusProfileSwitched": "Profil {0} activé.",
   "StatusProfileGameRunning": "Fermez le jeu avant de changer de profil.",
   "StatusProfileMissingPackages": "Profil activé. Les paquets de ces mods sont absents du cache ({0}).",
+  "StatusProfileImportedMissing": "Profil '{0}' importé. Ces mods ne figurent pas dans la liste des mods et n'ont pas été téléchargés ({1}).",
   "StatusProfileInvalid": "Fichier de profil non valide.",
   "StatusModOperationBusy": "Attendez la fin de l’opération en cours."
 }

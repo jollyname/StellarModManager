@@ -118,6 +118,7 @@
   "StatusProfileSwitched": "Выбран профиль {0}.",
   "StatusProfileGameRunning": "Закройте игру перед переключением профиля.",
   "StatusProfileMissingPackages": "Профиль переключён. В кэше нет пакетов для следующих модов ({0}).",
+  "StatusProfileImportedMissing": "Профиль '{0}' импортирован. Этих модов нет в списке модов, поэтому они не были загружены ({1}).",
   "StatusProfileInvalid": "Недопустимый файл профиля.",
   "StatusModOperationBusy": "Дождитесь завершения текущей операции."
 }

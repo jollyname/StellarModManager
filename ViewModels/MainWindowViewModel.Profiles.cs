@@ -15,6 +15,8 @@ using System.Threading.Tasks;
 
 namespace StellarModManager.ViewModels;
 
+// :)
+
 public partial class MainWindowViewModel
 {
     private sealed record ProfileFile(string Name, List<string> DeployedModIds);
@@ -96,6 +98,50 @@ public partial class MainWindowViewModel
         return true;
     }
 
+    private async Task<(List<string> Ids, List<string> Unavailable)> EnsureProfilePackagesAsync(IEnumerable<string> requested, bool followNeeds)
+    {
+        var ids = new List<string>();
+        var unavailable = new List<string>();
+        var queue = new Queue<string>(requested);
+        var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        // We NEED the mod list
+        if (OnlineMods.Count == 0)
+            await RefreshMods();
+
+        while (queue.TryDequeue(out var id))
+        {
+            if (!seen.Add(id))
+                continue;
+            ids.Add(id);
+
+            var package = _packages.Find(id);
+            if (package == null)
+            {
+                var online = OnlineMods.FirstOrDefault(m => SameId(m.Id, id));
+                if (online == null)
+                {
+                    unavailable.Add(id);
+                    continue;
+                }
+                package = await GetInstallPackage(online);
+            }
+
+            // What this mod needs has to be in the profile too
+            if (followNeeds)
+            {
+                foreach (var need in package.Mod.Needs ?? [])
+                {
+                    if (!string.IsNullOrWhiteSpace(need))
+                        queue.Enqueue(need.Trim());
+                }
+            }
+        }
+
+        // We return unavailable to tell users which mods couldn't be installed
+        return (ids, unavailable);
+    }
+
     [RelayCommand]
     private void ToggleProfilesDropdown() => IsProfilesDropdownOpen = !IsProfilesDropdownOpen;
 
@@ -164,6 +210,7 @@ public partial class MainWindowViewModel
             var store = _profileStore!;
             var active = ActiveProfile!.Id;
             var gamePath = GamePath;
+
             var (state, missing) = await Task.Run(() => store.Switch(active, target, clone, deleteActive, CheckGameStopped));
             ShowProfileState(state);
             if (missing.Count > 0)
@@ -310,12 +357,22 @@ public partial class MainWindowViewModel
             if (string.IsNullOrWhiteSpace(imported?.Name))
                 throw new InvalidDataException(LocalizationService.Instance["StatusProfileInvalid"]);
 
-            var profile = new ModProfile
-            {
-                Name = imported.Name.Trim(),
-                DeployedModIds = (imported.DeployedModIds ?? [])
-                    .Where(id => !string.IsNullOrWhiteSpace(id)).Select(id => id.Trim()).ToList()
-            };
+            var profileName = imported.Name.Trim();
+
+            // Find the requested mods
+            var requested = (imported.DeployedModIds ?? [])
+                .Where(id => !string.IsNullOrWhiteSpace(id))
+                .Select(id => id.Trim())
+                .Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+
+            // Make sure there aren't over a hundred, otherwise it'll count as an invalid profile
+            if (requested.Count > 100)
+                throw new InvalidDataException(LocalizationService.Instance["StatusProfileInvalid"]);
+
+            // Download what isn't cached yet, plus whatever those mods need
+            var (ids, unavailable) = await EnsureProfilePackagesAsync(requested, followNeeds: true);
+
+            var profile = new ModProfile { Name = profileName, DeployedModIds = ids };
             var store = _profileStore!;
             var active = ActiveProfile!.Id;
             var state = await Task.Run(() => store.Edit(active, current =>
@@ -324,7 +381,12 @@ public partial class MainWindowViewModel
                 current.Profiles.Add(profile);
             }));
             ShowProfileState(state);
-            ReportSuccess("StatusProfileImported", profile.Name);
+
+            // Tell the user about mods that aren't on installed, or on SM
+            if (unavailable.Count > 0)
+                ReportError("StatusProfileImportedMissing", profileName, string.Join(", ", unavailable));
+            else
+                ReportSuccess("StatusProfileImported", profileName);
         }
         catch (Exception ex)
         {
